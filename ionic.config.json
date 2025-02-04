@@ -1,0 +1,7 @@
+{
+  "name": "VOICE-Raffle-Buddy",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
