@@ -10,7 +10,23 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
+  },  {
+    path: 'login',
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
+  {
+    path: 'admin-dashboard',
+    loadChildren: () => import('./pages/admin-dashboard/admin-dashboard.module').then( m => m.AdminDashboardPageModule)
+  },
+  {
+    path: 'create-raffle',
+    loadChildren: () => import('./pages/raffles/create-raffle/create-raffle.module').then( m => m.CreateRafflePageModule)
+  },
+  {
+    path: 'raffle-details',
+    loadChildren: () => import('./pages/raffles/raffle-details/raffle-details.module').then( m => m.RaffleDetailsPageModule)
+  },
+
 ];
 
 @NgModule({
