@@ -21,4 +21,18 @@ export class ApiService {
         Authorization: `Bearer ${token}`,
       });
     }
+
+      // Admin Login
+  login(email: string, password: string): Observable<any> {
+    const url = `${this.baseUrl}/auth/login`;
+    const body = { email, password };
+    return this.http.post(url, body);
+  }
+
+  // Admin Register
+  register(username: string, email: string, password: string): Observable<any> {
+    const url = `${this.baseUrl}/auth/register`;
+    const body = { username, email, password };
+    return this.http.post(url, body);
+  }
 }
