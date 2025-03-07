@@ -51,4 +51,18 @@ export class ApiService {
     return this.http.get(url, { headers });
   }
 
+  // Update Raffle
+  updateRaffle(raffleId: string, raffleData: any): Observable<any> {
+    const url = `${this.baseUrl}/raffles/${raffleId}`;
+    const headers = this.getHeaders();
+    return this.http.put(url, raffleData, { headers });
+  }
+
+  // Delete Raffle
+  deleteRaffle(raffleId: string): Observable<any> {
+    const url = `${this.baseUrl}/raffles/${raffleId}`;
+    const headers = this.getHeaders();
+    return this.http.delete(url, { headers });
+  }
+
 }
