@@ -24,7 +24,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/create-raffle/create-raffle.module').then( m => m.CreateRafflePageModule)
   },
   {
-    path: 'raffle-detail',
+    path: 'raffle-detail/:id',  // Corrected path here
     loadChildren: () => import('./pages/raffle-detail/raffle-detail.module').then( m => m.RaffleDetailPageModule)
   },
   {

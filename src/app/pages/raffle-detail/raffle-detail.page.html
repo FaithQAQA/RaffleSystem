@@ -7,22 +7,50 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">raffleDetail</ion-title>
+      <ion-title size="large">Raffle Detail</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>{{ raffle.name }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p><strong>Description:</strong> {{ raffle.description }}</p>
-      <p><strong>Category:</strong> {{ raffle.category }}</p>
-      <p><strong>Ticket Price:</strong> ${{ raffle.ticketPrice }}</p>
-      <p><strong>Start Date:</strong> {{ raffle.startDate | date }}</p>
-      <p><strong>End Date:</strong> {{ raffle.endDate | date }}</p>
-    </ion-card-content>
-  </ion-card>
-  <ion-button expand="full" color="light" (click)="updateRaffle()">Update Raffle</ion-button>
-  <ion-button expand="full" color="light" (click)="deleteRaffle()">Delete</ion-button>
+  <!-- Pre-filled Form -->
+  <form (ngSubmit)="updateRaffle()">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ raffle.title }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Raffle Title</ion-label>
+          <ion-input [(ngModel)]="raffle.title" name="name" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Description</ion-label>
+          <ion-textarea [(ngModel)]="raffle.description" name="description" required></ion-textarea>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Category</ion-label>
+          <ion-input [(ngModel)]="raffle.category" name="category" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Ticket Price</ion-label>
+          <ion-input [(ngModel)]="raffle.price" name="ticketPrice" type="number" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Start Date</ion-label>
+          <ion-datetime [(ngModel)]="raffle.startDate" name="startDate" required></ion-datetime>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">End Date</ion-label>
+          <ion-datetime [(ngModel)]="raffle.endDate" name="endDate" required></ion-datetime>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button expand="full" type="submit" color="primary">Update Raffle</ion-button>
+    <ion-button expand="full" color="light" (click)="deleteRaffle()">Delete Raffle</ion-button>
+  </form>
 </ion-content>

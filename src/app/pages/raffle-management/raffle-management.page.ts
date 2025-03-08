@@ -22,6 +22,9 @@ export class RaffleManagementPage implements OnInit {
   }
 
   async loadRaffles() {
+    const token = localStorage.getItem('adminToken');
+    console.log('Stored Token:', token); // Check if the token is stored
+
     this.apiService.getAllRaffles().subscribe(
       (raffles: any[]) => {
         this.raffles = raffles;
@@ -30,12 +33,13 @@ export class RaffleManagementPage implements OnInit {
       (error) => {
         console.error('Error loading raffles:', error);
       }
-    );    
+    );
   }
+
 
   filterRaffles() {
     this.filteredRaffles = this.raffles.filter(raffle => {
-      
+
       const matchesSearch = this.searchTerm
         ? raffle.name.toLowerCase().includes(this.searchTerm.toLowerCase())
         : true;
@@ -57,7 +61,7 @@ export class RaffleManagementPage implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 
-  navigateToRaffleDetail(raffleId: string) {
+  navigateToRaffleDetail(raffleId: Number) {
     this.router.navigate([`/raffle-detail/${raffleId}`]);
   }
 }

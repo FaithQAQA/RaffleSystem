@@ -24,7 +24,7 @@ export class LoginPage implements OnInit {
         catchError(error => {
           alert('Login failed');
           console.error('Login error:', error);
-          return throwError(error);  
+          return throwError(error);
         })
       )
       .subscribe(response => {

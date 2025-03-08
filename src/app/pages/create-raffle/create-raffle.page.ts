@@ -23,19 +23,23 @@ export class CreateRafflePage implements OnInit {
 
   createRaffle() {
     const raffleData = {
-      name: this.name,
+      title: this.name, // Changed from 'name' to 'title' to match the backend structure
       description: this.description,
       category: this.category,
-      ticketPrice: this.ticketPrice,
+      price: this.ticketPrice, // Changed from 'ticketPrice' to 'price'
       startDate: this.startDate,
       endDate: this.endDate,
+      status: 'active', // Assuming a default status
+      raised: 0, // Starting with 0 raised amount
+      raffleItems: [], // Assuming an empty array for now
+      participants: [] // Assuming an empty array for now
     };
 
     this.apiService.createRaffle(raffleData).pipe(
       catchError((error) => {
         alert('Error creating raffle');
         console.error('Raffle creation error:', error);
-        return throwError(error);  
+        return throwError(error);
       })
     ).subscribe(
       (response) => {
@@ -45,7 +49,7 @@ export class CreateRafflePage implements OnInit {
   }
 
   cancelCreateRaffle() {
-    this.router.navigate(['/dashboard']); 
+    this.router.navigate(['/dashboard']);
   }
 
   ngOnInit() {

@@ -24,11 +24,13 @@ export class DashboardPage implements OnInit {
     this.apiService.getRecentRaffles().pipe(
       catchError((error) => {
         console.error('Error fetching raffles:', error);
-        return throwError(error);  
+        return throwError(error);
       })
     ).subscribe(
       (response) => {
         this.raffles = response;
+        console.log('Full response:', response);  // Log the full response to see all data
+        console.log('Raffles:', this.raffles);    // Log the raffles object
       },
       (error) => {
         console.error('Error fetching raffles:', error);
@@ -36,11 +38,12 @@ export class DashboardPage implements OnInit {
     );
   }
 
+
   navigateToCreateRaffle() {
     this.router.navigate(['/create-raffle']);
   }
 
-  navigateToRaffleDetail(raffleId: string) {
+  navigateToRaffleDetail(raffleId: number) {
     this.router.navigate([`/raffle-detail/${raffleId}`]);
   }
 

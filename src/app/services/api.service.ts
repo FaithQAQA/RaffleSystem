@@ -1,30 +1,47 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private baseUrl = 'http://localhost:5000/api'; 
+  private baseUrl = 'https://backendserver-euba.onrender.com/api';
 
   constructor(private http: HttpClient) {}
 
-    // Helper function to add authorization header
-    private getHeaders(): HttpHeaders {
-      const token = localStorage.getItem('token'); // Getting token from local storage
-      return new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      });
+  // Helper function to add authorization header
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No valid auth token found!');
+      // Optionally log out or redirect the user to the login page
+      return new HttpHeaders();  // Return empty headers if no token
     }
 
-      // Admin Login
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    });
+  }
+
+  // Admin Login
   login(email: string, password: string): Observable<any> {
     const url = `${this.baseUrl}/auth/login`;
     const body = { email, password };
-    return this.http.post(url, body);
+    console.log('Sending login request to:', url);
+    console.log('Request payload:', body);
+
+    return this.http.post(url, body).pipe(
+      tap((response: any) => {
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+          console.log('Token saved to localStorage');
+        }
+      })
+    );
   }
 
   // Admin Register
@@ -33,7 +50,6 @@ export class ApiService {
     const body = { username, email, password };
     return this.http.post(url, body);
   }
-
 
   // Create Raffle
   createRaffle(raffleData: any): Observable<any> {
@@ -46,10 +62,11 @@ export class ApiService {
   getAllRaffles(): Observable<any> {
     const url = `${this.baseUrl}/raffles`;
     const headers = this.getHeaders();
+    console.log('Request Headers:', headers);
     return this.http.get(url, { headers });
   }
 
-  // Get Recent Raffles (last 3 raffles)
+  // Get Recent Raffles
   getRecentRaffles(): Observable<any> {
     const url = `${this.baseUrl}/raffles/recent`;
     const headers = this.getHeaders();
