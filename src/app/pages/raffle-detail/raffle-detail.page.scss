@@ -1,0 +1,37 @@
+ion-card {
+  --background: #fff; /* Set background to white to ensure contrast */
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: add some shadow for card styling */
+}
+
+ion-item {
+  --background: #f9f9f9; /* Light background for the items for contrast */
+  --border-radius: 8px;
+  --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+ion-input, ion-textarea, ion-datetime {
+  --background: #fff; /* White background for input fields */
+  --color: #000; /* Black text color */
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+
+ion-label {
+  color: #333; /* Darker color for labels */
+  font-weight: bold;
+}
+
+ion-button {
+  --border-radius: 8px;
+  margin-top: 10px;
+}
+
+ion-button[color="primary"] {
+  --background: #3880ff;
+  --color: #fff;
+}
+
+ion-button[color="light"] {
+  --background: #f4f5f8;
+  --color: #000;
+}

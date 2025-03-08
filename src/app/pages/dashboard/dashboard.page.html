@@ -1,0 +1,32 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Admin Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">Logout</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Dashboard</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Buttons Section -->
+  <div class="action-buttons">
+    <ion-button expand="full" color="primary" (click)="navigateToRaffleManagement()">View Raffle</ion-button>
+    <ion-button expand="full" color="success" (click)="navigateToCreateRaffle()">Create Raffle</ion-button>
+  </div>
+
+  <!-- Recent Activity Section -->
+  <section class="recent-activity">
+    <h2>Recent Activity:</h2>
+    <ion-list>
+      <ion-item *ngFor="let raffle of raffles" (click)="navigateToRaffleDetail(raffle._id)">
+        <ion-label color="success">{{ raffle.title }}</ion-label>
+      </ion-item>
+    </ion-list>
+  </section>
+</ion-content>

@@ -1,0 +1,97 @@
+// Global Styling for Ion Header and Toolbar
+ion-header {
+  --background: #007bff;  // Blue color for the header
+  --backdrop-opacity: 0.2;
+}
+
+ion-toolbar {
+  --background: #0056b3;  // Darker blue for toolbar
+  --ion-color-primary: #fff;  // Set icon and text color to white
+}
+
+ion-title {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+ion-button {
+  margin: 5px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
+
+// Action Buttons Styling (View and Create Raffle)
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+  padding: 0 15px;
+}
+
+// Raffle List Section Styling
+.recent-activity {
+  margin-top: 20px;
+  padding: 0 15px;
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+  }
+
+  ion-list {
+    --ion-item-background: #f8f9fa;  // Light background for items
+    --ion-item-border-color: #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+    ion-item {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #e9ecef;
+        transform: scale(1.02);
+      }
+
+      ion-label {
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Responsive Styling for Mobile Devices
+@media (max-width: 767px) {
+  ion-title {
+    font-size: 1.6rem;
+  }
+
+  .action-buttons ion-button {
+    font-size: 1rem;
+    padding: 12px;
+  }
+
+  .recent-activity h2 {
+    font-size: 1.4rem;
+  }
+
+  ion-list {
+    --ion-item-padding-start: 10px;
+    --ion-item-padding-end: 10px;
+  }
+}

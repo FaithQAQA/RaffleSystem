@@ -8,25 +8,33 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'login',
     pathMatch: 'full'
-  },  {
+  },
+  {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
   {
-    path: 'admin-dashboard',
-    loadChildren: () => import('./pages/admin-dashboard/admin-dashboard.module').then( m => m.AdminDashboardPageModule)
+    path: 'dashboard',
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then( m => m.DashboardPageModule)
   },
   {
     path: 'create-raffle',
-    loadChildren: () => import('./pages/raffles/create-raffle/create-raffle.module').then( m => m.CreateRafflePageModule)
+    loadChildren: () => import('./pages/create-raffle/create-raffle.module').then( m => m.CreateRafflePageModule)
   },
   {
-    path: 'raffle-details',
-    loadChildren: () => import('./pages/raffles/raffle-details/raffle-details.module').then( m => m.RaffleDetailsPageModule)
+    path: 'raffle-detail/:id',  // Corrected path here
+    loadChildren: () => import('./pages/raffle-detail/raffle-detail.module').then( m => m.RaffleDetailPageModule)
   },
-
+  {
+    path: 'forget-password',
+    loadChildren: () => import('./pages/forget-password/forget-password.module').then( m => m.ForgetPasswordPageModule)
+  },
+  {
+    path: 'raffle-management',
+    loadChildren: () => import('./pages/raffle-management/raffle-management.module').then( m => m.RaffleManagementPageModule)
+  },
 ];
 
 @NgModule({

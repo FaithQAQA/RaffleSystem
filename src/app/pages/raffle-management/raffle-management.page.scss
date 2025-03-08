@@ -1,0 +1,86 @@
+// Raffle Management Page Styling
+.page-content {
+  padding: 16px;
+}
+
+// Header section
+ion-header {
+  background-color: #f8f9fa;
+}
+
+ion-toolbar {
+  --background: #007bff;
+  --color: white;
+}
+
+ion-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+// Search container styling
+.search-container {
+  margin: 20px 0;
+  ion-searchbar {
+    --padding-start: 10px;
+    --padding-end: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  ion-item {
+    margin-top: 10px;
+  }
+
+  ion-select {
+    --padding-start: 10px;
+    --padding-end: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Raffle List styling
+.raffle-list {
+  margin-top: 20px;
+  ion-item {
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f1f1f1;
+    }
+  }
+
+  .raffle-item-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+// Create Raffle Button styling
+.create-raffle-button {
+  margin-top: 30px;
+  ion-button {
+    border-radius: 5px;
+    font-weight: bold;
+    background-color: #28a745;
+  }
+}
+
+ion-button {
+  margin-top: 10px;
+  --border-radius: 6px;
+}
+
+// Footer Styling (Optional)
+ion-footer {
+  background-color: #f1f1f1;
+}
