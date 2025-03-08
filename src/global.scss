@@ -35,3 +35,128 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+ion-content {
+    --background: #f8f9fa; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100vw; 
+    padding: 0; 
+  }
+  
+  .mobile-container {
+    width: 92%;
+    max-width: 420px; 
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15); 
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -90%);
+  }
+  
+  ion-toolbar {
+    --background: #0056b3; 
+    --color: white;
+    --border-radius: 12px 12px 0 0; 
+    --padding-start: 15px;
+    --padding-end: 15px;
+  }
+  
+  ion-button {
+    width: 100%;
+    --border-radius: 10px;
+    --box-shadow: none;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: capitalize;
+    margin-top: 12px;
+  }
+  
+  ion-button[color="primary"] {
+    --background: #007bff;
+    --background-hover: #0069d9;
+    --background-activated: #0056b3;
+    --color: white;
+  }
+  
+  ion-button[color="light"] {
+    --background: #f0f0f0;
+    --color: #333;
+    --background-hover: #e0e0e0;
+    --background-activated: #d6d6d6;
+  }
+  
+  ion-item {
+    --background: white;
+    --border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); 
+    padding: 8px;
+    border-radius: 8px;
+  }
+  
+  ion-input, ion-textarea, ion-searchbar, ion-select {
+    --color: #333;
+    --placeholder-color: #999;
+    --background: white;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 15px;
+  }
+  
+  ion-card {
+    --background: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  ion-card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+  }
+  
+  ion-list {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    .mobile-container {
+      padding: 20px;
+    }
+  }
+  
+  
+  

@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Create Raffle</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">createRaffle</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <form (ngSubmit)="createRaffle()">
+    <ion-item>
+      <ion-label position="floating">Raffle Name</ion-label>
+      <ion-input [(ngModel)]="name" name="name" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Description</ion-label>
+      <ion-textarea [(ngModel)]="description" name="description" required></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Category</ion-label>
+      <ion-input [(ngModel)]="category" name="category" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Ticket Price</ion-label>
+      <ion-input [(ngModel)]="ticketPrice" name="ticketPrice" type="number" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Start Date</ion-label>
+      <ion-datetime [(ngModel)]="startDate" name="startDate" required></ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">End Date</ion-label>
+      <ion-datetime [(ngModel)]="endDate" name="endDate" required></ion-datetime>
+    </ion-item>
+
+    <ion-button expand="full" type="submit">Save Raffle</ion-button>
+    <ion-button expand="full" color="light" (click)="cancelCreateRaffle()">Cancel</ion-button>
+  </form>
+</ion-content>

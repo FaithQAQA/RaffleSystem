@@ -1,0 +1,28 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Raffle Detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">raffleDetail</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ raffle.name }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Description:</strong> {{ raffle.description }}</p>
+      <p><strong>Category:</strong> {{ raffle.category }}</p>
+      <p><strong>Ticket Price:</strong> ${{ raffle.ticketPrice }}</p>
+      <p><strong>Start Date:</strong> {{ raffle.startDate | date }}</p>
+      <p><strong>End Date:</strong> {{ raffle.endDate | date }}</p>
+    </ion-card-content>
+  </ion-card>
+  <ion-button expand="full" color="light" (click)="updateRaffle()">Update Raffle</ion-button>
+  <ion-button expand="full" color="light" (click)="deleteRaffle()">Delete</ion-button>
+</ion-content>

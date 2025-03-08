@@ -1,0 +1,36 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Raffle Management</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="navigateToDashboard()">Back to Dashboard</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">raffleManagement</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterRaffles()" placeholder="Search raffles..."></ion-searchbar>
+
+  <ion-item>
+    <ion-label>Filter By</ion-label>
+    <ion-select [(ngModel)]="selectedFilter" (ionChange)="filterRaffles()">
+      <ion-select-option value="all">All</ion-select-option>
+      <ion-select-option value="active">Active</ion-select-option>
+      <ion-select-option value="completed">Completed</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-list>
+    <ion-item *ngFor="let raffle of filteredRaffles" (click)="navigateToRaffleDetail(raffle._id)">
+      <ion-label>{{ raffle.name }}</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="full" (click)="navigateToCreateRaffle()">Create New Raffle</ion-button>
+
+</ion-content>

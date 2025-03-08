@@ -1,0 +1,22 @@
+<ion-content [fullscreen]="true">
+  <div class="mobile-container">
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-title size="large">Admin Login</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <br>
+  <ion-item>
+    <ion-label position="floating">Username</ion-label>
+    <ion-input [(ngModel)]="email" type="text"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Password</ion-label>
+    <ion-input [(ngModel)]="password" type="password"></ion-input>
+  </ion-item>
+
+  <ion-button expand="full" (click)="login()">Login</ion-button>
+  <ion-button expand="full" color="light" (click)="goToForgotPassword()">Forgot Password</ion-button>
+</div>
+</ion-content>
