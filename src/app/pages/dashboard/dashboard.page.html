@@ -84,7 +84,7 @@
               <div class="progress mb-3">
                 <div class="progress-bar" [ngClass]="raffle.progress > 50 ? 'bg-success' : 'bg-danger'" [style.width]="raffle.progress + '%'"></div>
               </div>
-              <p class="card-text progress-text">Progress: {{ raffle.progress }}%</p>
+              <p class="card-text progress-text">Progress: {{ raffle.progress | number:'1.0-0' }}%</p>
             </div>
           </div>
         </li>

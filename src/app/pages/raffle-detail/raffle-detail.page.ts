@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-raffle-detail',
@@ -17,19 +18,29 @@ export class RaffleDetailPage implements OnInit {
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private toastController: ToastController // Inject ToastController
   ) {}
 
   ngOnInit() {
-    this.raffleId = this.route.snapshot.paramMap.get('id');  // Get raffle ID from URL
+    this.raffleId = this.route.snapshot.paramMap.get('id');
     if (this.raffleId) {
-      this.getRaffleDetails();  // Fetch raffle details if ID is valid
+      this.getRaffleDetails();
     } else {
-      this.router.navigate(['/error-page']);  // Navigate to an error page if raffle ID is missing
+      this.router.navigate(['/error-page']);
     }
   }
 
-  // Fetch raffle details from the API
+  async presentToast(message: string, color: string = 'primary') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000, // Display for 2 seconds
+      position: 'top',
+      color,
+    });
+    await toast.present();
+  }
+
   getRaffleDetails() {
     if (!this.raffleId) {
       console.error('Raffle ID is required!');
@@ -42,29 +53,29 @@ export class RaffleDetailPage implements OnInit {
         console.log('Raffle Details:', this.raffle);
       },
       (error) => {
-        alert('Error fetching raffle details');
+        this.presentToast('Error fetching raffle details', 'danger');
         console.error('Error:', error);
       }
     );
   }
 
-  // Update raffle details
   updateRaffle() {
     if (!this.raffleId) return;
 
-    this.apiService.updateRaffle(this.raffleId, this.raffle).subscribe(
-      (response) => {
-        alert('Raffle updated successfully!');
+    console.log('Sending update for:', this.raffle); // Debugging
+
+    this.apiService.updateRaffle(this.raffleId, this.raffle).subscribe({
+      next: (response) => {
+        this.presentToast('Raffle updated successfully!', 'success');
         this.router.navigate(['/dashboard']);
       },
-      (error) => {
-        alert('Error updating raffle');
-        console.error('Error:', error);
+      error: (error) => {
+        console.error('Update failed:', error);
+        this.presentToast(`Error updating raffle: ${error.message}`, 'danger');
       }
-    );
+    });
   }
 
-  // Delete raffle
   deleteRaffle() {
     if (!this.raffleId) return;
 
@@ -72,11 +83,11 @@ export class RaffleDetailPage implements OnInit {
     if (confirmDelete) {
       this.apiService.deleteRaffle(this.raffleId).subscribe(
         (response) => {
-          alert('Raffle deleted successfully!');
+          this.presentToast('Raffle deleted successfully!', 'success');
           this.router.navigate(['/dashboard']);
         },
         (error) => {
-          alert('Error deleting raffle');
+          this.presentToast('Error deleting raffle', 'danger');
           console.error('Error:', error);
         }
       );
@@ -85,28 +96,26 @@ export class RaffleDetailPage implements OnInit {
 
   navigateToCreateRaffle() {
     this.router.navigate(['/create-raffle']);
-  //  this.presentToast('Navigating to Create Raffle', 'success');
+    this.presentToast('Navigating to Create Raffle', 'success');
   }
 
   navigateToRaffleDetail(raffleId: number) {
     this.router.navigate([`/raffle-detail/${raffleId}`]);
-   // this.presentToast(`Opening raffle: ${raffleId}`, 'tertiary');
+    this.presentToast(`Opening raffle: ${raffleId}`, 'tertiary');
   }
 
   navigateToRaffleManagement() {
     this.router.navigate(['/raffle-management']);
-  //  this.presentToast('Navigating to Raffle Management', 'primary');
+    this.presentToast('Navigating to Raffle Management', 'primary');
   }
 
   toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen; // Toggle the state
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
 
   logout() {
     localStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
-   // this.presentToast('You have been logged out', 'danger');
+    this.presentToast('You have been logged out', 'danger');
   }
-
-
 }
