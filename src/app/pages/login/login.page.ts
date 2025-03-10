@@ -19,23 +19,34 @@ export class LoginPage implements OnInit {
 
   login() {
     const data = { email: this.email, password: this.password };
-    this.apiService.login(data.email, data.password)
-      .pipe(
-        catchError(error => {
-          alert('Login failed');
-          console.error('Login error:', error);
-          return throwError(error);
-        })
-      )
-      .subscribe(response => {
+
+    this.apiService.login(data.email, data.password).pipe(
+      catchError(error => {
+        // Show alert for failed login attempt
+        alert('Login failed');
+        console.error('Login error:', error);
+        return throwError(error); // rethrow error to propagate it
+      })
+    ).subscribe(
+      (response: any) => {
+        // If response contains a token, navigate to the dashboard
         if (response && response.token) {
           localStorage.setItem('adminToken', response.token);
           this.router.navigate(['/dashboard']);
         } else {
+          // If no token, alert invalid credentials
           alert('Invalid credentials!');
         }
-      });
+      },
+      error => {
+        // Handle any additional errors if necessary (already handled in catchError)
+        console.error('An error occurred during login:', error);
+      }
+    );
   }
+
+
+
 
   goToForgotPassword() {
     this.router.navigate(['/forget-password']);
