@@ -9,9 +9,6 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class RaffleManagementPage implements OnInit {
-onSearch($event: Event) {
-throw new Error('Method not implemented.');
-}
 
   raffles: any[] = [];
   filteredRaffles: any[] = [];
@@ -25,6 +22,7 @@ throw new Error('Method not implemented.');
     this.loadRaffles();
   }
 
+  // Load raffles from the API
   async loadRaffles() {
     const token = localStorage.getItem('adminToken');
     console.log('Stored Token:', token); // Check if the token is stored
@@ -32,7 +30,7 @@ throw new Error('Method not implemented.');
     this.apiService.getAllRaffles().subscribe(
       (raffles: any[]) => {
         this.raffles = raffles;
-        this.filterRaffles();
+        this.filterRaffles(); // Filter the raffles after loading
       },
       (error) => {
         console.error('Error loading raffles:', error);
@@ -40,21 +38,29 @@ throw new Error('Method not implemented.');
     );
   }
 
-
+  // Filter raffles based on search term and selected filter
   filterRaffles() {
     this.filteredRaffles = this.raffles.filter(raffle => {
-
+      // Filter by search term (case-insensitive)
       const matchesSearch = this.searchTerm
-        ? raffle.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+        ? (raffle.title || '').toLowerCase().includes(this.searchTerm.toLowerCase())
         : true;
 
+      // Filter by selected status
       const matchesFilter =
         this.selectedFilter === 'all' ||
         (this.selectedFilter === 'active' && raffle.status === 'active') ||
         (this.selectedFilter === 'completed' && raffle.status === 'completed');
 
+      // Return true only if both filters match
       return matchesSearch && matchesFilter;
     });
+  }
+
+  // Handle search input
+  onSearch(event: Event) {
+    this.searchTerm = (event.target as HTMLInputElement).value; // Update searchTerm with the user's input
+    this.filterRaffles(); // Re-filter raffles based on updated searchTerm
   }
 
   navigateToCreateRaffle() {
@@ -64,26 +70,22 @@ throw new Error('Method not implemented.');
   logout() {
     localStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
-    //this.presentToast('You have been logged out', 'danger');
   }
 
   navigateToDashboard() {
     this.router.navigate(['/dashboard']);
   }
 
-  navigateToRaffleDetail(raffleId: number) {
+  navigateToRaffleDetail(raffleId: String) {
     this.router.navigate([`/raffle-detail/${raffleId}`]);
-  //  this.presentToast(`Opening raffle: ${raffleId}`, 'tertiary');
   }
-
 
   navigateToRaffleManagement() {
     this.router.navigate(['/raffle-management']);
-   // this.presentToast('Navigating to Raffle Management', 'primary');
   }
 
   toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen; // Toggle the state
+    this.isSidebarOpen = !this.isSidebarOpen; // Toggle the state of the sidebar
   }
 
 }

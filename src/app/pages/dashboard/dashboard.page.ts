@@ -151,8 +151,8 @@ throw new Error('Method not implemented.');
         ],
       },
       options: {
-        responsive: true,  // Ensures the chart resizes based on container size
-        maintainAspectRatio: false,  // Disable aspect ratio maintenance (allows for full flexibility)
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'bottom',
