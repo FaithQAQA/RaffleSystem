@@ -1,97 +1,223 @@
-// Global Styling for Ion Header and Toolbar
-ion-header {
-  --background: #007bff;  // Blue color for the header
-  --backdrop-opacity: 0.2;
-}
-
-ion-toolbar {
-  --background: #0056b3;  // Darker blue for toolbar
-  --ion-color-primary: #fff;  // Set icon and text color to white
-}
-
-ion-title {
-  color: white;
-  font-size: 1.8rem;
-  font-weight: bold;
-}
-
-ion-button {
-  margin: 5px;
-  font-size: 1.1rem;
-  border-radius: 8px;
-  text-transform: uppercase;
-  font-weight: 600;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-3px);
-  }
-}
-
-// Action Buttons Styling (View and Create Raffle)
-.action-buttons {
+/* Dashboard Container */
+.dashboard-container {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin: 20px 0;
-  padding: 0 15px;
+  height: 100vh;
+  margin-left: 250px; /* Sidebar default width */
+  transition: margin-left 0.3s ease;
 }
 
-// Raffle List Section Styling
+/* Sidebar Collapsed */
+.sidebar-collapsed {
+  margin-left: 0;
+}
+
+.offcanvas {
+  width: 250px !important;
+  position: fixed;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.offcanvas-hide {
+  transform: translateX(-100%);
+}
+
+/* Sidebar Button Styling */
+.sidebar-btn {
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  color: #333; /* Color of text */
+  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.sidebar-btn:hover {
+  background: #007bff; /* Change background on hover */
+  color: white; /* Change text color to white */
+  transform: scale(1.05);
+}
+
+.sidebar-btn ion-icon {
+  margin-right: 8px;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-btn:hover ion-icon {
+  transform: scale(1.2);
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #007bff;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Top Bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Search Bar */
+.search-container {
+  position: relative;
+  width: 250px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 35px 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+}
+
+/* Chart Card Styling */
+.chart-card {
+  flex: 1; /* Make the chart card flexible, filling its container */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%; /* Ensure the chart container is flexible and fills the available space */
+  padding: 10px; /* Add padding inside the card */
+}
+
+canvas {
+  display: block; /* Prevent inline behavior of canvas */
+  width: 100% !important; /* Ensure the canvas fills the container width */
+  height: 100% !important; /* Ensure the canvas fills the container height */
+}
+
+/* Chart Canvas Styling */
+.chart-canvas {
+  height: 150px; /* Reduced height for charts */
+  width: 100%; /* Full width of the container */
+}
+
+/* Chart Title Styling */
+.chart-title {
+  font-size: 1.2rem; /* Smaller font size for titles */
+  text-align: center; /* Center align titles */
+}
+
+/* Recent Activity Section Styling */
 .recent-activity {
   margin-top: 20px;
-  padding: 0 15px;
-
-  h2 {
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 15px;
-  }
-
-  ion-list {
-    --ion-item-background: #f8f9fa;  // Light background for items
-    --ion-item-border-color: #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-
-    ion-item {
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      transition: all 0.3s ease;
-
-      &:hover {
-        background-color: #e9ecef;
-        transform: scale(1.02);
-      }
-
-      ion-label {
-        font-size: 1.1rem;
-        color: #333;
-        font-weight: 500;
-      }
-    }
-  }
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  overflow: visible; /* Allow content to overflow */
 }
 
-// Responsive Styling for Mobile Devices
-@media (max-width: 767px) {
-  ion-title {
-    font-size: 1.6rem;
+.activity-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center; /* Center align title */
+}
+
+.activity-list {
+  max-height: 300px; /* Reduced height for activity list */
+  overflow-y:scroll ; /* Enable vertical scrolling */
+}
+
+.activity-card {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 10px 0; /* Add spacing between cards */
+  padding: 10px; /* Add padding inside cards */
+}
+
+.activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.progress {
+  height: 8px;
+  border-radius: 4px;
+}
+
+.progress-bar {
+  border-radius: 4px;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Responsive Grid Adjustments */
+@media (max-width: 768px) {
+  .chart-canvas {
+    height: 120px; /* Further reduced height for smaller screens */
   }
 
-  .action-buttons ion-button {
-    font-size: 1rem;
-    padding: 12px;
+  .chart-title, .activity-title {
+    font-size: 1rem; /* Smaller font size for smaller screens */
   }
 
-  .recent-activity h2 {
-    font-size: 1.4rem;
+  .dashboard-container {
+    margin-left: 0;
   }
 
-  ion-list {
-    --ion-item-padding-start: 10px;
-    --ion-item-padding-end: 10px;
+  .sidebar-toggle {
+    display: block;
   }
+
+  .graph-placeholder {
+    text-align: center;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .graph-placeholder img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+  }
+}
+.list-group-item:hover {
+  background-color: #f8f9fa; /* Highlight on hover */
 }

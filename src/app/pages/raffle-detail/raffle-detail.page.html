@@ -1,26 +1,51 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Raffle Detail</ion-title>
-  </ion-toolbar>
-</ion-header>
+<!-- Sidebar -->
+<div class="offcanvas offcanvas-start" id="sidebarMenu" [ngClass]="{'show': isSidebarOpen}" data-bs-backdrop="false">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Admin Panel</h5>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="list-group sidebar-menu">
+      <li class="list-group-item">
+        <button class="btn sidebar-btn" (click)="navigateToRaffleManagement()">
+          <ion-icon name="eye-outline"></ion-icon> View Raffles
+        </button>
+      </li>
+      <li class="list-group-item">
+        <button class="btn sidebar-btn" (click)="navigateToCreateRaffle()">
+          <ion-icon name="add-circle-outline"></ion-icon> Create Raffle
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Raffle Detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<!-- Top Bar with Sidebar Toggle -->
+<div class="top-bar">
+  <button class="btn btn-outline-primary sidebar-toggle" (click)="toggleSidebar()">
+    <ion-icon name="menu-outline"></ion-icon>
+  </button>
+  <div class="dropdown">
+    <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown">
+      <ion-icon name="person-circle-outline"></ion-icon> Admin
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><button class="dropdown-item text-danger" (click)="logout()">Logout</button></li>
+    </ul>
+  </div>
+</div>
 
+<!-- Main Content -->
+<ion-content [fullscreen]="true" class="content" padding>
   <!-- Pre-filled Form -->
   <form (ngSubmit)="updateRaffle()">
-    <ion-card>
+    <ion-card class="centered-form">
       <ion-card-header>
         <ion-card-title>{{ raffle.title }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="floating">Raffle Title</ion-label>
-          <ion-input [(ngModel)]="raffle.title" name="name" required></ion-input>
+          <ion-label  position="floating">Raffle Title</ion-label>
+          <ion-input [(ngModel)]="raffle.title" name="title" required></ion-input>
         </ion-item>
 
         <ion-item>
@@ -40,6 +65,7 @@
 
         <ion-item>
           <ion-label position="floating">Start Date</ion-label>
+          <br><br>
           <ion-datetime [(ngModel)]="raffle.startDate" name="startDate" required></ion-datetime>
         </ion-item>
 
@@ -50,7 +76,11 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-button expand="full" type="submit" color="primary">Update Raffle</ion-button>
-    <ion-button expand="full" color="light" (click)="deleteRaffle()">Delete Raffle</ion-button>
+    <!-- Update and Delete Buttons -->
+    <div class="button-container">
+      <ion-button expand="block" type="submit" color="primary">Update Raffle</ion-button>
+      <ion-button expand="block" color="danger" (click)="deleteRaffle()">Delete Raffle</ion-button>
+    </div>
+
   </form>
 </ion-content>

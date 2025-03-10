@@ -28,9 +28,12 @@
     "@capacitor/status-bar": "7.0.0",
     "@ionic/angular": "^8.0.0",
     "axios": "^1.8.2",
+    "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.8",
     "ionicons": "^7.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "voice1": "file:",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

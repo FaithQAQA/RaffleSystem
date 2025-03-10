@@ -1,32 +1,95 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Admin Dashboard</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="logout()">Logout</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<!-- Sidebar -->
+<div class="offcanvas offcanvas-start" id="sidebarMenu" [ngClass]="{'show': isSidebarOpen}" data-bs-backdrop="false">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Admin Panel</h5>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Dashboard</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="list-group sidebar-menu">
+      <li class="list-group-item">
+        <button class="btn sidebar-btn" (click)="navigateToRaffleManagement()">
+          <ion-icon name="eye-outline"></ion-icon> View Raffles
+        </button>
+      </li>
+      <li class="list-group-item">
+        <button class="btn sidebar-btn" (click)="navigateToCreateRaffle()">
+          <ion-icon name="add-circle-outline"></ion-icon> Create Raffle
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
 
-  <!-- Buttons Section -->
-  <div class="action-buttons">
-    <ion-button expand="full" color="primary" (click)="navigateToRaffleManagement()">View Raffle</ion-button>
-    <ion-button expand="full" color="success" (click)="navigateToCreateRaffle()">Create Raffle</ion-button>
+
+<!-- Main Content -->
+<div class="dashboard-container">
+  <!-- Top Bar with Sidebar Toggle -->
+  <div class="top-bar">
+    <button class="btn btn-outline-primary sidebar-toggle" (click)="toggleSidebar()">
+      <ion-icon name="menu-outline"></ion-icon>
+    </button>
+
+    <div class="search-container">
+      <input type="text" class="form-control search-input" placeholder="Search..." (input)="onSearch($event)">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+    </div>
+
+    <div class="dropdown">
+      <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown">
+        <ion-icon name="person-circle-outline"></ion-icon> Admin
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><button class="dropdown-item text-danger" (click)="logout()">Logout</button></li>
+      </ul>
+    </div>
   </div>
 
-  <!-- Recent Activity Section -->
-  <section class="recent-activity">
-    <h2>Recent Activity:</h2>
-    <ion-list>
-      <ion-item *ngFor="let raffle of raffles" (click)="navigateToRaffleDetail(raffle._id)">
-        <ion-label color="success">{{ raffle.title }}</ion-label>
-      </ion-item>
-    </ion-list>
-  </section>
-</ion-content>
+  <ion-content>
+    <ion-grid>
+      <ion-row>
+        <!-- Raffle Chart Box -->
+        <ion-col size="12" size-md="4.5"> <!-- Adjusted column size -->
+                    <ion-card class="chart-card">
+            <ion-card-header>
+              <ion-card-title class="chart-title">Raffle Overview</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <canvas #raffleChart class="chart-canvas"></canvas>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <!-- Sales Chart Box -->
+        <ion-col size="12" size-md="6">
+          <ion-card class="chart-card">
+            <ion-card-header>
+              <ion-card-title class="chart-title">Sales Overview</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <canvas #salesChart class="chart-canvas"></canvas>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Recent Activity Section -->
+    <section class="recent-activity p-3">
+      <h2 class="activity-title mb-4">Recent Activity:</h2>
+      <ul class="list-group">
+        <li *ngFor="let raffle of raffles" (click)="navigateToRaffleDetail(raffle._id)" class="list-group-item mb-3">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h5 class="mb-2">{{ raffle.title }}</h5>
+              <div class="progress mb-3">
+                <div class="progress-bar" [ngClass]="raffle.progress > 50 ? 'bg-success' : 'bg-danger'" [style.width]="raffle.progress + '%'"></div>
+              </div>
+              <p class="card-text progress-text">Progress: {{ raffle.progress }}%</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+  </ion-content>
+</div>
