@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
@@ -13,10 +13,7 @@ Chart.register(...registerables);
   styleUrls: ['./dashboard.page.scss'],
   standalone: false,
 })
-export class DashboardPage implements OnInit {
-onSearch($event: Event) {
-throw new Error('Method not implemented.');
-}
+export class DashboardPage implements OnInit, AfterViewInit {
   raffles: any[] = [];
   totalRaffles: number = 0;
   activeRaffles: number = 0;
@@ -28,7 +25,7 @@ throw new Error('Method not implemented.');
 
   chart: any;
 
-  isSidebarOpen = true; // Sidebar is initially open
+  isSidebarOpen = true;
 
   constructor(
     private apiService: ApiService,
@@ -40,18 +37,21 @@ throw new Error('Method not implemented.');
     this.getRaffles();
   }
 
-  // Toggle the sidebar visibility
-  toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen; // Toggle the state
-  }
+  onSearch($event: Event) {
+    throw new Error('Method not implemented.');
+    }
 
-  ionViewDidEnter() {
-    this.getRaffles();
+  ngAfterViewInit() {
     setTimeout(() => {
-      this.createChart(); // Create Raffle Chart
-      this.createSalesChart(); // Create Sales Chart
+      this.createChart();
+      this.createSalesChart();
     }, 500);
   }
+
+    // Toggle the sidebar visibility
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen; // Toggle the state
+    }
 
   getRaffles() {
     this.isLoading = true;
@@ -62,42 +62,22 @@ throw new Error('Method not implemented.');
         console.error('Error fetching raffles:', error);
         this.errorMessage = 'Failed to load raffles. Please try again.';
         this.isLoading = false;
-        return throwError(error);
+        return throwError(() => new Error(error));
       })
     ).subscribe(
       (response) => {
         this.raffles = response.map((raffle: any) => {
-          const progress = this.calculateProgress(raffle);
-          console.log(`Raffle ID: ${raffle._id}, Progress: ${progress}`);
-          return {
-            ...raffle,
-            progress,
-          };
+          return { ...raffle, progress: this.calculateProgress(raffle) };
         });
 
         this.totalRaffles = this.raffles.length;
-
-        // Log current time for debugging
         const now = Date.now();
-        console.log(`Current Time: ${now} (${new Date(now).toISOString()})`);
 
-        // Corrected logic for active raffles
         this.activeRaffles = this.raffles.filter(raffle => {
           const start = new Date(raffle.startDate).getTime();
           const end = new Date(raffle.endDate).getTime();
-
-          // Log start and end dates for debugging
-          console.log(`Raffle ID: ${raffle._id}`);
-          console.log(`Start Date: ${raffle.startDate} (${start})`);
-          console.log(`End Date: ${raffle.endDate} (${end})`);
-
-          // Check if the raffle is active
-          return now >= start && now <= end; // Raffle is active if now is between start and end
+          return now >= start && now <= end;
         }).length;
-
-        console.log(`Total Raffles: ${this.totalRaffles}`);
-        console.log(`Active Raffles: ${this.activeRaffles}`);
-        console.log(`Inactive Raffles: ${this.totalRaffles - this.activeRaffles}`);
 
         this.isLoading = false;
         this.createChart();
@@ -109,7 +89,6 @@ throw new Error('Method not implemented.');
     );
   }
 
-
   calculateProgress(raffle: any): number {
     if (!raffle.startDate || !raffle.endDate) return 0;
 
@@ -117,25 +96,22 @@ throw new Error('Method not implemented.');
     const end = new Date(raffle.endDate).getTime();
     const now = Date.now();
 
-    // Log start and end dates for debugging
-    console.log(`Raffle ID: ${raffle._id}`);
-    console.log(`Start Date: ${raffle.startDate} (${start})`);
-    console.log(`End Date: ${raffle.endDate} (${end})`);
+    if (start > end) return 0;
+    if (now > end) return 100;
+    if (now < start) return 0;
 
-    // Check for invalid date range
-    if (start > end) {
-      console.error(`Invalid date range for Raffle ID: ${raffle._id}. End date is before start date.`);
-      return 0; // Treat as inactive
+    return ((now - start) / (end - start)) * 100;
+  }
+
+  createChart() {
+    if (!this.raffleChart || !this.raffleChart.nativeElement) {
+      console.error('Chart element not found');
+      return;
     }
 
-    if (now > end) return 100; // Raffle has ended
-    if (now < start) return 0; // Raffle hasn't started yet
-
-    return ((now - start) / (end - start)) * 100; // Calculate progress
-  }
-  createChart() {
     if (this.chart) {
-      this.chart.destroy(); // Destroy the previous chart if it exists
+      this.chart.destroy();
+      this.chart = null;
     }
 
     this.chart = new Chart(this.raffleChart.nativeElement, {
@@ -146,7 +122,6 @@ throw new Error('Method not implemented.');
           {
             data: [this.activeRaffles, this.totalRaffles - this.activeRaffles],
             backgroundColor: ['#4CAF50', '#FF5733'],
-            hoverBackgroundColor: ['#45A049', '#E74C3C'],
           },
         ],
       },
@@ -163,21 +138,31 @@ throw new Error('Method not implemented.');
   }
 
   createSalesChart() {
+    if (!this.salesChartCanvas || !this.salesChartCanvas.nativeElement) {
+      console.error("Sales chart canvas not found.");
+      return;
+    }
+
     const ctx = this.salesChartCanvas.nativeElement.getContext('2d');
-    const salesChart = new Chart(ctx, {
+    if (!ctx) {
+      console.error("Canvas context not available for Sales Chart.");
+      return;
+    }
+
+    new Chart(ctx, {
       type: 'line',
       data: {
         labels: ['January', 'February', 'March', 'April', 'May'],
         datasets: [{
           label: 'Sales (Temp Money)',
-          data: [10, 20, 30, 40, 50], // Placeholder data
+          data: [10, 20, 30, 40, 50],
           borderColor: 'rgba(0, 123, 255, 0.8)',
           fill: false,
         }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,  // Disable aspect ratio maintenance for full container flexibility
+        maintainAspectRatio: false,
         scales: {
           y: {
             beginAtZero: true
@@ -186,7 +171,6 @@ throw new Error('Method not implemented.');
       }
     });
   }
-
 
   async presentToast(message: string, color: string) {
     const toast = await this.toastController.create({
