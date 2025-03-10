@@ -12,6 +12,7 @@ export class RaffleDetailPage implements OnInit {
 
   raffleId: string | null = null;
   raffle: any = {};
+  isSidebarOpen = true;
 
   constructor(
     private apiService: ApiService,
@@ -81,4 +82,31 @@ export class RaffleDetailPage implements OnInit {
       );
     }
   }
+
+  navigateToCreateRaffle() {
+    this.router.navigate(['/create-raffle']);
+  //  this.presentToast('Navigating to Create Raffle', 'success');
+  }
+
+  navigateToRaffleDetail(raffleId: number) {
+    this.router.navigate([`/raffle-detail/${raffleId}`]);
+   // this.presentToast(`Opening raffle: ${raffleId}`, 'tertiary');
+  }
+
+  navigateToRaffleManagement() {
+    this.router.navigate(['/raffle-management']);
+  //  this.presentToast('Navigating to Raffle Management', 'primary');
+  }
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen; // Toggle the state
+  }
+
+  logout() {
+    localStorage.removeItem('adminToken');
+    this.router.navigate(['/login']);
+   // this.presentToast('You have been logged out', 'danger');
+  }
+
+
 }

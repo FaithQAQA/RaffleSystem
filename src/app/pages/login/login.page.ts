@@ -14,7 +14,7 @@ export class LoginPage implements OnInit {
 
   email: string = '';
   password: string = '';
-
+  rememberMe: boolean = false;
   constructor(private apiService: ApiService, private router: Router) {}
 
   login() {
