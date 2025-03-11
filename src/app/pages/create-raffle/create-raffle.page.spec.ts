@@ -61,7 +61,7 @@ describe('CreateRafflePage', () => {
     component.createRaffle();
 
     expect(apiService.createRaffle).toHaveBeenCalledWith(raffleData);
-    expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
+    expect(router.navigate).toHaveBeenCalledWith(['/raffle-management']);
   });
 
   it('should handle error when createRaffle fails', () => {

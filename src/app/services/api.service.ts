@@ -16,8 +16,8 @@ export class ApiService {
     const token = localStorage.getItem('token');
     if (!token) {
       console.error('No valid auth token found!');
-      // Optionally log out or redirect the user to the login page
-      return new HttpHeaders(); // Return empty headers if no token
+     
+      return new HttpHeaders();
     }
 
     return new HttpHeaders({
