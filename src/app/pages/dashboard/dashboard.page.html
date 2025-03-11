@@ -77,19 +77,38 @@
     <section class="recent-activity p-3">
       <h2 class="activity-title mb-4">Recent Activity:</h2>
       <ul class="list-group">
-        <li *ngFor="let raffle of raffles" (click)="navigateToRaffleDetail(raffle._id)" class="list-group-item mb-3">
-          <div class="d-flex justify-content-between">
+        <li *ngFor="let raffle of recentRaffles"
+            (click)="navigateToRaffleDetail(raffle._id)"
+            class="list-group-item mb-3 cursor-pointer">
+
+          <div class="d-flex justify-content-between align-items-center">
             <div>
               <h5 class="mb-2">{{ raffle.title }}</h5>
-              <div class="progress mb-3">
-                <div class="progress-bar" [ngClass]="raffle.progress > 50 ? 'bg-success' : 'bg-danger'" [style.width]="raffle.progress + '%'"></div>
+
+              <!-- Progress bar -->
+              <div class="progress mb-2">
+                <div
+                  class="progress-bar"
+                  [ngClass]="raffle.progress > 50 ? 'bg-success' : 'bg-danger'"
+                  [style.width]="raffle.progress + '%'"
+                  role="progressbar"
+                  [attr.aria-valuenow]="raffle.progress"
+                  aria-valuemin="0"
+                  aria-valuemax="100">
+                </div>
               </div>
-              <p class="card-text progress-text">Progress: {{ raffle.progress | number:'1.0-0' }}%</p>
+
+              <p class="card-text progress-text">
+                Progress: {{ raffle.progress | number:'1.0-0' }}%
+              </p>
             </div>
           </div>
+
         </li>
       </ul>
     </section>
+
+
 
   </ion-content>
 </div>

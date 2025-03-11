@@ -130,13 +130,16 @@ canvas {
   text-align: center; /* Center align titles */
 }
 
+
+
 /* Recent Activity Section Styling */
 .recent-activity {
   margin-top: 20px;
   background-color: #f8f9fa;
   border-radius: 8px;
   padding: 20px;
-  overflow: visible; /* Allow content to overflow */
+  padding-bottom: 3rem; /* Adjust as needed */
+  overflow: scroll; /* Allow content to overflow */
 }
 
 .activity-title {

@@ -4,10 +4,9 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiService {
-
   private baseUrl = 'https://backendserver-euba.onrender.com/api';
 
   constructor(private http: HttpClient) {}
@@ -18,12 +17,12 @@ export class ApiService {
     if (!token) {
       console.error('No valid auth token found!');
       // Optionally log out or redirect the user to the login page
-      return new HttpHeaders();  // Return empty headers if no token
+      return new HttpHeaders(); // Return empty headers if no token
     }
 
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     });
   }
 
@@ -93,5 +92,4 @@ export class ApiService {
     const headers = this.getHeaders();
     return this.http.delete(url, { headers });
   }
-
 }

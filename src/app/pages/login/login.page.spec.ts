@@ -18,7 +18,7 @@ describe('LoginPage', () => {
     TestBed.configureTestingModule({
       declarations: [LoginPage],
       imports: [HttpClientTestingModule, RouterTestingModule],
-      providers: [ApiService]
+      providers: [ApiService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginPage);

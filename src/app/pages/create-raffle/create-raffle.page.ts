@@ -20,7 +20,7 @@ export class CreateRafflePage implements OnInit {
   endDate: string = '';
 
   constructor(private apiService: ApiService, private router: Router,    private toastController: ToastController ) {}
-  isSidebarOpen = true; // Sidebar is initially open
+  isSidebarOpen = false; // Sidebar is initially open
 
 
   async presentToast(message: string, color: string = 'primary') {
@@ -78,7 +78,7 @@ export class CreateRafflePage implements OnInit {
       })
     ).subscribe(
       (response) => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/raffle-management']);
       }
     );
   }
