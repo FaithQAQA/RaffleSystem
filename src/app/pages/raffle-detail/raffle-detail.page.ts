@@ -10,7 +10,6 @@ import { ToastController } from '@ionic/angular';
   standalone: false,
 })
 export class RaffleDetailPage implements OnInit {
-
   raffleId: string | null = null;
   raffle: any = {};
   isSidebarOpen = true;
@@ -72,26 +71,40 @@ export class RaffleDetailPage implements OnInit {
       error: (error) => {
         console.error('Update failed:', error);
         this.presentToast(`Error updating raffle: ${error.message}`, 'danger');
-      }
+      },
     });
   }
 
-  deleteRaffle() {
+  async deleteRaffle() {
     if (!this.raffleId) return;
 
-    const confirmDelete = confirm('Are you sure you want to delete this raffle?');
-    if (confirmDelete) {
-      this.apiService.deleteRaffle(this.raffleId).subscribe(
-        (response) => {
-          this.presentToast('Raffle deleted successfully!', 'success');
-          this.router.navigate(['/dashboard']);
+    const alert = await this.toastController.create({
+      header: 'Confirm Deletion',
+      message: 'Are you sure you want to delete this raffle?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
         },
-        (error) => {
-          this.presentToast('Error deleting raffle', 'danger');
-          console.error('Error:', error);
-        }
-      );
-    }
+        {
+          text: 'Delete',
+          handler: () => {
+            this.apiService.deleteRaffle(this.raffleId!.toString()).subscribe(
+              () => {
+                this.presentToast('Raffle deleted successfully!', 'success');
+                this.navigateToRaffleManagement(); // Navigate to management page
+              },
+              (error) => {
+                this.presentToast('Error deleting raffle', 'danger');
+                console.error('Error:', error);
+              }
+            );
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 
   navigateToCreateRaffle() {

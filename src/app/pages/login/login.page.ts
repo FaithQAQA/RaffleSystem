@@ -11,12 +11,15 @@ import { ToastController } from '@ionic/angular';
   standalone: false,
 })
 export class LoginPage implements OnInit {
-
   email: string = '';
   password: string = '';
   rememberMe: boolean = false;
 
-  constructor(private apiService: ApiService, private router: Router,   private toastController: ToastController) {}
+  constructor(
+    private apiService: ApiService,
+    private router: Router,
+    private toastController: ToastController
+  ) {}
 
   async presentToast(message: string, color: string = 'danger') {
     const toast = await this.toastController.create({
@@ -27,8 +30,6 @@ export class LoginPage implements OnInit {
     });
     await toast.present();
   }
-
-
 
   login() {
     const data = { email: this.email, password: this.password };
@@ -62,25 +63,31 @@ export class LoginPage implements OnInit {
           if (!isNaN(unlockTime.getTime())) {
             const formattedTime = unlockTime.toLocaleString();
             console.warn('Account locked until:', formattedTime);
-            this.presentToast(`Account is locked. Try again after ${formattedTime}`, 'warning');
+            this.presentToast(
+              `Account is locked. Try again after ${formattedTime}`,
+              'warning'
+            );
           } else {
-            console.error('Invalid lockUntil timestamp:', error.error.lockUntil);
+            console.error(
+              'Invalid lockUntil timestamp:',
+              error.error.lockUntil
+            );
             this.presentToast('Account is locked. Try again later.', 'warning');
           }
         } else {
           console.error('Unexpected server error:', error);
-          this.presentToast('An unexpected error occurred. Please try again.', 'danger');
+          this.presentToast(
+            'An unexpected error occurred. Please try again.',
+            'danger'
+          );
         }
       }
     );
   }
 
-
-
   goToForgotPassword() {
     this.router.navigate(['/forget-password']);
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 }

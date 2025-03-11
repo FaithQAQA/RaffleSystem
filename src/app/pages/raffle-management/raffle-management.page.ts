@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class RaffleManagementPage implements OnInit {
-
   raffles: any[] = [];
   filteredRaffles: any[] = [];
   searchTerm: string = '';
@@ -40,10 +39,12 @@ export class RaffleManagementPage implements OnInit {
 
   // Filter raffles based on search term and selected filter
   filterRaffles() {
-    this.filteredRaffles = this.raffles.filter(raffle => {
+    this.filteredRaffles = this.raffles.filter((raffle) => {
       // Filter by search term (case-insensitive)
       const matchesSearch = this.searchTerm
-        ? (raffle.title || '').toLowerCase().includes(this.searchTerm.toLowerCase())
+        ? (raffle.title || '')
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase())
         : true;
 
       // Filter by selected status
@@ -87,5 +88,4 @@ export class RaffleManagementPage implements OnInit {
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen; // Toggle the state of the sidebar
   }
-
 }

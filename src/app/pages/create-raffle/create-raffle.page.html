@@ -59,14 +59,15 @@
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">Start Date</ion-label>
-        <ion-datetime [(ngModel)]="startDate" name="startDate" required></ion-datetime>
+        <ion-label>Start Date</ion-label>
+        <ion-datetime [(ngModel)]="startDate" name="startDate" labelPlacement="floating" required></ion-datetime>
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">End Date</ion-label>
-        <ion-datetime [(ngModel)]="endDate" name="endDate" required></ion-datetime>
+        <ion-label>End Date</ion-label>
+        <ion-datetime [(ngModel)]="endDate" name="endDate" labelPlacement="floating" required></ion-datetime>
       </ion-item>
+
 
       <div class="button-group">
         <ion-button expand= "block" type="submit" class="submit-btn">Save Raffle</ion-button>

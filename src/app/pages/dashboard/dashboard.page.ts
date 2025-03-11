@@ -14,7 +14,11 @@ Chart.register(...registerables);
   standalone: false,
 })
 export class DashboardPage implements OnInit, AfterViewInit {
-  raffles: any[] = [];
+onSearch($event: Event) {
+throw new Error('Method not implemented.');
+}
+  recentRaffles: any[] = [];
+  allRaffles: any[] = [];
   totalRaffles: number = 0;
   activeRaffles: number = 0;
   isLoading: boolean = true;
@@ -24,7 +28,6 @@ export class DashboardPage implements OnInit, AfterViewInit {
   @ViewChild('salesChart') salesChartCanvas!: ElementRef;
 
   chart: any;
-
   isSidebarOpen = true;
 
   constructor(
@@ -34,12 +37,8 @@ export class DashboardPage implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.getRaffles();
+    this.fetchDashboardData();
   }
-
-  onSearch($event: Event) {
-    throw new Error('Method not implemented.');
-    }
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -48,106 +47,79 @@ export class DashboardPage implements OnInit, AfterViewInit {
     }, 500);
   }
 
-    // Toggle the sidebar visibility
-    toggleSidebar() {
-      this.isSidebarOpen = !this.isSidebarOpen; // Toggle the state
-    }
+  fetchDashboardData() {
+    this.getRecentRaffles();
+    this.getAllRafflesWithStatus();
+  }
 
-  getRaffles() {
+  getRecentRaffles() {
     this.isLoading = true;
-    this.errorMessage = '';
-
     this.apiService.getRecentRaffles().pipe(
-      catchError((error) => {
-        console.error('Error fetching raffles:', error);
-        this.errorMessage = 'Failed to load raffles. Please try again.';
+      catchError(error => {
+        console.error('Error fetching recent raffles:', error);
+        this.errorMessage = 'Failed to load recent raffles.';
         this.isLoading = false;
         return throwError(() => new Error(error));
       })
-    ).subscribe(
-      (response) => {
-        this.raffles = response.map((raffle: any) => {
-          return { ...raffle, progress: this.calculateProgress(raffle) };
-        });
+    ).subscribe(response => {
+      this.recentRaffles = response
+        .sort((a: { startDate: string | number | Date; }, b: { startDate: string | number | Date; }) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+        .slice(0, 3)
+        .map((raffle: any) => ({ ...raffle, progress: this.calculateProgress(raffle) }));
+      this.isLoading = false;
+    });
+  }
 
-        this.totalRaffles = this.raffles.length;
-        const now = Date.now();
-
-        this.activeRaffles = this.raffles.filter(raffle => {
+  getAllRafflesWithStatus() {
+    this.apiService.getAllRaffles().subscribe(
+      raffles => {
+        this.allRaffles = raffles.map((raffle: { startDate: string | number | Date; endDate: string | number | Date; }) => {
+          const now = Date.now();
           const start = new Date(raffle.startDate).getTime();
           const end = new Date(raffle.endDate).getTime();
-          return now >= start && now <= end;
-        }).length;
-
-        this.isLoading = false;
-        this.createChart();
+          let status = now < start ? 'Upcoming' : now <= end ? 'Active' : 'Completed';
+          return { ...raffle, status };
+        });
+        this.totalRaffles = this.allRaffles.length;
+        this.activeRaffles = this.allRaffles.filter(r => r.status === 'Active').length;
+        this.loadAllRafflesForChart();
       },
-      (error) => {
-        console.error('Error fetching raffles:', error);
-        this.isLoading = false;
+      error => {
+        console.error('Error fetching all raffles:', error);
+        this.presentToast('Failed to fetch all raffles', 'danger');
       }
     );
   }
 
   calculateProgress(raffle: any): number {
-    if (!raffle.startDate || !raffle.endDate) return 0;
-
     const start = new Date(raffle.startDate).getTime();
     const end = new Date(raffle.endDate).getTime();
     const now = Date.now();
-
-    if (start > end) return 0;
-    if (now > end) return 100;
-    if (now < start) return 0;
-
-    return ((now - start) / (end - start)) * 100;
+    if (start > end || now < start) return 0;
+    return now > end ? 100 : ((now - start) / (end - start)) * 100;
   }
 
   createChart() {
-    if (!this.raffleChart || !this.raffleChart.nativeElement) {
-      console.error('Chart element not found');
-      return;
-    }
-
-    if (this.chart) {
-      this.chart.destroy();
-      this.chart = null;
-    }
+    if (!this.raffleChart?.nativeElement) return;
+    if (this.chart) this.chart.destroy();
 
     this.chart = new Chart(this.raffleChart.nativeElement, {
       type: 'doughnut',
       data: {
         labels: ['Active Raffles', 'Inactive Raffles'],
-        datasets: [
-          {
-            data: [this.activeRaffles, this.totalRaffles - this.activeRaffles],
-            backgroundColor: ['#4CAF50', '#FF5733'],
-          },
-        ],
+        datasets: [{
+          data: [this.activeRaffles, this.totalRaffles - this.activeRaffles],
+          backgroundColor: ['#4CAF50', '#FF5733'],
+        }],
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-          },
-        },
-      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
   }
 
   createSalesChart() {
-    if (!this.salesChartCanvas || !this.salesChartCanvas.nativeElement) {
-      console.error("Sales chart canvas not found.");
-      return;
-    }
-
+    if (!this.salesChartCanvas?.nativeElement) return;
     const ctx = this.salesChartCanvas.nativeElement.getContext('2d');
-    if (!ctx) {
-      console.error("Canvas context not available for Sales Chart.");
-      return;
-    }
+    if (!ctx) return;
 
     new Chart(ctx, {
       type: 'line',
@@ -160,33 +132,55 @@ export class DashboardPage implements OnInit, AfterViewInit {
           fill: false,
         }]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+    });
+  }
+
+  loadAllRafflesForChart() {
+    this.apiService.getAllRaffles().subscribe(
+      allRaffles => this.updateChartWithAllRaffles(allRaffles),
+      error => console.error('Error fetching all raffles:', error)
+    );
+  }
+
+  updateChartWithAllRaffles(allRaffles: any[]) {
+    if (!this.raffleChart?.nativeElement) return;
+    if (this.chart) this.chart.destroy();
+
+    const activeAllRaffles = allRaffles.filter(r => {
+      const start = new Date(r.startDate).getTime();
+      const end = new Date(r.endDate).getTime();
+      return Date.now() >= start && Date.now() <= end;
+    }).length;
+
+    this.chart = new Chart(this.raffleChart.nativeElement, {
+      type: 'doughnut',
+      data: {
+        labels: ['Active Raffles (All)', 'Inactive Raffles (All)'],
+        datasets: [{
+          data: [activeAllRaffles, allRaffles.length - activeAllRaffles],
+          backgroundColor: ['#4CAF50', '#FF5733'],
+        }],
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
   }
 
   async presentToast(message: string, color: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 2000,
-      color,
-    });
+    const toast = await this.toastController.create({ message, duration: 2000, color });
     await toast.present();
   }
 
-  navigateToCreateRaffle() {
-    this.router.navigate(['/create-raffle']);
-    this.presentToast('Navigating to Create Raffle', 'success');
+  toggleSidebar() { this.isSidebarOpen = !this.isSidebarOpen; }
+
+  logout() {
+    localStorage.removeItem('adminToken');
+    this.router.navigate(['/login']);
+    this.presentToast('You have been logged out', 'danger');
   }
 
   navigateToRaffleDetail(raffleId: number) {
+   // this.router.navigate([/raffle-detail/${raffleId}]);
     this.router.navigate([`/raffle-detail/${raffleId}`]);
     this.presentToast(`Opening raffle: ${raffleId}`, 'tertiary');
   }
@@ -196,9 +190,9 @@ export class DashboardPage implements OnInit, AfterViewInit {
     this.presentToast('Navigating to Raffle Management', 'primary');
   }
 
-  logout() {
-    localStorage.removeItem('adminToken');
-    this.router.navigate(['/login']);
-    this.presentToast('You have been logged out', 'danger');
+  navigateToCreateRaffle() {
+    this.router.navigate(['/create-raffle']);
+    this.presentToast('Navigating to Create Raffle', 'success');
   }
+
 }
