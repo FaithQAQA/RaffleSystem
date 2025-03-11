@@ -5,26 +5,24 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Location } from '@angular/common';
+import { ToastController } from '@ionic/angular';
 
 describe('RaffleDetailPage', () => {
   let component: RaffleDetailPage;
   let fixture: ComponentFixture<RaffleDetailPage>;
   let apiService: ApiService;
   let router: Router;
-  let location: Location;
-  let activatedRoute: ActivatedRoute;
+  let toastController: ToastController;
   let getRaffleByIdSpy: jasmine.Spy;
-  let updateRaffleSpy: jasmine.Spy;
-  let deleteRaffleSpy: jasmine.Spy;
-  let localStorageSpy: jasmine.Spy;
+  let presentToastSpy: jasmine.Spy;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [RaffleDetailPage],
-      imports: [HttpClientTestingModule, RouterTestingModule, ],
+      imports: [HttpClientTestingModule, RouterTestingModule],
       providers: [
         ApiService,
+        ToastController,
         {
           provide: ActivatedRoute,
           useValue: {
@@ -38,54 +36,49 @@ describe('RaffleDetailPage', () => {
     component = fixture.componentInstance;
     apiService = TestBed.inject(ApiService);
     router = TestBed.inject(Router);
-    location = TestBed.inject(Location);
-    activatedRoute = TestBed.inject(ActivatedRoute);
+    toastController = TestBed.inject(ToastController);
 
-    // Spying on API calls
     getRaffleByIdSpy = spyOn(apiService, 'getRaffleById');
-    updateRaffleSpy = spyOn(apiService, 'updateRaffle');
-    deleteRaffleSpy = spyOn(apiService, 'deleteRaffle');
 
-    // Spying on router navigation
+    // Mocking ToastController create method
+    presentToastSpy = spyOn(toastController, 'create').and.callFake(async (options) => {
+      return {
+        present: jasmine.createSpy('present')
+      } as any;
+    });
+
     spyOn(router, 'navigate');
-
-    // Mocking localStorage methods
-    localStorageSpy = spyOn(localStorage, 'removeItem');
   });
 
   describe('ngOnInit', () => {
     it('should fetch raffle details if raffleId is present', () => {
       const mockRaffle = { id: '123', name: 'Test Raffle' };
-
       getRaffleByIdSpy.and.returnValue(of(mockRaffle));
 
       component.ngOnInit();
+      fixture.detectChanges();
 
       expect(getRaffleByIdSpy).toHaveBeenCalledWith('123');
       expect(component.raffle).toEqual(mockRaffle);
     });
 
     it('should navigate to error page if raffleId is missing', () => {
-      const mockRaffleId = null;
-      activatedRoute.snapshot.paramMap.get = jasmine.createSpy().and.returnValue(mockRaffleId);
-
+      (component as any).route.snapshot.paramMap.get = jasmine.createSpy().and.returnValue(null);
       component.ngOnInit();
-
       expect(router.navigate).toHaveBeenCalledWith(['/error-page']);
     });
 
-    it('should show error alert if getRaffleById fails', () => {
-      const mockError = { error: 'Failed to fetch raffle' };
-      const spyAlert = spyOn(window, 'alert');
-
-      getRaffleByIdSpy.and.returnValue(throwError(mockError));
+    it('should show error toast if getRaffleById fails', async () => {
+      getRaffleByIdSpy.and.returnValue(throwError(() => new Error('Failed to fetch raffle')));
 
       component.ngOnInit();
+      fixture.detectChanges();
 
-      expect(spyAlert).toHaveBeenCalledWith('Error fetching raffle details');
+      expect(presentToastSpy).toHaveBeenCalledWith(
+        jasmine.objectContaining({ message: 'Error fetching raffle details', color: 'danger' })
+      );
     });
   });
-
 
   describe('toggleSidebar', () => {
     it('should toggle sidebar state', () => {
@@ -97,8 +90,9 @@ describe('RaffleDetailPage', () => {
 
   describe('logout', () => {
     it('should remove token from localStorage and navigate to login', () => {
+      spyOn(localStorage, 'removeItem');
       component.logout();
-      expect(localStorageSpy).toHaveBeenCalledWith('adminToken');
+      expect(localStorage.removeItem).toHaveBeenCalledWith('adminToken');
       expect(router.navigate).toHaveBeenCalledWith(['/login']);
     });
   });

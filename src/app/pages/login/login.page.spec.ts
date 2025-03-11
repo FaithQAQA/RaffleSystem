@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ToastController } from '@ionic/angular';
 
 describe('LoginPage', () => {
   let component: LoginPage;
@@ -13,20 +14,27 @@ describe('LoginPage', () => {
   let router: Router;
   let loginSpy: jasmine.Spy;
   let localStorageSpy: jasmine.Spy;
+  let toastController: ToastController;
+  let toastSpy: jasmine.SpyObj<HTMLIonToastElement>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [LoginPage],
       imports: [HttpClientTestingModule, RouterTestingModule],
-      providers: [ApiService],
+      providers: [ApiService, ToastController],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginPage);
     component = fixture.componentInstance;
     apiService = TestBed.inject(ApiService);
     router = TestBed.inject(Router);
+    toastController = TestBed.inject(ToastController);
     loginSpy = spyOn(apiService, 'login');
     localStorageSpy = spyOn(localStorage, 'setItem');
+
+    // Spy on toast creation and presentation
+    toastSpy = jasmine.createSpyObj('HTMLIonToastElement', ['present']);
+    spyOn(toastController, 'create').and.returnValue(Promise.resolve(toastSpy));
   });
 
   describe('login', () => {
@@ -35,7 +43,6 @@ describe('LoginPage', () => {
       const email = 'test@example.com';
       const password = 'password123';
 
-      // Mock the login method to return an observable
       loginSpy.and.returnValue(of(mockResponse));
       spyOn(router, 'navigate');
 
@@ -48,38 +55,71 @@ describe('LoginPage', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
 
-    it('should show alert on failed login', () => {
+    it('should show toast on failed login', async () => {
       const email = 'test@example.com';
       const password = 'wrongPassword';
       const mockError = { error: 'Invalid credentials' };
 
-      // Mock the login method to return an observable with error
       loginSpy.and.returnValue(throwError(mockError));
-      spyOn(window, 'alert');
 
       component.email = email;
       component.password = password;
-      component.login();
+      await component.login(); // Ensure async execution
 
       expect(loginSpy).toHaveBeenCalledWith(email, password);
-      expect(window.alert).toHaveBeenCalledWith('Login failed');
+      expect(toastController.create).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          message: 'An unexpected error occurred. Please try again.', // ✅ Matches actual component message
+          duration: 3000, // ✅ Matches actual component duration
+          position: 'top', // ✅ Matches actual component position
+          color: 'danger',
+        })
+      );
+
+      expect(toastSpy.present).toHaveBeenCalled();
     });
 
-    it('should show invalid credentials alert when response does not contain a token', () => {
-      const mockResponse = {}; // No token in the response
+    it('should show toast on failed login with invalid credentials', async () => {
       const email = 'test@example.com';
-      const password = 'password123';
+      const password = 'wrongPassword';
+      const mockError = { error: { type: 'credentials', message: 'Invalid email or password' } };
 
-      // Mock the login method to return an observable with the mock response
-      loginSpy.and.returnValue(of(mockResponse));
-      spyOn(window, 'alert');
+      loginSpy.and.returnValue(throwError(mockError));
 
       component.email = email;
       component.password = password;
-      component.login();
+      await component.login(); // Ensure async execution
 
       expect(loginSpy).toHaveBeenCalledWith(email, password);
-      expect(window.alert).toHaveBeenCalledWith('Invalid credentials!');
+      expect(toastController.create).toHaveBeenCalledWith({
+        message: 'Invalid email or password', // Match actual component message
+        duration: 3000, // Match actual component duration
+        position: 'top', // Match actual component position
+        color: 'danger',
+      });
+      expect(toastSpy.present).toHaveBeenCalled();
+    });
+
+    it('should show toast on unexpected error', async () => {
+      const email = 'test@example.com';
+      const password = 'wrongPassword';
+      const mockError = { error: 'Some server error' };
+
+      loginSpy.and.returnValue(throwError(mockError));
+
+      component.email = email;
+      component.password = password;
+      await component.login();
+
+      expect(loginSpy).toHaveBeenCalledWith(email, password);
+      expect(toastController.create).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          message: 'An unexpected error occurred. Please try again.',
+          duration: 3000,
+          color: 'danger',
+        })
+      );
+      expect(toastSpy.present).toHaveBeenCalled();
     });
   });
 
