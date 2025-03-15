@@ -1,24 +1,26 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Home</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/about">About</ion-button>
+      <ion-button routerLink="/contact">Contact</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <h2>Hello World</h2>
-    <a href="https://www.voicefordeafkids.com/" target="_blank">
-      <ion-button expand="full">
-        Go to Voice Website
-      </ion-button>
-    </a>
+  <div class="home-container">
+    <h1>Welcome to Our App</h1>
+    <p>Experience seamless integration with our powerful features.</p>
+    <ion-button expand="full" color="primary" href="https://www.voicefordeafkids.com/" target="_blank">
+      Visit Website
+    </ion-button>
   </div>
-</ion-content>
+</ion-content>A
+
+<style>
+  .home-container {
+    text-align: center;
+    padding: 2rem;
+  }
+</style>

@@ -1,0 +1,57 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-lg p-4 w-100" style="max-width: 400px">
+    <div class="card-body">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0"><b>Register</b></h3>
+        <a routerLink="/login" class="text-primary">Already have an account?</a>
+      </div>
+
+      <!-- Username Input -->
+      <div class="form-group mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input
+          type="text"
+          [(ngModel)]="user.username"
+          class="form-control"
+          id="username"
+          placeholder="Enter username"
+          required
+        />
+      </div>
+
+      <!-- Email Input -->
+      <div class="form-group mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input
+          type="email"
+          [(ngModel)]="user.email"
+          class="form-control"
+          id="email"
+          placeholder="Enter email"
+          required
+        />
+      </div>
+
+      <!-- Password Input -->
+      <div class="form-group mb-3 position-relative">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          [(ngModel)]="user.password"
+          class="form-control"
+          id="password"
+          placeholder="Enter password"
+          required
+        />
+      </div>
+
+      <!-- Register Button -->
+      <div class="d-grid mt-4">
+        <button class="btn btn-primary btn-block" (click)="register()">
+          Register
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

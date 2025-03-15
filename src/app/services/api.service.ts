@@ -16,7 +16,7 @@ export class ApiService {
     const token = localStorage.getItem('token');
     if (!token) {
       console.error('No valid auth token found!');
-     
+
       return new HttpHeaders();
     }
 
@@ -41,6 +41,11 @@ export class ApiService {
         }
       })
     );
+  }
+
+  verifyEmail(token: string): Observable<any> {
+    console.log('Calling verify email API with token:', token);
+    return this.http.get(`${this.baseUrl}/auth/verify-email?token=${token}`);
   }
 
   // Admin Register
