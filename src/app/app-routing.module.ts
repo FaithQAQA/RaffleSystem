@@ -35,6 +35,16 @@ const routes: Routes = [
     path: 'raffle-management',
     loadChildren: () => import('./pages/raffle-management/raffle-management.module').then( m => m.RaffleManagementPageModule)
   },
+  {
+    path: 'register',
+    loadChildren: () => import('./pages/Register/register/register.module').then( m => m.RegisterPageModule)
+  },
+  {
+    path: 'verify-email',
+    loadChildren: () => import('./pages/verify-email/verify-email.module').then( m => m.VerifyEmailPageModule)
+  },
+
+
 ];
 
 @NgModule({

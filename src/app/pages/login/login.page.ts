@@ -36,47 +36,44 @@ export class LoginPage implements OnInit {
 
     this.apiService.login(data.email, data.password).subscribe(
       async (response: any) => {
-        if (response.token) {
+        if (response?.token) {
           localStorage.setItem('adminToken', response.token);
-          localStorage.setItem('isAdmin', response.isAdmin ? 'true' : 'false'); // Store isAdmin flag
+          localStorage.setItem('isAdmin', response?.isAdmin ? 'true' : 'false'); // Prevents undefined issues
 
           console.log('Login successful! Token:', response.token);
           console.log('User is admin:', response.isAdmin);
 
           if (response.isAdmin) {
-            this.presentToast('Admin login successful!', 'success');
+            await this.presentToast('Admin login successful!', 'success');
             this.router.navigate(['/admin-dashboard']); // Redirect admin
           } else {
-            this.presentToast('Login successful!', 'success');
-            this.router.navigate(['/dashboard']); // Redirect normal user
+            await this.presentToast('Login successful!', 'success');
+            this.router.navigate(['/home']); // Redirect normal user
           }
         }
       },
       async (error) => {
         console.error('Login error:', error);
 
-        if (error.error.type === 'credentials') {
+        if (error.error?.type === 'credentials') {
           console.warn('Invalid credentials:', error.error.message);
-          this.presentToast('Invalid email or password', 'danger');
-        } else if (error.error.type === 'locked') {
-          const unlockTime = new Date(error.error.lockUntil);
-          if (!isNaN(unlockTime.getTime())) {
+          await this.presentToast('Invalid email or password', 'danger');
+        } else if (error.error?.type === 'locked') {
+          const unlockTime = error.error.lockUntil ? new Date(error.error.lockUntil) : null;
+          if (unlockTime && !isNaN(unlockTime.getTime())) {
             const formattedTime = unlockTime.toLocaleString();
             console.warn('Account locked until:', formattedTime);
-            this.presentToast(
+            await this.presentToast(
               `Account is locked. Try again after ${formattedTime}`,
               'warning'
             );
           } else {
-            console.error(
-              'Invalid lockUntil timestamp:',
-              error.error.lockUntil
-            );
-            this.presentToast('Account is locked. Try again later.', 'warning');
+            console.error('Invalid lockUntil timestamp:', error.error.lockUntil);
+            await this.presentToast('Account is locked. Try again later.', 'warning');
           }
         } else {
           console.error('Unexpected server error:', error);
-          this.presentToast(
+          await this.presentToast(
             'An unexpected error occurred. Please try again.',
             'danger'
           );
