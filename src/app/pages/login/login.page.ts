@@ -45,7 +45,7 @@ export class LoginPage implements OnInit {
 
           if (response.isAdmin) {
             await this.presentToast('Admin login successful!', 'success');
-            this.router.navigate(['/admin-dashboard']); // Redirect admin
+            this.router.navigate(['/dashboard']); // Redirect admin
           } else {
             await this.presentToast('Login successful!', 'success');
             this.router.navigate(['/home']); // Redirect normal user
