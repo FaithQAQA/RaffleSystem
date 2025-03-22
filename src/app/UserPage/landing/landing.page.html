@@ -1,0 +1,84 @@
+
+
+  <ion-app>
+      <ion-header>
+          <ion-toolbar class="custom-header">
+              <ion-buttons slot="start">
+                  <img aria-hidden="true" alt="popcorn-logo" src="" class="logo" />
+                  <span class="brand-name">Raffles</span>
+              </ion-buttons>
+              <ion-buttons slot="end" class="nav-links">
+                  <ion-button routerLink="/home">
+                      <span>Home</span>
+                  </ion-button>
+                  <ion-button routerLink="/view-raffles">
+                      <span>View Raffles</span>
+                  </ion-button>
+                  <ion-button routerLink="/research">
+                      <span>Carts</span>
+                  </ion-button>
+                  <ion-button (click)="logout()" class="logout-btn">
+                      <span>Logout</span>
+                  </ion-button>
+              </ion-buttons>
+          </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+          <!-- Feature Raffle Section -->
+          <div class="feature-raffle text-center">
+              <h2 class="raffle-title">Our Feature Raffle</h2>
+              <p class="raffle-subtitle">Join us for a chance to win exciting prizes!</p>
+          </div>
+
+          <!-- Image Gallery -->
+          <ion-grid class="raffle-gallery">
+              <ion-row *ngIf="recentRaffles.length > 0; else noRaffles">
+                  <ion-col *ngFor="let raffle of recentRaffles; let i = index" size="12" size-md="4">
+                      <ion-card (click)="goToRaffleDetail(raffle._id)" class="raffle-image-card">
+                          <img src="https://placehold.co/600x400" alt="Shipping Containers">
+                          <ion-card-header>
+                              <ion-card-title>{{ raffle.title }}</ion-card-title>
+                          </ion-card-header>
+                          <ion-card-content>
+                              <p>{{ raffle.description }}</p>
+                          </ion-card-content>
+                      </ion-card>
+                  </ion-col>
+              </ion-row>
+
+              <!-- Show this if there are no recent raffles -->
+              <ng-template #noRaffles>
+                  <ion-col size="12" class="text-center">
+                      <p>No recent raffles available.</p>
+                  </ion-col>
+              </ng-template>
+          </ion-grid>
+
+          <!-- Explore All Raffles Section -->
+          <ion-card class="text-center mt-4">
+              <ion-card-header>
+                  <ion-card-title class="text-primary fw-bold">Explore All Raffles</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                  <p class="text-muted">
+                      Discover all our exciting raffles and get a chance to win amazing prizes. Don't miss out—join now!
+                  </p>
+                  <ion-button expand="block" color="primary" routerLink="/view-raffles">View All Raffles</ion-button>
+              </ion-card-content>
+          </ion-card>
+
+          <!-- Footer -->
+          <ion-footer class="bg-light shadow rounded p-4 text-center">
+              <h3 class="text-primary fw-bold">VOICE for Children who are Deaf and Hard of Hearing</h3>
+              <p class="text-muted">478 Dundas St. West, P.O. Box 30045</p>
+              <p class="text-muted">Oakville, Ontario</p>
+              <p class="text-muted">L6H 6Y3</p>
+              <p class="text-muted">Email: <a href="mailto:admin@voicefordeafkids.com" class="text-primary">adminvoicefordeafkids.com</a></p>
+              <p class="text-muted">Please email us and we will respond with email or a call back if requested.</p>
+          </ion-footer>
+      </ion-content>
+  </ion-app>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+

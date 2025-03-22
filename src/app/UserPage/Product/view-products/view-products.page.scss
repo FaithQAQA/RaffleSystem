@@ -1,0 +1,227 @@
+@import 'src/theme/variables.scss';
+
+$primary-color: #007bff;  // Blue
+$secondary-color: #6c757d; // Gray
+$highlight-color: #28a745; // Green
+$text-color: #212529; // Dark Gray for readability
+$background-color: #ffffff; // White
+$error-color: #dc3545; // Red
+$error-hover: #c82333; // Darker Red
+
+//  Product Wrapper
+.product-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 56px);
+  padding: 16px;
+  background-color: $background-color;
+}
+
+//  Product Container
+.product-container {
+  display: flex;
+  flex-direction: column;
+  background: $background-color;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); // Improved shadow contrast
+  width: 95%;
+  max-width: 800px;
+  gap: 24px;
+  color: $text-color;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    max-width: 900px;
+  }
+}
+
+//  Product Image
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex: 1;
+  }
+
+  img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+  }
+}
+
+//  Product Info
+.info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+
+  @media (min-width: 768px) {
+    flex: 1;
+    text-align: left;
+    padding-left: 24px;
+  }
+}
+
+.title {
+  font-size: 26px;
+  font-weight: bold;
+  text-align: center;
+  color: $text-color;
+
+  @media (min-width: 768px) {
+    text-align: left;
+  }
+}
+
+.sku, .price {
+  color: $secondary-color; // Use gray for better readability
+  font-size: 18px;
+  text-align: center;
+
+  @media (min-width: 768px) {
+    text-align: left;
+  }
+}
+
+//  Countdown Timer
+.countdown {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+  color: $highlight-color;
+}
+
+//  Quantity Selection
+.quantity-selection {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (min-width: 768px) {
+    align-items: flex-start;
+  }
+
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    input {
+      width: 50px;
+      text-align: center;
+      border: 1px solid $secondary-color; // Changed from white to gray
+      border-radius: 4px;
+      padding: 4px;
+      background: white;
+      color: $text-color;
+    }
+  }
+}
+
+//  Buttons Section
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+
+  ion-button {
+    &.primary-btn {
+      background-color: $primary-color;
+      color: white;
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+    &.secondary-btn {
+      background-color: $secondary-color;
+      color: white;
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+    &.highlight-btn {
+      background-color: $highlight-color;
+      color: white;
+      &:hover {
+        background-color: darken($highlight-color, 10%);
+      }
+    }
+  }
+}
+
+// Product Description
+.product-info {
+  margin-top: 20px;
+
+  h2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: $text-color;
+  }
+
+  p {
+    color: $text-color; // Changed from white for readability
+    line-height: 1.6;
+  }
+}
+
+// Header Styling
+ion-header {
+  background: $background-color;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  ion-toolbar {
+    --background: $background-color;
+    --color: $text-color;
+    display: flex;
+    align-items: center;
+  }
+
+  ion-searchbar {
+    flex: 1;
+    max-width: 300px;
+    margin: 0 auto;
+    background: #f8f9fa; // Light gray background
+    color: $text-color;
+  }
+
+  ion-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  ion-button {
+    display: flex;
+    align-items: center;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  ion-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: $error-color;
+    color: white;
+  }
+}

@@ -1,27 +1,45 @@
-#container {
-  text-align: center;
+@import 'src/theme/variables.scss';
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.bg-primary {
+  background-color: #001F3F !important; // Dark Navy Blue
+  color: #fff;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.bg-secondary {
+  background-color: #F8F9FA !important; // Light Gray
+  color: #212529;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+.bg-primary-foreground {
+  background-color: #FFFFFF !important; // White
+  color: #000;
 }
 
-#container a {
-  text-decoration: none;
+.bg-accent {
+  background-color: #FFC107 !important; // Bright Gold
+  color: #212529;
 }
+
+.card-custom {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.badge {
+  font-size: 1rem;
+  padding: 5px 10px;
+}
+
+.footer {
+  background-color: #343A40 !important; // Dark Gray
+  color: #fff;
+}
+

@@ -1,0 +1,74 @@
+<ion-header>
+  <ion-toolbar class="custom-header">
+    <ion-title>Tote</ion-title>
+
+  </ion-toolbar>
+  <div class="nav-buttons">
+    <button class="btn btn-link" routerLink="/landing">Home</button>
+    <button class="btn btn-link" routerLink="/view-raffles">View Raffle</button>
+    <button class="btn btn-link">Cart</button>
+    <button class="btn btn-link" (click)="logout()">Logout</button>
+  </div>
+</ion-header>
+
+<ion-content>
+  <div class="container text-center mt-4">
+    <div class="d-flex justify-content-center align-items-center mb-3">
+      <!-- Search Bar -->
+      <input type="text" [(ngModel)]="searchTerm" (input)="filterRaffles()"
+             placeholder="Search raffles..." class="form-control w-50 mr-2">
+
+      <!-- Category Filter -->
+      <select [(ngModel)]="selectedFilter" (ngModelChange)="filterRaffles()" class="form-select w-25">
+        <option value="all">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+      </select>
+
+
+
+    </div>
+
+    <p class="text-muted">Raffles</p>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-4" *ngFor="let raffle of filteredRaffles; let i = index">
+        <div class="product-card"
+             (click)="goToRaffleDetail(raffle._id)"
+             (mouseenter)="hoverIndex = i"
+             (mouseleave)="hoverIndex = -1"
+             style="cursor: pointer;">
+          <img src="https://www.lapland.fi/uploads/2017/11/a65bfd2e-filming-finland-polar-night-markus-kiili-1440x810.jpg"
+               alt="raffle-image" class="img-fluid rounded shadow">
+          <div class="product-info">
+            <span class="product-title text-black">{{ raffle.title }}</span>
+            <hr class="my-1 border-black w-50 mx-auto">
+            <span class="product-price text-black">${{ raffle.price }}</span>
+            <div class="add-to-cart-wrapper" *ngIf="hoverIndex === i">
+              <button class="btn btn-primary" (click)="addToCart(raffle.id, $event)">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- Social Media Icons -->
+  <div class="social-media">
+    <img src="https://openui.fly.dev/openui/50x50.svg?text=Facebook" alt="facebook">
+    <img src="https://openui.fly.dev/openui/50x50.svg?text=Twitter" alt="twitter">
+    <img src="https://openui.fly.dev/openui/50x50.svg?text=Instagram" alt="instagram">
+    <img src="https://openui.fly.dev/openui/50x50.svg?text=LinkedIn" alt="linkedin">
+  </div>
+
+
+  <ion-footer class="bg-light shadow rounded p-4 text-center">
+    <h3 class="text-primary fw-bold">VOICE for Children who are Deaf and Hard of Hearing</h3>
+    <p class="text-muted">478 Dundas St. West, P.O. Box 30045</p>
+    <p class="text-muted">Oakville, Ontario</p>
+    <p class="text-muted">L6H 6Y3</p>
+    <p class="text-muted">Email: <a href="mailto:admin@voicefordeafkids.com" class="text-primary">adminvoicefordeafkids.com</a></p>
+    <p class="text-muted">Please email us and we will respond with email or a call back if requested.</p>
+</ion-footer>
+</ion-content>
+
