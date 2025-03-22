@@ -5,8 +5,6 @@
  * the entire app and not just one component. Additionally, this file can be
  * used as an entry point to import other CSS/Sass files to be included in the
  * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
 /* Core CSS required for Ionic components to work properly */
@@ -25,140 +23,92 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
-@import 'bootstrap/dist/css/bootstrap.min.css';
+// 🎨 Color Palette
+$primary-color: #007bff;  // Blue
+$secondary-color: #6c757d; // Gray
+$highlight-color: #28a745; // Green
+$text-color:black; // Dark Gray for readability
+$background-color: #ffffff; // White
+$error-color: #dc3545; // Red
+$error-hover: #c82333; // Darker Red
 
+// 🌐 Global Styles
+body, ion-content {
+  font-family: 'Arial', sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+}
 
-ion-content {
-    --background: #f8f9fa; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100vw; 
-    padding: 0; 
-  }
-  
-  .mobile-container {
-    width: 92%;
-    max-width: 420px; 
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15); 
-    text-align: center;
-    animation: fadeIn 0.3s ease-in-out;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -90%);
-  }
-  
-  ion-toolbar {
-    --background: #0056b3; 
-    --color: white;
-    --border-radius: 12px 12px 0 0; 
-    --padding-start: 15px;
-    --padding-end: 15px;
-  }
-  
-  ion-button {
-    width: 100%;
-    --border-radius: 10px;
-    --box-shadow: none;
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: capitalize;
-    margin-top: 12px;
-  }
-  
-  ion-button[color="primary"] {
-    --background: #007bff;
-    --background-hover: #0069d9;
-    --background-activated: #0056b3;
-    --color: white;
-  }
-  
-  ion-button[color="light"] {
-    --background: #f0f0f0;
-    --color: #333;
-    --background-hover: #e0e0e0;
-    --background-activated: #d6d6d6;
-  }
-  
-  ion-item {
-    --background: white;
-    --border-radius: 8px;
-    margin-bottom: 12px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); 
-    padding: 8px;
-    border-radius: 8px;
-  }
-  
-  ion-input, ion-textarea, ion-searchbar, ion-select {
-    --color: #333;
-    --placeholder-color: #999;
-    --background: white;
-    border-radius: 6px;
-    padding: 10px;
-    font-size: 15px;
-  }
-  
-  ion-card {
-    --background: white;
-    border-radius: 12px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    padding: 15px;
-    margin-bottom: 15px;
-  }
-  
-  ion-card-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #333;
-    text-align: center;
-  }
-  
-  ion-list {
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(15px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+//  Buttons
+ion-button {
+  width: 100%;
+  --border-radius: 8px;
+  --box-shadow: none;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: capitalize;
+  transition: all 0.3s ease-in-out;
+
+  &.primary-btn {
+    background-color: $primary-color;
+    color: white;
+    &:hover {
+      background-color: darken($primary-color, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
     }
   }
-  
-  .centered-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  @media (max-width: 480px) {
-    .mobile-container {
-      padding: 20px;
+
+  &.secondary-btn {
+    background-color: $secondary-color;
+    color: white;
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
     }
   }
-  
-  
-  
+
+  &.highlight-btn {
+    background-color: $highlight-color;
+    color: white;
+    &:hover {
+      background-color: darken($highlight-color, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    }
+  }
+
+  &.logout-btn {
+    background-color: $error-color;
+    color: white;
+    &:hover {
+      background-color: $error-hover;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+    }
+  }
+}
+
+//  Toolbar
+ion-toolbar {
+  background: $background-color;
+  color: $text-color;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+//  Cards with Hover Effect
+ion-card {
+  background: $background-color;
+  color: $text-color;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+}

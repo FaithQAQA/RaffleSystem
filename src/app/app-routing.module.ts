@@ -43,6 +43,18 @@ const routes: Routes = [
     path: 'verify-email',
     loadChildren: () => import('./pages/verify-email/verify-email.module').then( m => m.VerifyEmailPageModule)
   },
+  {
+    path: 'landing',
+    loadChildren: () => import('./UserPage/landing/landing.module').then( m => m.LandingPageModule)
+  },
+  {
+    path: 'view-raffles',
+    loadChildren: () => import('./UserPage/HomeFolder/view-raffles/view-raffles.module').then( m => m.ViewRafflesPageModule)
+  },
+  {
+    path: 'view-products/:id',
+    loadChildren: () => import('./UserPage/Product/view-products/view-products.module').then( m => m.ViewProductsPageModule)
+  },
 
 
 ];

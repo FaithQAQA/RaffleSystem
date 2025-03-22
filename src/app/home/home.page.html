@@ -1,26 +1,102 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Home</ion-title>
-    <ion-buttons slot="end">
-      <ion-button routerLink="/about">About</ion-button>
-      <ion-button routerLink="/contact">Contact</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <!-- Hero Section -->
+  <section class="bg-primary text-center py-5 px-3">
+    <div class="container">
+      <h1 class="display-3 fw-bold mb-3">Win Big! Enter Now</h1>
+      <p class="lead">Enter for a chance to win exciting prizes</p>
+      <ion-button class="button-custom" (click)="navigateToLandingPage()">Join Now</ion-button>
+    </div>
+  </section>
 
-<ion-content [fullscreen]="true">
-  <div class="home-container">
-    <h1>Welcome to Our App</h1>
-    <p>Experience seamless integration with our powerful features.</p>
-    <ion-button expand="full" color="dangerous" href="https://www.voicefordeafkids.com/" target="_blank">
-      Visit Website
-    </ion-button>
-  </div>
-</ion-content>A
+  <!-- Prizes Section -->
+  <section class="bg-secondary py-5 px-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4" *ngFor="let raffle of recentRaffles" (click)="goToRaffleDetail(raffle._id)">
+          <div class="card-custom text-center">
+            <img src="https://openui.fly.dev/openui/300x200.svg?text=Prize+1"
+                 alt="Raffle Image" class="img-fluid mb-3" />
+            <h3 class="h5">{{ raffle.title }}</h3>
+            <p>{{ raffle.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<style>
-  .home-container {
-    text-align: center;
-    padding: 2rem;
-  }
-</style>
+
+  <!-- How It Works -->
+  <section class="bg-primary-foreground text-center py-5 px-3">
+    <div class="container">
+      <h2 class="h2 fw-bold mb-4">How It Works</h2>
+      <div class="row">
+        <!-- Step 1: Login -->
+        <div class="col-md-4">
+          <div class="card-custom text-center">
+            <img src="https://openui.fly.dev/openui/100x100.svg?text=Login"
+                 alt="Step 1 - Login" class="img-fluid mb-3 rounded-circle" />
+            <p class="fw-semibold">Step 1: Login</p>
+            <p>Sign in to your account to get started.</p>
+            <span class="badge bg-success">✔</span>
+          </div>
+        </div>
+
+        <!-- Step 2: Browse & Buy Tickets -->
+        <div class="col-md-4">
+          <div class="card-custom text-center">
+            <img src="https://openui.fly.dev/openui/100x100.svg?text=Browse"
+                 alt="Step 2 - Browse & Buy" class="img-fluid mb-3 rounded-circle" />
+            <p class="fw-semibold">Step 2: Browse & Buy Tickets</p>
+            <p>Explore available raffles and purchase tickets.</p>
+            <span class="badge bg-success"></span>
+          </div>
+        </div>
+
+        <!-- Step 3: Win! -->
+        <div class="col-md-4">
+          <div class="card-custom text-center">
+            <img src="https://openui.fly.dev/openui/100x100.svg?text=Win"
+                 alt="Step 3 - Win" class="img-fluid mb-3 rounded-circle" />
+            <p class="fw-semibold">Step 3: Win!</p>
+            <p>Stay tuned for the draw and claim your prize.</p>
+            <span class="badge bg-success"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Countdown Timer -->
+  <section class="bg-secondary text-center py-5 px-3">
+    <div class="container">
+      <h3 class="h4 fw-bold mb-3">Hurry! Limited time left to enter</h3>
+      <div id="countdown" class="h1 fw-bold"></div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-accent text-center py-5 px-3">
+    <div class="container">
+      <h2 class="display-4 fw-bold mb-3">Join the Raffle Now</h2>
+      <ion-button class="button-custom" (click)="navigateToLandingPage()">Join Now</ion-button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-secondary text-center py-3 px-3">
+    <div class="container">
+      <nav class="mb-3">
+        <a href="#" class="me-3">Terms & Conditions</a>
+        <a href="#" class="me-3">Privacy Policy</a>
+        <a href="#">Contact Info</a>
+      </nav>
+      <div class="mb-3">
+        <a href="#" class="me-3"><img src="https://openui.fly.dev/openui/30x30.svg?text=SM1" alt="Social Media 1" /></a>
+        <a href="#" class="me-3"><img src="https://openui.fly.dev/openui/30x30.svg?text=SM2" alt="Social Media 2" /></a>
+        <a href="#"><img src="https://openui.fly.dev/openui/30x30.svg?text=SM3" alt="Social Media 3" /></a>
+      </div>
+      <p>&copy; 2025 TicketStack Group. All rights reserved.</p>
+    </div>
+  </footer>
+</ion-content>

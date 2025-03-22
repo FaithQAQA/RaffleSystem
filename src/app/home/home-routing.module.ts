@@ -7,6 +7,11 @@ const routes: Routes = [
     path: '',
     component: HomePage,
   },
+  {
+    path: 'landing',
+    loadChildren: () => import('../UserPage/landing/landing.module').then(m => m.LandingPageModule)
+  },
+
 
 ];
 

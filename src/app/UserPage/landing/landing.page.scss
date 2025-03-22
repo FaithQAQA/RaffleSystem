@@ -1,0 +1,206 @@
+@import 'src/theme/variables.scss';
+$primary-color: #007bff;   // Vibrant Blue (Links, Highlights)
+$secondary-color: #008080; // Teal (Accent, Buttons)
+$highlight-color: #FF7F50; // Warm Orange (Extra Contrast)
+$error-color: #ff3b30;
+$error-hover: #d32f2f;
+
+//  General Styles
+body, ion-content {
+  font-family: 'Arial', sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+}
+
+//  Header
+.custom-header {
+  background-color: $background-color;
+  border-bottom: 2px solid $secondary-color;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.brand-name {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-left: 10px;
+  color: $text-color;
+}
+
+//  Navigation Links
+.nav-links ion-button {
+  color: $text-color;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.2s ease;
+
+  &:hover {
+    color: $secondary-color;
+    background-color: rgba(0, 128, 128, 0.2);
+    transform: scale(1.05);
+  }
+}
+
+//  Feature Raffle Section
+.feature-raffle {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.raffle-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: $text-color;
+  text-shadow: 0px 0px 10px rgba($primary-color, 0.3);
+}
+
+.raffle-subtitle {
+  font-size: 1.2rem;
+  color: darken($text-color, 20%);
+}
+
+//  Raffle Cards
+.raffle-gallery {
+  margin-top: 20px;
+}
+
+.raffle-image-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba($secondary-color, 0.5);
+  }
+}
+
+.raffle-image-card img {
+  width: 100%;
+  height: auto;
+  border-bottom: 2px solid lighten($background-color, 10%);
+}
+
+//  Buttons (Global Button Styles)
+ion-button {
+  --border-radius: 8px;
+  --box-shadow: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+
+  &.primary-btn {
+    background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, lighten($primary-color, 5%), darken($primary-color, 15%));
+      transform: scale(1.07);
+      box-shadow: 0px 4px 15px rgba($primary-color, 0.3);
+    }
+  }
+
+  &.secondary-btn {
+    background: linear-gradient(135deg, $secondary-color, darken($secondary-color, 10%));
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, lighten($secondary-color, 5%), darken($secondary-color, 15%));
+      transform: scale(1.07);
+      box-shadow: 0px 4px 15px rgba($secondary-color, 0.3);
+    }
+  }
+
+  &.highlight-btn {
+    background: linear-gradient(135deg, $highlight-color, darken($highlight-color, 10%));
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, lighten($highlight-color, 5%), darken($highlight-color, 15%));
+      transform: scale(1.07);
+      box-shadow: 0px 4px 15px rgba($highlight-color, 0.3);
+    }
+  }
+
+  &.logout-btn {
+    background-color: $error-color;
+    color: white;
+
+    &:hover {
+      background-color: $error-hover;
+      transform: scale(1.07);
+      box-shadow: 0px 4px 12px rgba($error-color, 0.3);
+    }
+  }
+}
+
+//  Footer
+ion-footer {
+  background-color: $background-color;
+  padding: 20px;
+  border-top: 2px solid $secondary-color;
+  text-align: center;
+
+  h3 {
+    color: $secondary-color;
+    font-weight: bold;
+  }
+
+  p {
+    color: darken($text-color, 20%);
+    margin: 5px 0;
+  }
+
+  a {
+    color: $primary-color;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      text-decoration: underline;
+      color: lighten($primary-color, 10%);
+    }
+  }
+}
+
+//  Smooth Fade-in Animation
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+//  Custom Backgrounds
+.bg-primary {
+  background-color: $primary-color;
+  color: white;
+}
+
+.bg-secondary {
+  background-color: $secondary-color;
+  color: white;
+}
+
+.bg-highlight {
+  background-color: $highlight-color;
+  color: white;
+}
+
+//  Dark UI Glow Effect
+.glow-effect {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+//  Responsive Tweaks
+@media (max-width: 480px) {
+  .mobile-container {
+    padding: 20px;
+  }
+}

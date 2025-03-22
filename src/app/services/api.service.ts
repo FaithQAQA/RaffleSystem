@@ -74,6 +74,7 @@ export class ApiService {
   getRecentRaffles(): Observable<any> {
     const url = `${this.baseUrl}/raffles/recent`;
     const headers = this.getHeaders();
+    console.log('Request Headers recent raffles:', headers);
     return this.http.get(url, { headers });
   }
 
