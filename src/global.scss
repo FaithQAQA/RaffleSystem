@@ -1,10 +1,7 @@
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
+ * Global styles for the entire app.
  */
 
 /* Core CSS required for Ionic components to work properly */
@@ -16,28 +13,52 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
+/* Optional CSS utils */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-
-// 🎨 Color Palette
+//  Color Palette
 $primary-color: #007bff;  // Blue
 $secondary-color: #6c757d; // Gray
 $highlight-color: #28a745; // Green
-$text-color:black; // Dark Gray for readability
+$text-color: black; // Dark Gray for readability
 $background-color: #ffffff; // White
 $error-color: #dc3545; // Red
 $error-hover: #c82333; // Darker Red
 
-// 🌐 Global Styles
+//  Global Styles
 body, ion-content {
   font-family: 'Arial', sans-serif;
   background-color: $background-color;
   color: $text-color;
+}
+
+//  Mobile-friendly Container
+.mobile-container {
+  width: 92%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -90%);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+//  Toolbar
+ion-toolbar {
+  --background: #0056b3;
+  --color: white;
+  --border-radius: 12px 12px 0 0;
+  --padding-start: 15px;
+  --padding-end: 15px;
 }
 
 //  Buttons
@@ -48,6 +69,7 @@ ion-button {
   font-size: 16px;
   font-weight: 600;
   text-transform: capitalize;
+  margin-top: 12px;
   transition: all 0.3s ease-in-out;
 
   &.primary-btn {
@@ -91,13 +113,6 @@ ion-button {
   }
 }
 
-//  Toolbar
-ion-toolbar {
-  background: $background-color;
-  color: $text-color;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
 //  Cards with Hover Effect
 ion-card {
   background: $background-color;
@@ -110,5 +125,50 @@ ion-card {
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+}
+
+//  Form Inputs
+ion-item {
+  --background: white;
+  --border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+ion-input, ion-textarea, ion-searchbar, ion-select {
+  --color: #333;
+  --placeholder-color: #999;
+  --background: white;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 15px;
+}
+
+//  Lists
+ion-list {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+//  Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-container {
+    padding: 20px;
   }
 }
