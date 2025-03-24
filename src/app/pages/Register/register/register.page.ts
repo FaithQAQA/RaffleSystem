@@ -23,7 +23,7 @@ export class RegisterPage {
 
     .subscribe(
       (res) => {
-      
+
 
         alert('Registration successful! Please check your email to verify your account.');
       },
