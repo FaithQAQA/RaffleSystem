@@ -1,11 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ViewRafflesPage } from './view-raffles.page';
+import { HttpClientTestingModule } from '@angular/common/http/testing'; // ✅ Import this
+import { ApiService } from 'src/services/api.service'; // ✅ Import ApiService
 
 describe('ViewRafflesPage', () => {
   let component: ViewRafflesPage;
   let fixture: ComponentFixture<ViewRafflesPage>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ViewRafflesPage],
+      imports: [HttpClientTestingModule], // ✅ Provide HttpClient
+      providers: [ApiService], // ✅ Provide ApiService
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ViewRafflesPage);
     component = fixture.componentInstance;
     fixture.detectChanges();

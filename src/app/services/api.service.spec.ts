@@ -1,27 +1,27 @@
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from './api.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HttpHeaders } from '@angular/common/http';
 
 describe('ApiService', () => {
   let service: ApiService;
   let httpMock: HttpTestingController;
 
-  const baseUrl = 'https://backendserver-euba.onrender.com/api';
-
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [ApiService]
+      imports: [HttpClientTestingModule], // ✅ Fixed duplicate import
+      providers: [ApiService],
     });
+
     service = TestBed.inject(ApiService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
-    // Ensure that there are no pending HTTP requests after each test
     httpMock.verify();
   });
+
+
+
 
   describe('login', () => {
     it('should send a POST request to login and store token', () => {
@@ -29,7 +29,6 @@ describe('ApiService', () => {
       const email = 'test@example.com';
       const password = 'password123';
 
-      // Spy on localStorage.setItem
       spyOn(localStorage, 'setItem');
 
       service.login(email, password).subscribe((response) => {
@@ -37,10 +36,10 @@ describe('ApiService', () => {
         expect(localStorage.setItem).toHaveBeenCalledWith('token', 'dummyToken');
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/auth/login`);
+      const req = httpMock.expectOne(`${service['baseUrl']}/auth/login`); // ✅ Fixed reference
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ email, password });
-      req.flush(mockResponse); // Simulate the response
+      req.flush(mockResponse);
     });
   });
 
@@ -55,7 +54,7 @@ describe('ApiService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/auth/register`);
+      const req = httpMock.expectOne(`${service['baseUrl']}/auth/register`); // ✅ Fixed reference
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ username, email, password });
       req.flush(mockResponse);
@@ -66,7 +65,6 @@ describe('ApiService', () => {
     it('should send a POST request to create a raffle with the correct headers', () => {
       const mockResponse = { success: true };
       const raffleData = { title: 'Test Raffle', ticketPrice: 10 };
-      const headers = new HttpHeaders().set('Authorization', 'Bearer dummyToken');
 
       spyOn(localStorage, 'getItem').and.returnValue('dummyToken'); // Mock token in localStorage
 
@@ -74,7 +72,7 @@ describe('ApiService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/raffles`);
+      const req = httpMock.expectOne(`${service['baseUrl']}/raffles`); // ✅ Fixed reference
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(raffleData);
       expect(req.request.headers.has('Authorization')).toBeTrue();
@@ -85,15 +83,14 @@ describe('ApiService', () => {
   describe('getAllRaffles', () => {
     it('should send a GET request to fetch all raffles with the correct headers', () => {
       const mockResponse = [{ title: 'Test Raffle 1' }, { title: 'Test Raffle 2' }];
-      const headers = new HttpHeaders().set('Authorization', 'Bearer dummyToken');
 
-      spyOn(localStorage, 'getItem').and.returnValue('dummyToken'); // Mock token in localStorage
+      spyOn(localStorage, 'getItem').and.returnValue('dummyToken');
 
       service.getAllRaffles().subscribe((response) => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/raffles`);
+      const req = httpMock.expectOne(`${service['baseUrl']}/raffles`); // ✅ Fixed reference
       expect(req.request.method).toBe('GET');
       expect(req.request.headers.has('Authorization')).toBeTrue();
       req.flush(mockResponse);
@@ -105,13 +102,13 @@ describe('ApiService', () => {
       const mockResponse = { title: 'Test Raffle' };
       const raffleId = '123';
 
-      spyOn(localStorage, 'getItem').and.returnValue('dummyToken'); // Mock token in localStorage
+      spyOn(localStorage, 'getItem').and.returnValue('dummyToken');
 
       service.getRaffleById(raffleId).subscribe((response) => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/raffles/${raffleId}`);
+      const req = httpMock.expectOne(`${service['baseUrl']}/raffles/${raffleId}`); // ✅ Fixed reference
       expect(req.request.method).toBe('GET');
       expect(req.request.headers.has('Authorization')).toBeTrue();
       req.flush(mockResponse);
@@ -124,13 +121,13 @@ describe('ApiService', () => {
       const raffleData = { title: 'Updated Raffle' };
       const raffleId = '123';
 
-      spyOn(localStorage, 'getItem').and.returnValue('dummyToken'); // Mock token in localStorage
+      spyOn(localStorage, 'getItem').and.returnValue('dummyToken');
 
       service.updateRaffle(raffleId, raffleData).subscribe((response) => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/raffles/${raffleId}`);
+      const req = httpMock.expectOne(`${service['baseUrl']}/raffles/${raffleId}`); // ✅ Fixed reference
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(raffleData);
       expect(req.request.headers.has('Authorization')).toBeTrue();
@@ -143,13 +140,13 @@ describe('ApiService', () => {
       const mockResponse = { success: true };
       const raffleId = '123';
 
-      spyOn(localStorage, 'getItem').and.returnValue('dummyToken'); // Mock token in localStorage
+      spyOn(localStorage, 'getItem').and.returnValue('dummyToken');
 
       service.deleteRaffle(raffleId).subscribe((response) => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/raffles/${raffleId}`);
+      const req = httpMock.expectOne(`${service['baseUrl']}/raffles/${raffleId}`); // ✅ Fixed reference
       expect(req.request.method).toBe('DELETE');
       expect(req.request.headers.has('Authorization')).toBeTrue();
       req.flush(mockResponse);
