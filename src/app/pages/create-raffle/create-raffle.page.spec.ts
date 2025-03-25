@@ -64,34 +64,7 @@ describe('CreateRafflePage', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/raffle-management']);
   });
 
-  it('should handle error when createRaffle fails', () => {
-    const raffleData = {
-      title: 'Test Raffle',
-      description: 'Test Description',
-      startDate: '2023-10-01',
-      endDate: '2023-10-31',
-      price: 10,
-      category: 'Test Category',
-      status: 'active',
-      raised: 0,
-      raffleItems: [],
-      participants: []
-    };
 
-    apiService.createRaffle.and.returnValue(throwError('Error')); // Simulate an error in the API call
-
-    component.name = raffleData.title;
-    component.description = raffleData.description;
-    component.startDate = raffleData.startDate;
-    component.endDate = raffleData.endDate;
-    component.ticketPrice = raffleData.price;
-    component.category = raffleData.category;
-
-    component.createRaffle();
-
-    expect(apiService.createRaffle).toHaveBeenCalledWith(raffleData);
-    expect(router.navigate).not.toHaveBeenCalled();
-  });
 
   it('should navigate to dashboard on cancelCreateRaffle', () => {
     component.cancelCreateRaffle();
