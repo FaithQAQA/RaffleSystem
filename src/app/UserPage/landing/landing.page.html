@@ -1,28 +1,32 @@
 
 
   <ion-app>
-      <ion-header>
-          <ion-toolbar class="custom-header">
-              <ion-buttons slot="start">
-                  <img aria-hidden="true" alt="popcorn-logo" src="" class="logo" />
-                  <span class="brand-name">Raffles</span>
-              </ion-buttons>
-              <ion-buttons slot="end" class="nav-links">
-                  <ion-button routerLink="/home">
-                      <span>Home</span>
-                  </ion-button>
-                  <ion-button routerLink="/view-raffles">
-                      <span>View Raffles</span>
-                  </ion-button>
-                  <ion-button routerLink="/research">
-                      <span>Carts</span>
-                  </ion-button>
-                  <ion-button (click)="logout()" class="logout-btn">
-                      <span>Logout</span>
-                  </ion-button>
-              </ion-buttons>
-          </ion-toolbar>
-      </ion-header>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button routerLink="/landing">
+            <ion-icon name="home"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+
+
+        <ion-buttons slot="end">
+          <ion-button routerLink="/view-raffles">
+            <ion-icon name="ticket-outline"></ion-icon>
+            <ion-label>View Raffles</ion-label>
+          </ion-button>
+
+          <ion-button routerLink="/view-cart">
+            <ion-icon name="cart"></ion-icon>
+            <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
+          </ion-button>
+
+          <ion-button (click)="logout()">
+            <ion-icon name="log-out-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
 
       <ion-content class="ion-padding">
           <!-- Feature Raffle Section -->

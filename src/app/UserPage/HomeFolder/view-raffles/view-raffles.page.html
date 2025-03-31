@@ -1,15 +1,30 @@
 <ion-header>
-  <ion-toolbar class="custom-header">
-    <ion-title>Tote</ion-title>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button routerLink="/landing">
+        <ion-icon name="home"></ion-icon>
+      </ion-button>
+    </ion-buttons>
 
+
+    <ion-buttons slot="end">
+      <ion-button routerLink="/view-raffles">
+        <ion-icon name="ticket-outline"></ion-icon>
+        <ion-label>View Raffles</ion-label>
+      </ion-button>
+
+      <ion-button routerLink="/view-cart">
+        <ion-icon name="cart"></ion-icon>
+        <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
+      </ion-button>
+
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
-  <div class="nav-buttons">
-    <button class="btn btn-link" routerLink="/landing">Home</button>
-    <button class="btn btn-link" routerLink="/view-raffles">View Raffle</button>
-    <button class="btn btn-link">Cart</button>
-    <button class="btn btn-link" (click)="logout()">Logout</button>
-  </div>
 </ion-header>
+
 
 <ion-content>
   <div class="container text-center mt-4">

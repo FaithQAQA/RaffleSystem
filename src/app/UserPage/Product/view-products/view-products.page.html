@@ -13,9 +13,9 @@
         <ion-label>View Raffles</ion-label>
       </ion-button>
 
-      <ion-button routerLink="/cart">
+      <ion-button routerLink="/view-cart">
         <ion-icon name="cart"></ion-icon>
-        <ion-badge color="danger">3</ion-badge> <!-- Dynamic Count -->
+        <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
       </ion-button>
 
       <ion-button (click)="logout()">
@@ -51,7 +51,7 @@
         </div>
 
         <div class="buttons">
-          <ion-button fill="outline" expand="full">Add to Cart</ion-button>
+          <ion-button fill="outline" expand="full" (click)="addToCart()">Add to Cart</ion-button>
         </div>
 
         <div class="product-info">

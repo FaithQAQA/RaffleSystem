@@ -18,8 +18,14 @@ export class ViewRafflesPage implements OnInit {
   selectedCategory: string = 'all';
   categories: string[] = ['Electronics', 'Clothing', 'Home Appliances', 'Accessories']; // Example categories
   constructor(private router: Router, private apiService: ApiService) {}
-
+  cartItemCount = 0;
   ngOnInit() {
+
+    this.apiService.cartCount$.subscribe(count => {
+      this.cartItemCount = count;
+    });
+
+    this.apiService.loadCart(); // Load cart initially
     this.loadRaffles();
   }
 

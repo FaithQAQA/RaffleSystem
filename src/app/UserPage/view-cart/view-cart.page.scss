@@ -1,0 +1,11 @@
+.cart-container {
+  max-height: 400px; /* Adjust height to show 4 items */
+  overflow-y: auto; /* Enable scrolling */
+  padding: 10px;
+}
+
+.cart-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between items */
+}
