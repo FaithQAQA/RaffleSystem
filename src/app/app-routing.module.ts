@@ -55,6 +55,14 @@ const routes: Routes = [
     path: 'view-products/:id',
     loadChildren: () => import('./UserPage/Product/view-products/view-products.module').then( m => m.ViewProductsPageModule)
   },
+  {
+    path: 'reset-password',
+    loadChildren: () => import('./pages/reset-password/reset-password/reset-password.module').then( m => m.ResetPasswordPageModule)
+  },
+  {
+    path: 'view-cart',
+    loadChildren: () => import('./UserPage/view-cart/view-cart.module').then( m => m.ViewCartPageModule)
+  },
 
 
 ];

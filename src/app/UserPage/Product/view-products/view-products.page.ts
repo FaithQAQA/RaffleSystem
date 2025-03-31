@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
-
+import { ToastController } from '@ionic/angular';
 @Component({
   selector: 'app-view-products',
   templateUrl: './view-products.page.html',
@@ -20,15 +20,25 @@ throw new Error('Method not implemented.');
   countdown: string = '';
   showInfo: boolean = false;
 
+
   private countdownInterval: any;
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router) {}
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private router: Router, private toastController: ToastController) {}
+  cartItemCount = 0;
 
   ngOnInit() {
     this.raffleId = this.route.snapshot.paramMap.get('id');
     console.log('Selected Raffle ID:', this.raffleId);
     this.getRaffleDetails(); // Fetch raffle details first
+    this.apiService.cartCount$.subscribe(count => {
+      this.cartItemCount = count;
+    });
+
+    this.apiService.loadCart(); // Load cart initially
   }
+
+
+
 
 
 
@@ -125,8 +135,16 @@ throw new Error('Method not implemented.');
   }
 
 
-  addToCart() {
-    console.log(`Added ${this.quantity} of ${this.raffle.title} to cart`);
-    // Implement add to cart functionality
+  async addToCart() {
+    this.apiService.addToCart(this.raffle._id, this.quantity);
+
+    // Show toast notification
+    const toast = await this.toastController.create({
+      message: `Added ${this.quantity} of ${this.raffle.title} to cart`,
+      duration: 2000,  // Show for 2 seconds
+      position: 'bottom',
+      color: 'success'
+    });
+    await toast.present();
   }
 }

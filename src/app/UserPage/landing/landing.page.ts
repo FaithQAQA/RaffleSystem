@@ -19,9 +19,15 @@ export class LandingPage implements OnInit {
 
 
   constructor(private router: Router, private apiService: ApiService ) { }
+  cartItemCount = 0;
 
   ngOnInit()
   {
+    this.apiService.cartCount$.subscribe(count => {
+      this.cartItemCount = count;
+    });
+
+    this.apiService.loadCart(); // Load cart initially
     this.getRecentRaffles()
   }
 
