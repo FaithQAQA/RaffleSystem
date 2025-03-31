@@ -19,6 +19,7 @@ throw new Error('Method not implemented.');
   quantity: number = 1;
   countdown: string = '';
   showInfo: boolean = false;
+  raffleTicketData: any = { totalTickets: 0, userTickets: 0, winningChance: 0 };
 
 
   private countdownInterval: any;
@@ -30,11 +31,16 @@ throw new Error('Method not implemented.');
     this.raffleId = this.route.snapshot.paramMap.get('id');
     console.log('Selected Raffle ID:', this.raffleId);
     this.getRaffleDetails(); // Fetch raffle details first
+    this.fetchTicketCount();  // Fetch ticket count on load
     this.apiService.cartCount$.subscribe(count => {
       this.cartItemCount = count;
     });
 
     this.apiService.loadCart(); // Load cart initially
+
+    setInterval(() => {
+      this.fetchTicketCount();
+    }, 5000);
   }
 
 
@@ -146,5 +152,23 @@ throw new Error('Method not implemented.');
       color: 'success'
     });
     await toast.present();
+  }
+
+  fetchTicketCount() {
+    if (!this.raffleId) return;
+  
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      console.error('User ID not found in local storage');
+      return;
+    }  
+    this.apiService.getRaffleWinningChance(this.raffleId, userId).subscribe(
+      (response) => {
+        this.raffleTicketData = response;
+      },
+      (error) => {
+        console.error('Error fetching ticket count:', error);
+      }
+    );
   }
 }
