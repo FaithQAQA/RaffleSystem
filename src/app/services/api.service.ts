@@ -185,4 +185,12 @@ getCart(): Observable<{ items: CartItem[] }> {
 }
 
 
+
+getRaffleWinningChance(raffleId: string, userId: string): Observable<any> {
+  const url = `${this.baseUrl}/raffles/${raffleId}/winning-chance/${userId}`;
+  const headers = this.getHeaders();
+  return this.http.get(url, { headers });
+}
+
+
 }

@@ -37,6 +37,7 @@ export class LoginPage implements OnInit {
     this.apiService.login(data.email, data.password).subscribe(
       async (response: any) => {
         if (response?.token) {
+          localStorage.setItem('userId', response.id)
           localStorage.setItem('adminToken', response.token);
           localStorage.setItem('isAdmin', response?.isAdmin ? 'true' : 'false'); // Prevents undefined issues
 
