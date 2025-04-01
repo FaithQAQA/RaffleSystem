@@ -38,9 +38,7 @@ throw new Error('Method not implemented.');
 
     this.apiService.loadCart(); // Load cart initially
 
-    setInterval(() => {
-      this.fetchTicketCount();
-    }, 5000);
+
   }
 
 
@@ -155,16 +153,17 @@ throw new Error('Method not implemented.');
   }
 
   fetchTicketCount() {
+    console.log('test getting called')
     if (!this.raffleId) return;
-  
     const userId = localStorage.getItem('userId');
     if (!userId) {
       console.error('User ID not found in local storage');
       return;
-    }  
+    }
     this.apiService.getRaffleWinningChance(this.raffleId, userId).subscribe(
       (response) => {
         this.raffleTicketData = response;
+        console.log(response, 'tesing if getting reply')
       },
       (error) => {
         console.error('Error fetching ticket count:', error);
