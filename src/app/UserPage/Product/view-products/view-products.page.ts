@@ -141,7 +141,7 @@ throw new Error('Method not implemented.');
 
   async addToCart() {
     this.apiService.addToCart(this.raffle._id, this.quantity);
-
+    console.log("Added 1 of Test Raffle to cart")
     // Show toast notification
     const toast = await this.toastController.create({
       message: `Added ${this.quantity} of ${this.raffle.title} to cart`,

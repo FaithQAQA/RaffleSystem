@@ -31,6 +31,10 @@ export class HomePage implements OnInit {
     this.getRandomRaffles();
   }
 
+   toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+  }
+
   getRandomRaffles() {
     this.apiService.getRecentRaffles().pipe(
       take(1),

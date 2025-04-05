@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LandingPage } from './landing.page';
 import { HttpClientTestingModule } from '@angular/common/http/testing'; // ✅ Import this
-import { ApiService } from 'src/services/api.service';
+
+import { ApiService } from 'src/app/services/api.service';
 describe('LandingPage', () => {
   let component: LandingPage;
   let fixture: ComponentFixture<LandingPage>;

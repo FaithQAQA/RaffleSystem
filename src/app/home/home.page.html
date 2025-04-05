@@ -1,21 +1,35 @@
 <ion-content>
   <!-- Hero Section -->
-  <section class="bg-primary text-center py-5 px-3">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- Dark Mode Toggle (optional) -->
+  <section class="toggle-mode text-end p-3">
+    <button aria-label="Toggle dark mode" class="btn btn-outline-secondary" (click)="toggleDarkMode()">
+      <i class="bi bi-moon-fill"></i>
+    </button>
+
+  </section>
+
+  <section class="hero-section bg-primary text-center py-5 px-3">
     <div class="container">
-      <h1 class="display-3 fw-bold mb-3">Win Big! Enter Now</h1>
-      <p class="lead">Enter for a chance to win exciting prizes</p>
-      <ion-button class="button-custom" (click)="navigateToLandingPage()">Join Now</ion-button>
+      <h1 class="display-3 fw-bold mb-3 animate__animated animate__fadeInDown">Win Big! Enter Now</h1>
+      <p class="lead animate__animated animate__fadeInUp">Enter for a chance to win exciting prizes</p>
+      <ion-button class="button-custom animate__animated animate__zoomIn" (click)="navigateToLandingPage()">
+        Join Now
+      </ion-button>
     </div>
   </section>
 
   <!-- Prizes Section -->
-  <section class="bg-secondary py-5 px-3">
+  <section class="prizes-section bg-secondary py-5 px-3">
     <div class="container">
-      <div class="row">
-        <div class="col-md-4" *ngFor="let raffle of recentRaffles" (click)="goToRaffleDetail(raffle._id)">
-          <div class="card-custom text-center">
-            <img src="https://openui.fly.dev/openui/300x200.svg?text=Prize+1"
-                 alt="Raffle Image" class="img-fluid mb-3" />
+      <div class="row g-4">
+        <div class="col-md-4" *ngFor="let raffle of recentRaffles">
+          <div class="card-custom text-center p-4 shadow-sm" role="button" tabindex="0"
+               (click)="goToRaffleDetail(raffle._id)"
+               (keypress)="($event.key === 'Enter') && goToRaffleDetail(raffle._id)">
+            <i class="bi bi-gift-fill display-1 text-primary mb-3"></i>
             <h3 class="h5">{{ raffle.title }}</h3>
             <p>{{ raffle.description }}</p>
           </div>
@@ -24,51 +38,41 @@
     </div>
   </section>
 
-
   <!-- How It Works -->
-  <section class="bg-primary-foreground text-center py-5 px-3">
+  <section class="how-it-works bg-light text-center py-5 px-3">
     <div class="container">
       <h2 class="h2 fw-bold mb-4">How It Works</h2>
       <div class="row">
         <!-- Step 1: Login -->
         <div class="col-md-4">
-          <div class="card-custom text-center">
-            <img src="https://openui.fly.dev/openui/100x100.svg?text=Login"
-                 alt="Step 1 - Login" class="img-fluid mb-3 rounded-circle" />
-            <p class="fw-semibold">Step 1: Login</p>
+          <div class="card-custom text-center p-3 border-0">
+            <i class="bi bi-box-arrow-in-right text-primary" style="font-size: 3rem;"></i>
+            <p class="fw-semibold mt-2">Step 1: Login</p>
             <p>Sign in to your account to get started.</p>
-            <span class="badge bg-success">✔</span>
           </div>
         </div>
-
         <!-- Step 2: Browse & Buy Tickets -->
         <div class="col-md-4">
-          <div class="card-custom text-center">
-            <img src="https://openui.fly.dev/openui/100x100.svg?text=Browse"
-                 alt="Step 2 - Browse & Buy" class="img-fluid mb-3 rounded-circle" />
-            <p class="fw-semibold">Step 2: Browse & Buy Tickets</p>
+          <div class="card-custom text-center p-3 border-0">
+            <i class="bi bi-ticket-perforated text-warning" style="font-size: 3rem;"></i>
+            <p class="fw-semibold mt-2">Step 2: Browse & Buy Tickets</p>
             <p>Explore available raffles and purchase tickets.</p>
-            <span class="badge bg-success"></span>
           </div>
         </div>
-
         <!-- Step 3: Win! -->
         <div class="col-md-4">
-          <div class="card-custom text-center">
-            <img src="https://openui.fly.dev/openui/100x100.svg?text=Win"
-                 alt="Step 3 - Win" class="img-fluid mb-3 rounded-circle" />
-            <p class="fw-semibold">Step 3: Win!</p>
+          <div class="card-custom text-center p-3 border-0">
+            <i class="bi bi-trophy text-success" style="font-size: 3rem;"></i>
+            <p class="fw-semibold mt-2">Step 3: Win!</p>
             <p>Stay tuned for the draw and claim your prize.</p>
-            <span class="badge bg-success"></span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-
   <!-- Countdown Timer -->
-  <section class="bg-secondary text-center py-5 px-3">
+  <section class="countdown-section bg-secondary text-center py-5 px-3">
     <div class="container">
       <h3 class="h4 fw-bold mb-3">Hurry! Limited time left to enter</h3>
       <div id="countdown" class="h1 fw-bold"></div>
@@ -76,7 +80,7 @@
   </section>
 
   <!-- CTA Section -->
-  <section class="bg-accent text-center py-5 px-3">
+  <section class="cta-section bg-accent text-center py-5 px-3">
     <div class="container">
       <h2 class="display-4 fw-bold mb-3">Join the Raffle Now</h2>
       <ion-button class="button-custom" (click)="navigateToLandingPage()">Join Now</ion-button>
@@ -84,19 +88,23 @@
   </section>
 
   <!-- Footer -->
-  <footer class="bg-secondary text-center py-3 px-3">
+  <footer class="footer bg-secondary text-center py-3 px-3">
     <div class="container">
       <nav class="mb-3">
-        <a href="#" class="me-3">Terms & Conditions</a>
-        <a href="#" class="me-3">Privacy Policy</a>
-        <a href="#">Contact Info</a>
+        <a href="#" class="me-3 text-decoration-none">Terms & Conditions</a>
+        <a href="#" class="me-3 text-decoration-none">Privacy Policy</a>
+        <a href="#" class="text-decoration-none">Contact Info</a>
       </nav>
-      <div class="mb-3">
-        <a href="#" class="me-3"><img src="https://openui.fly.dev/openui/30x30.svg?text=SM1" alt="Social Media 1" /></a>
-        <a href="#" class="me-3"><img src="https://openui.fly.dev/openui/30x30.svg?text=SM2" alt="Social Media 2" /></a>
-        <a href="#"><img src="https://openui.fly.dev/openui/30x30.svg?text=SM3" alt="Social Media 3" /></a>
+      <div class="social-media text-center mt-5">
+        <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="social-link"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
       </div>
       <p>&copy; 2025 TicketStack Group. All rights reserved.</p>
     </div>
   </footer>
+
+
+
 </ion-content>

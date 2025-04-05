@@ -1,67 +1,91 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { throwError } from 'rxjs/internal/observable/throwError';
-import { catchError } from 'rxjs/internal/operators/catchError';
+import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ApiService } from 'src/app/services/api.service';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.page.html',
   styleUrls: ['./landing.page.scss'],
   standalone: false,
-
 })
 export class LandingPage implements OnInit {
-
   recentRaffles: any[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
-
-
-  constructor(private router: Router, private apiService: ApiService ) { }
   cartItemCount = 0;
+  notificationCount = 3;
+  constructor(
+    private router: Router,
+    private apiService: ApiService,
+    private toastController: ToastController
+  ) {}
 
-  ngOnInit()
-  {
+  ngOnInit() {
     this.apiService.cartCount$.subscribe(count => {
       this.cartItemCount = count;
     });
-
     this.apiService.loadCart(); // Load cart initially
-    this.getRecentRaffles()
+    this.getRecentRaffles();
+
+    // Initialize dark mode based on saved preference
+    const darkModeSetting = localStorage.getItem('darkMode');
+    if (darkModeSetting === 'enabled') {
+      document.body.classList.add('dark-mode');
+    }
   }
 
+  toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+    this.announce(`Dark mode ${isDarkMode ? 'enabled' : 'disabled'}`);
+  }
 
-    getRecentRaffles() {
-      this.isLoading = true;
-      this.apiService.getRecentRaffles().pipe(
-        catchError(error => {
-          console.error('Error fetching recent raffles:', error);
-          this.errorMessage = 'Failed to load recent raffles.';
-          return throwError(() => new Error(error));
-        })
-      ).subscribe(response => {
-        this.recentRaffles = response
-          .sort((a: { startDate: string | number | Date; }, b: { startDate: string | number | Date; }) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-          .slice(0, 3)
-      });
+  getRecentRaffles() {
+    this.isLoading = true;
+    this.apiService.getRecentRaffles().pipe(
+      catchError(error => {
+        console.error('Error fetching recent raffles:', error);
+        this.errorMessage = 'Failed to load recent raffles.';
+        this.announce('Failed to load recent raffles.');
+        return throwError(() => new Error(error));
+      })
+    ).subscribe(response => {
+      this.recentRaffles = response
+        .sort((a: any, b: any) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+        .slice(0, 3);
+      this.isLoading = false;
+      this.announce('Recent raffles loaded successfully.');
+    });
+  }
+
+  goToRaffleDetail(raffleId: string) {
+    if (!raffleId) {
+      console.error('Error: Raffle ID is undefined or null');
+      return;
     }
+    this.router.navigate([`/view-products/${raffleId}`]);
+  }
 
-    goToRaffleDetail(raffleId: string) {
-      console.log('Navigating to raffle with ID:', raffleId);
-      if (raffleId === undefined || raffleId === null) {
-        console.error('Error: Raffle ID is undefined or null');
-        return;
-      }
-      this.router.navigate([`/view-products/${raffleId}`]);
-      //this.router.navigate([`/raffle-detail/${raffleId}`]);
-
-    }
+  
 
   logout() {
     localStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
-
   }
 
+  private announce(message: string) {
+    const liveRegion = document.getElementById('liveRegion');
+    if (liveRegion) {
+      liveRegion.textContent = message;
+    }
+    this.toastController.create({
+      message,
+      duration: 2000,
+      position: 'bottom'
+    }).then(toast => toast.present());
+  }
 }

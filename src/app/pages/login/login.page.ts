@@ -14,6 +14,7 @@ export class LoginPage implements OnInit {
   email: string = '';
   password: string = '';
   rememberMe: boolean = false;
+  isLoading: boolean = false; // New state for button loading
 
   constructor(
     private apiService: ApiService,
@@ -32,57 +33,49 @@ export class LoginPage implements OnInit {
   }
 
   login() {
-    const data = { email: this.email, password: this.password };
+    if (!this.email || !this.password) {
+      this.presentToast('Email and password are required', 'warning');
+      return;
+    }
 
-    this.apiService.login(data.email, data.password).subscribe(
+    this.isLoading = true; // Start loading
+
+    this.apiService.login(this.email, this.password).subscribe(
       async (response: any) => {
-        if (response?.token) {
-          localStorage.setItem('userId', response.id)
-          localStorage.setItem('adminToken', response.token);
-          localStorage.setItem('isAdmin', response?.isAdmin ? 'true' : 'false'); // Prevents undefined issues
+        this.isLoading = false; // Stop loading
 
-          console.log('Login successful! Token:', response.token);
-          console.log('User is admin:', response.isAdmin);
+        if (response?.token) {
+          localStorage.setItem('userId', response.id);
+          localStorage.setItem('adminToken', response.token);
+          localStorage.setItem('isAdmin', response?.isAdmin ? 'true' : 'false');
 
           if (response.isAdmin) {
             await this.presentToast('Admin login successful!', 'success');
-            this.router.navigate(['/dashboard']); // Redirect admin
+            this.router.navigate(['/dashboard']);
           } else {
             await this.presentToast('Login successful!', 'success');
-            this.router.navigate(['/home']); // Redirect normal user
+            this.router.navigate(['/home']);
           }
         }
       },
       async (error) => {
-        console.error('Login error:', error);
+        this.isLoading = false; // Stop loading
 
         if (error.error?.type === 'credentials') {
-          console.warn('Invalid credentials:', error.error.message);
           await this.presentToast('Invalid email or password', 'danger');
         } else if (error.error?.type === 'locked') {
           const unlockTime = error.error.lockUntil ? new Date(error.error.lockUntil) : null;
           if (unlockTime && !isNaN(unlockTime.getTime())) {
-            const formattedTime = unlockTime.toLocaleString();
-            console.warn('Account locked until:', formattedTime);
-            await this.presentToast(
-              `Account is locked. Try again after ${formattedTime}`,
-              'warning'
-            );
+            await this.presentToast(`Account is locked. Try again after ${unlockTime.toLocaleString()}`, 'warning');
           } else {
-            console.error('Invalid lockUntil timestamp:', error.error.lockUntil);
             await this.presentToast('Account is locked. Try again later.', 'warning');
           }
         } else {
-          console.error('Unexpected server error:', error);
-          await this.presentToast(
-            'An unexpected error occurred. Please try again.',
-            'danger'
-          );
+          await this.presentToast('An unexpected error occurred. Please try again.', 'danger');
         }
       }
     );
   }
-
   goToForgotPassword() {
     this.router.navigate(['/forget-password']);
   }

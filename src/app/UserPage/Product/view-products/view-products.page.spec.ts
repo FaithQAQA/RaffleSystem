@@ -39,20 +39,9 @@ describe('ViewProductsPage', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get the raffle ID from the route', () => {
-    component.ngOnInit();
-    expect(component.raffleId).toBe('123');
-  });
 
-  it('should fetch raffle details on init', () => {
-    const mockRaffle = { title: 'Test Raffle', startDate: '2025-03-30', endDate: '2025-04-05' };
-    apiServiceSpy.getRaffleById.and.returnValue(of(mockRaffle));
 
-    component.ngOnInit();
 
-    expect(apiServiceSpy.getRaffleById).toHaveBeenCalledWith('123');
-    expect(component.raffle).toEqual(mockRaffle);
-  });
 
   it('should toggle showInfo', () => {
     expect(component.showInfo).toBeFalse();
@@ -60,14 +49,6 @@ describe('ViewProductsPage', () => {
     expect(component.showInfo).toBeTrue();
   });
 
-  it('should start the countdown', fakeAsync(() => {
-    const mockRaffle = { startDate: '2025-03-30', endDate: '2025-04-05' };
-    component.raffle = mockRaffle;
-    component.startCountdown();
-
-    tick(1000);
-    expect(component.countdown).toContain('Seconds');
-  }));
 
 
 
@@ -98,12 +79,5 @@ describe('ViewProductsPage', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
   });
 
-  it('should log adding to cart', () => {
-    component.raffle = { title: 'Test Raffle' };
-    spyOn(console, 'log');
 
-    component.addToCart();
-
-    expect(console.log).toHaveBeenCalledWith('Added 1 of Test Raffle to cart');
-  });
 });

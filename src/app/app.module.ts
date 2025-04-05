@@ -7,9 +7,10 @@ import { SwiperModule } from 'swiper/types';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
-
+import { NotificationPopoverComponent } from './components/notification-popover/notification-popover.component';
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent,NotificationPopoverComponent],
+  
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, FormsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

@@ -1,89 +1,127 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="modern-toolbar">
     <ion-buttons slot="start">
-      <ion-button routerLink="/landing">
+      <ion-button routerLink="/landing" aria-label="Home">
         <ion-icon name="home"></ion-icon>
       </ion-button>
     </ion-buttons>
 
-
     <ion-buttons slot="end">
-      <ion-button routerLink="/view-raffles">
+      <ion-button routerLink="/view-raffles" aria-label="View Raffles">
         <ion-icon name="ticket-outline"></ion-icon>
-        <ion-label>View Raffles</ion-label>
+        <ion-label>Raffles</ion-label>
       </ion-button>
-
-      <ion-button routerLink="/view-cart">
+      <ion-button routerLink="/view-cart" aria-label="View Cart" class="cart-button">
         <ion-icon name="cart"></ion-icon>
-        <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
+        <ion-badge *ngIf="cartItemCount > 0" color="danger">
+          {{ cartItemCount }}
+        </ion-badge>
       </ion-button>
-
-      <ion-button (click)="logout()">
+      <ion-button (click)="logout()" aria-label="Logout">
         <ion-icon name="log-out-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-
-<ion-content>
-  <div class="container text-center mt-4">
-    <div class="d-flex justify-content-center align-items-center mb-3">
-      <!-- Search Bar -->
-      <input type="text" [(ngModel)]="searchTerm" (input)="filterRaffles()"
-             placeholder="Search raffles..." class="form-control w-50 mr-2">
-
-      <!-- Category Filter -->
-      <select [(ngModel)]="selectedFilter" (ngModelChange)="filterRaffles()" class="form-select w-25">
+<ion-content class="modern-content">
+  <div class="container">
+    <!-- Search and Filter Section -->
+    <div class="search-filter d-flex flex-wrap justify-content-center align-items-center mb-4">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="filterRaffles()"
+        placeholder="Search raffles..."
+        class="form-control search-input"
+        aria-label="Search raffles" />
+      <select
+        [(ngModel)]="selectedFilter"
+        (ngModelChange)="filterRaffles()"
+        class="form-select filter-select"
+        aria-label="Filter by category">
         <option value="all">All Categories</option>
-        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
       </select>
-
-
-
     </div>
 
-    <p class="text-muted">Raffles</p>
-    <div class="row justify-content-center mt-4">
-      <div class="col-md-4" *ngFor="let raffle of filteredRaffles; let i = index">
-        <div class="product-card"
+    <!-- ARIA Live Region for Notifications -->
+    <div aria-live="polite" class="visually-hidden" id="liveRegion"></div>
+
+    <p class="section-title">Raffles Hub</p>
+    <div class="raffle-grid row justify-content-center">
+      <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let raffle of filteredRaffles; let i = index">
+        <div class="card modern-card" tabindex="0"
              (click)="goToRaffleDetail(raffle._id)"
              (mouseenter)="hoverIndex = i"
              (mouseleave)="hoverIndex = -1"
-             style="cursor: pointer;">
-          <img src="https://www.lapland.fi/uploads/2017/11/a65bfd2e-filming-finland-polar-night-markus-kiili-1440x810.jpg"
-               alt="raffle-image" class="img-fluid rounded shadow">
-          <div class="product-info">
-            <span class="product-title text-black">{{ raffle.title }}</span>
-            <hr class="my-1 border-black w-50 mx-auto">
-            <span class="product-price text-black">${{ raffle.price }}</span>
-            <div class="add-to-cart-wrapper" *ngIf="hoverIndex === i">
-              <button class="btn btn-primary" (click)="addToCart(raffle.id, $event)">Add to Cart</button>
+             (focus)="hoverIndex = i"
+             (blur)="hoverIndex = -1">
+          <div class="icon-container" aria-hidden="true">
+            <i class="bi bi-ticket-perforated raffle-icon"></i>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ raffle.title }}</h5>
+            <hr class="divider">
+            <p class="card-text">${{ raffle.price }}</p>
+
+            <!-- Add to Cart Button with Fade-in Interaction -->
+            <div class="add-to-cart" *ngIf="hoverIndex === i">
+              <button class="btn btn-accent"
+                      (click)="addToCart(raffle._id, $event); $event.stopPropagation();"
+                      aria-label="Add to Cart">
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Load More Button -->
+    <div class="text-center mt-4" *ngIf="filteredRaffles.length < raffles.length">
+      <button class="btn btn-primary" (click)="loadMoreRaffles()">
+        Load More
+      </button>
+    </div>
 
+    <!-- Social Media Links -->
+    <div class="social-media text-center mt-5">
+      <a href="#" class="social-link" aria-label="Facebook">
+        <i class="bi bi-facebook"></i>
+      </a>
+      <a href="#" class="social-link" aria-label="Twitter">
+        <i class="bi bi-twitter"></i>
+      </a>
+      <a href="#" class="social-link" aria-label="Instagram">
+        <i class="bi bi-instagram"></i>
+      </a>
+      <a href="#" class="social-link" aria-label="LinkedIn">
+        <i class="bi bi-linkedin"></i>
+      </a>
+    </div>
   </div>
 
-  <!-- Social Media Icons -->
-  <div class="social-media">
-    <img src="https://openui.fly.dev/openui/50x50.svg?text=Facebook" alt="facebook">
-    <img src="https://openui.fly.dev/openui/50x50.svg?text=Twitter" alt="twitter">
-    <img src="https://openui.fly.dev/openui/50x50.svg?text=Instagram" alt="instagram">
-    <img src="https://openui.fly.dev/openui/50x50.svg?text=LinkedIn" alt="linkedin">
-  </div>
-
-
-  <ion-footer class="bg-light shadow rounded p-4 text-center">
-    <h3 class="text-primary fw-bold">VOICE for Children who are Deaf and Hard of Hearing</h3>
-    <p class="text-muted">478 Dundas St. West, P.O. Box 30045</p>
-    <p class="text-muted">Oakville, Ontario</p>
-    <p class="text-muted">L6H 6Y3</p>
-    <p class="text-muted">Email: <a href="mailto:admin@voicefordeafkids.com" class="text-primary">adminvoicefordeafkids.com</a></p>
-    <p class="text-muted">Please email us and we will respond with email or a call back if requested.</p>
-</ion-footer>
+  <!-- Footer -->
+  <ion-footer class="modern-footer">
+    <div class="footer-container">
+      <h3 class="footer-title">VOICE for Children who are Deaf and Hard of Hearing</h3>
+      <p class="footer-text">478 Dundas St. West, P.O. Box 30045</p>
+      <p class="footer-text">Oakville, Ontario L6H 6Y3</p>
+      <p class="footer-text">
+        Email:
+        <a href="mailto:admin@voicefordeafkids.com" class="footer-link">
+          adminvoicefordeafkids.com
+        </a>
+      </p>
+      <p class="footer-note">
+        Please email us and we will respond via email or call back if requested.
+      </p>
+    </div>
+  </ion-footer>
 </ion-content>
 
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">

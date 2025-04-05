@@ -9,19 +9,22 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class ViewRafflesPage implements OnInit {
-
+  darkMode: any;
   raffles: any[] = []; // Stores all raffles
   filteredRaffles: any[] = []; // Stores filtered raffles based on search
   searchTerm: string = '';
   selectedFilter: string = 'all';
   hoverIndex: number = -1; // Used for showing Add to Cart button on hover
-  selectedCategory: string = 'all';
   categories: string[] = ['Electronics', 'Clothing', 'Home Appliances', 'Accessories']; // Example categories
-  constructor(private router: Router, private apiService: ApiService) {}
   cartItemCount = 0;
-  ngOnInit() {
 
-    this.apiService.cartCount$.subscribe(count => {
+  displayCount: number = 6; // Number of raffles to display initially
+  incrementCount: number = 6; // Number of raffles to load when clicking "Load More"
+
+  constructor(private router: Router, private apiService: ApiService) {}
+
+  ngOnInit() {
+    this.apiService.cartCount$.subscribe((count) => {
       this.cartItemCount = count;
     });
 
@@ -46,22 +49,29 @@ export class ViewRafflesPage implements OnInit {
   }
 
   extractCategories() {
-    const uniqueCategories = new Set(this.raffles.map(r => r.category));
+    const uniqueCategories = new Set(this.raffles.map((r) => r.category));
     this.categories = ['All', ...Array.from(uniqueCategories)];
   }
 
+  loadMoreRaffles() {
+    this.displayCount += this.incrementCount; // Increase display count
+    this.filterRaffles();
+  }
 
   // Filter raffles based on search term and selected filter
   filterRaffles() {
-    this.filteredRaffles = this.raffles.filter((raffle) => {
+    let filtered = this.raffles.filter((raffle) => {
       const matchesSearch = this.searchTerm
         ? raffle.title.toLowerCase().includes(this.searchTerm.toLowerCase())
         : true;
 
-      const matchesCategory = this.selectedFilter === 'all' || raffle.category === this.selectedFilter;
+      const matchesCategory =
+        this.selectedFilter === 'all' || raffle.category === this.selectedFilter;
 
       return matchesSearch && matchesCategory;
     });
+
+    this.filteredRaffles = filtered.slice(0, this.displayCount); // Only display a subset of raffles
   }
 
   logout() {
@@ -76,15 +86,12 @@ export class ViewRafflesPage implements OnInit {
       return;
     }
     this.router.navigate([`/view-products/${raffleId}`]);
-    //this.router.navigate([`/raffle-detail/${raffleId}`]);
-
   }
 
-
-
-  addToCart(raffleId: number, event: Event) {
+  addToCart(raffleId: string, event: Event) {
     event.stopPropagation(); // Prevent navigation when clicking the button
     console.log('Added to cart:', raffleId);
+    this.apiService.addToCart(raffleId, 1);
     // Add your cart logic here
   }
 }
