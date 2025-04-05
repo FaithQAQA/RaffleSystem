@@ -1,88 +1,107 @@
+<ion-app>
+  <!-- Header -->
+  <ion-header>
+    <ion-toolbar class="modern-toolbar">
+      <ion-buttons slot="start">
+        <ion-button routerLink="/landing" aria-label="Go to Home">
+          <ion-icon name="home"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+
+      <ion-buttons slot="end">
+        <ion-button routerLink="/view-raffles" aria-label="View Raffles">
+          <ion-icon name="ticket-outline"></ion-icon>
+          <ion-label>Raffles</ion-label>
+        </ion-button>
+
+        <ion-button routerLink="/view-cart" aria-label="View Cart">
+          <ion-icon name="cart"></ion-icon>
+          <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
+        </ion-button>
+
+        <!-- 🔔 Notification Center -->
+        <ion-button  aria-label="View Notifications">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <ion-badge *ngIf="notificationCount > 0" color="warning">{{ notificationCount }}</ion-badge>
+        </ion-button>
+
+        <ion-button (click)="logout()" aria-label="Logout">
+          <ion-icon name="log-out-outline"></ion-icon>
+        </ion-button>
+
+        <ion-button (click)="toggleDarkMode()" aria-label="Toggle dark mode">
+          <ion-icon name="moon"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
 
 
-  <ion-app>
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-button routerLink="/landing">
-            <ion-icon name="home"></ion-icon>
-          </ion-button>
-        </ion-buttons>
+  <!-- Main Content -->
+  <ion-content class="modern-content ion-padding">
+    <!-- Feature Raffle Section -->
+    <section class="feature-raffle text-center">
+      <h2 class="raffle-title">Our Featured Raffle</h2>
+      <p class="raffle-subtitle">Join us for a chance to win exciting prizes!</p>
+    </section>
 
+    <!-- ARIA Live Region for Announcements -->
+    <div aria-live="polite" class="visually-hidden" id="liveRegion"></div>
 
-        <ion-buttons slot="end">
-          <ion-button routerLink="/view-raffles">
-            <ion-icon name="ticket-outline"></ion-icon>
-            <ion-label>View Raffles</ion-label>
-          </ion-button>
-
-          <ion-button routerLink="/view-cart">
-            <ion-icon name="cart"></ion-icon>
-            <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
-          </ion-button>
-
-          <ion-button (click)="logout()">
-            <ion-icon name="log-out-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-      <ion-content class="ion-padding">
-          <!-- Feature Raffle Section -->
-          <div class="feature-raffle text-center">
-              <h2 class="raffle-title">Our Feature Raffle</h2>
-              <p class="raffle-subtitle">Join us for a chance to win exciting prizes!</p>
-          </div>
-
-          <!-- Image Gallery -->
-          <ion-grid class="raffle-gallery">
-              <ion-row *ngIf="recentRaffles.length > 0; else noRaffles">
-                  <ion-col *ngFor="let raffle of recentRaffles; let i = index" size="12" size-md="4">
-                      <ion-card (click)="goToRaffleDetail(raffle._id)" class="raffle-image-card">
-                          <img src="https://placehold.co/600x400" alt="Shipping Containers">
-                          <ion-card-header>
-                              <ion-card-title>{{ raffle.title }}</ion-card-title>
-                          </ion-card-header>
-                          <ion-card-content>
-                              <p>{{ raffle.description }}</p>
-                          </ion-card-content>
-                      </ion-card>
-                  </ion-col>
-              </ion-row>
-
-              <!-- Show this if there are no recent raffles -->
-              <ng-template #noRaffles>
-                  <ion-col size="12" class="text-center">
-                      <p>No recent raffles available.</p>
-                  </ion-col>
-              </ng-template>
-          </ion-grid>
-
-          <!-- Explore All Raffles Section -->
-          <ion-card class="text-center mt-4">
-              <ion-card-header>
-                  <ion-card-title class="text-primary fw-bold">Explore All Raffles</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                  <p class="text-muted">
-                      Discover all our exciting raffles and get a chance to win amazing prizes. Don't miss out—join now!
-                  </p>
-                  <ion-button expand="block" color="primary" routerLink="/view-raffles">View All Raffles</ion-button>
-              </ion-card-content>
+    <!-- Image Gallery Section -->
+    <ion-grid class="raffle-gallery">
+      <ion-row *ngIf="recentRaffles.length > 0; else noRaffles">
+        <ion-col *ngFor="let raffle of recentRaffles; let i = index" size="12" size-md="4">
+          <ion-card class="raffle-image-card" (click)="goToRaffleDetail(raffle._id)" tabindex="0">
+            <img src="https://placehold.co/600x400" [attr.alt]="'Raffle image for ' + raffle.title" loading="lazy" />
+            <ion-card-header>
+              <ion-card-title>{{ raffle.title }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p>{{ raffle.description }}</p>
+            </ion-card-content>
           </ion-card>
+        </ion-col>
+      </ion-row>
 
-          <!-- Footer -->
-          <ion-footer class="bg-light shadow rounded p-4 text-center">
-              <h3 class="text-primary fw-bold">VOICE for Children who are Deaf and Hard of Hearing</h3>
-              <p class="text-muted">478 Dundas St. West, P.O. Box 30045</p>
-              <p class="text-muted">Oakville, Ontario</p>
-              <p class="text-muted">L6H 6Y3</p>
-              <p class="text-muted">Email: <a href="mailto:admin@voicefordeafkids.com" class="text-primary">adminvoicefordeafkids.com</a></p>
-              <p class="text-muted">Please email us and we will respond with email or a call back if requested.</p>
-          </ion-footer>
-      </ion-content>
-  </ion-app>
+      <!-- No Raffles Template -->
+      <ng-template #noRaffles>
+        <ion-col size="12" class="text-center">
+          <p>No recent raffles available.</p>
+        </ion-col>
+      </ng-template>
+    </ion-grid>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Explore All Raffles Section -->
+    <section class="explore-raffles">
+      <ion-card class="explore-card text-center">
+        <ion-card-header>
+          <ion-card-title class="text-primary fw-bold">Explore All Raffles</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p class="text-muted">
+            Discover all our exciting raffles and get a chance to win amazing prizes. Don't miss out—join now!
+          </p>
+          <ion-button expand="block" color="primary" routerLink="/view-raffles">View All Raffles</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </section>
 
+    <!-- Footer -->
+    <ion-footer class="modern-footer">
+      <div class="footer-container">
+        <h3 class="footer-title">VOICE for Children who are Deaf and Hard of Hearing</h3>
+        <p class="footer-text">478 Dundas St. West, P.O. Box 30045</p>
+        <p class="footer-text">Oakville, Ontario, L6H 6Y3</p>
+        <p class="footer-text">
+          Email:
+          <a href="mailto:admin@voicefordeafkids.com" class="footer-link">adminvoicefordeafkids.com</a>
+        </p>
+        <p class="footer-note">Please email us and we will respond via email or call back if requested.</p>
+      </div>
+    </ion-footer>
+  </ion-content>
+</ion-app>
+
+<!-- Bootstrap Bundle for any additional JS components -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

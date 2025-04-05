@@ -1,45 +1,74 @@
 @import 'src/theme/variables.scss';
 
+/* Minimalist Theme: Neutral tones with a single accent */
+
+$accent-color: #0077B6; // Accent blue
+$background-light: #F8F9FA;
+$background-dark: #343A40;
+$text-dark: #212529;
+$text-light: #ffffff;
+
 .bg-primary {
-  background-color: #001F3F !important; // Dark Navy Blue
-  color: #fff;
+  background-color: $background-dark !important;
+  color: $text-light;
 }
 
 .bg-secondary {
-  background-color: #F8F9FA !important; // Light Gray
-  color: #212529;
+  background-color: $background-light !important;
+  color: $text-dark;
 }
 
 .bg-primary-foreground {
-  background-color: #FFFFFF !important; // White
-  color: #000;
+  background-color: $text-light !important;
+  color: $background-dark;
 }
 
 .bg-accent {
-  background-color: #FFC107 !important; // Bright Gold
-  color: #212529;
+  background-color: $accent-color !important;
+  color: $text-light;
 }
 
 .card-custom {
-  background: #fff;
-  border-radius: 10px;
+  background: $text-light;
+  border-radius: 8px;
   padding: 20px;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  &:hover,
+  &:focus {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    outline: none;
   }
 }
 
 .badge {
-  font-size: 1rem;
-  padding: 5px 10px;
+  font-size: 0.9rem;
+  padding: 4px 8px;
+  background-color: $accent-color;
+  color: $text-light;
+  border-radius: 4px;
 }
 
 .footer {
-  background-color: #343A40 !important; // Dark Gray
-  color: #fff;
+  background-color: $background-dark !important;
+  color: $text-light;
+  a {
+    color: lighten($accent-color, 20%);
+    &:hover {
+      color: $accent-color;
+    }
+  }
 }
-
+.social-media {
+  font-size: 24px;
+}
+.social-link {
+  margin: 0 15px;
+  color: #333;
+  text-decoration: none;
+}
+.social-link:hover {
+  color: #007bff;
+}

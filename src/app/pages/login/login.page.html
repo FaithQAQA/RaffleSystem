@@ -50,10 +50,14 @@
 
       <!-- Login Button -->
       <div class="d-grid mt-4">
-        <button class="btn btn-primary btn-block" (click)="login()">
-          Login
+        <button class="btn btn-primary btn-block" (click)="login()" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Login</span>
+          <span *ngIf="isLoading">
+            <i class="spinner-border spinner-border-sm"></i> Logging in...
+          </span>
         </button>
       </div>
+
 
       <!-- Separator -->
       <div class="separator my-4 text-center"></div>

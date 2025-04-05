@@ -1,81 +1,206 @@
-// 🔹 Header Styles
-@import 'src/theme/variables.scss';
+// Define color variables and settings
+$primary-color: #0D1B2A;        // Deep navy blue
+$secondary-color: #1B263B;      // Dark slate
+$accent-color: #FCA311;         // Vibrant accent orange
+$text-light: #ffffff;
+$text-dark: #212529;
+$background-light: #F8F9FA;
+$border-radius: 8px;
+$transition-speed: 0.3s;
 
-.custom-header {
-  background-color: $background-color;
-  color: $text-color;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+// Utility for screen readers
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
 }
 
-//  Navigation Buttons
-.nav-buttons {
+.modern-toolbar {
+  background-color: $primary-color;
+  color: $text-light;
+}
+
+.modern-content {
+  background-color: $background-light;
+  padding: 1rem;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Search & Filter */
+.search-filter {
+  gap: 1rem;
+}
+
+.search-input, .filter-select {
+  max-width: 300px;
+  flex: 1;
+  border: 1px solid $secondary-color;
+  border-radius: $border-radius;
+  padding: 0.5rem 1rem;
+  transition: border $transition-speed ease;
+  &:focus {
+    border-color: $accent-color;
+    outline: none;
+    box-shadow: 0 0 5px $accent-color;
+  }
+}
+
+/* Section Title */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $primary-color;
+  margin-bottom: 1rem;
+}
+
+/* Raffle Card Grid */
+.raffle-grid {
+  margin-bottom: 2rem;
+}
+
+.modern-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform $transition-speed ease, box-shadow $transition-speed ease;
+  cursor: pointer;
+  background: #fff;
+  outline: none;
+  &:focus {
+    box-shadow: 0 0 10px $accent-color;
+  }
+}
+
+.modern-card:hover,
+.modern-card:focus {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.icon-container {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  padding: 10px;
+  align-items: center;
+  background: #4f46e5; /* Indigo */
+  height: 150px;
 }
 
-//  Product Card Styles
-.product-card {
-  position: relative;
+.raffle-icon {
+  font-size: 4rem;
+  color: white;
+}
+
+/* Add-to-Cart Button Fade-in Effect */
+.add-to-cart {
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity $transition-speed ease, transform $transition-speed ease;
+}
+
+.modern-card:hover .add-to-cart,
+.modern-card:focus .add-to-cart {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  color: $primary-color;
+  margin-bottom: 0.5rem;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid $secondary-color;
+  width: 50%;
+  margin: 0.5rem auto;
+}
+
+.card-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: $secondary-color;
+}
+
+.add-to-cart {
+  margin-top: 1rem;
   text-align: center;
-  padding: 10px;
-  border-radius: 8px;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
 
-  .product-info {
-    margin-top: 10px;
-    color: black;
-  }
-
-  .product-title,
-  .product-price {
-    font-weight: bold;
-    color: black;
-  }
-
-  .add-to-cart-wrapper {
-    opacity: 0;
-    visibility: hidden;
-    margin-top: 10px;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-  }
-
+.btn-accent {
+  background-color: $accent-color;
+  color: $primary-color;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: $border-radius;
+  transition: background-color $transition-speed ease;
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+    background-color: darken($accent-color, 5%);
+  }
+}
 
-    .add-to-cart-wrapper {
-      opacity: 1;
-      visibility: visible;
-      display: flex;
-      justify-content: center;
+/* Social Media */
+.social-media {
+  a {
+    margin: 0 0.5rem;
+    transition: transform $transition-speed ease;
+    &:hover {
+      transform: scale(1.1);
     }
   }
 }
 
-//  Social Media Icons
-.social-media {
-  position: fixed;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-
-  img {
-    width: 40px;
-    height: 40px;
-    filter: brightness(0) invert(1); // Dark mode compatibility
-
+/* Footer */
+.modern-footer {
+  background-color: $secondary-color;
+  color: $text-light;
+  padding: 1.5rem 0;
+  text-align: center;
+  .footer-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .footer-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .footer-text {
+    font-size: 0.9rem;
+    margin: 0.2rem 0;
+  }
+  .footer-link {
+    color: $accent-color;
+    text-decoration: none;
     &:hover {
-      filter: brightness(1);
-      transform: scale(1.1);
-      transition: all 0.3s ease-in-out;
+      text-decoration: underline;
     }
+  }
+  .footer-note {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    color: lighten($text-light, 20%);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+  .search-filter {
+    flex-direction: column;
+  }
+  .search-input, .filter-select {
+    max-width: 100%;
   }
 }
