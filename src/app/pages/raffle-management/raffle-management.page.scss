@@ -1,15 +1,13 @@
-// Variables for a modern color scheme and spacing
-$primary-color: #4f46e5; // Indigo
-$secondary-color: #10b981; // Emerald
+$primary-color: #4f46e5;
+$secondary-color: #10b981;
 $light-bg: #f8f9fa;
 $dark-bg: #343a40;
 $text-color: #333;
 $light-text: #fff;
 $border-radius: 8px;
 $transition-speed: 0.3s;
-$top-bar-height: 60px; // Set top bar height
+$top-bar-height: 60px;
 
-// Global Styles
 body {
   font-family: 'Open Sans', sans-serif;
   background-color: $light-bg;
@@ -18,28 +16,43 @@ body {
   padding: 0;
 }
 
-// Off-Canvas Sidebar
+/* Ensure ion-content is pushed down */
+ion-content {
+  padding-top: calc($top-bar-height + 1rem);
+}
+
+/* Off-Canvas Sidebar */
 .offcanvas {
-  background-color: $dark-bg;
+  background: linear-gradient(135deg, #343a40, #23272b);
   color: $light-text;
   width: 250px;
   transform: translateX(-100%);
   transition: transform $transition-speed ease;
   position: fixed;
-  top: $top-bar-height; // Offset so it doesn't cover the top bar
+  top: $top-bar-height; // Below the top bar
   bottom: 0;
-  z-index: 1050; // Sidebar z-index
+  z-index: 1050;
+  border-top-right-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;  // Prevent offcanvas background from blocking clicks
 
   &.show {
     transform: translateX(0);
   }
 
+  .offcanvas-header,
+  .offcanvas-body {
+    pointer-events: auto;  // Allow interaction with sidebar content
+  }
+
   .offcanvas-header {
     padding: 1rem;
-    border-bottom: 1px solid lighten($dark-bg, 10%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     h5 {
       margin: 0;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
+      font-weight: bold;
     }
   }
 
@@ -49,29 +62,25 @@ body {
       list-style: none;
       padding: 0;
       margin: 0;
-
       .list-group-item {
         background: transparent;
         border: none;
-        padding: 0.75rem 0;
+        padding: 12px 20px;
         transition: background $transition-speed ease;
-
         &:hover {
           background: rgba(255, 255, 255, 0.1);
         }
-
         .sidebar-btn {
           color: $light-text;
           display: flex;
           align-items: center;
-          font-size: 1rem;
+          font-size: 1.1rem;
           background: none;
           border: none;
           width: 100%;
-
           ion-icon {
-            font-size: 1.2rem;
-            margin-right: 0.5rem;
+            font-size: 1.3rem;
+            margin-right: 10px;
           }
         }
       }
@@ -79,7 +88,7 @@ body {
   }
 }
 
-// Top Bar
+/* Fixed Top Bar */
 .top-bar {
   display: flex;
   align-items: center;
@@ -87,52 +96,25 @@ body {
   padding: 1rem;
   background-color: $light-bg;
   border-bottom: 1px solid #ddd;
-  position: fixed; // Fixed to ensure it stays on top
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: $top-bar-height;
-  z-index: 1200; // Increased z-index so it appears above the sidebar
-
+  z-index: 3000;
   .sidebar-toggle {
-    background: $primary-color;
+    background: transparent;
     border: none;
-    color: $light-text;
-    padding: 0.5rem;
-    border-radius: $border-radius;
-    transition: background $transition-speed ease;
-
+    font-size: 22px;
+    color: #007bff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
     &:hover {
-      background: darken($primary-color, 10%);
+      transform: scale(1.1);
     }
   }
-
-  .search-container {
-    flex: 1;
-    margin: 0 1rem;
-    position: relative;
-
-    .search-input {
-      width: 100%;
-      padding: 0.5rem 2.5rem 0.5rem 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: $border-radius;
-      font-size: 1rem;
-    }
-
-    .search-icon {
-      position: absolute;
-      right: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #aaa;
-      font-size: 1.2rem;
-    }
-  }
-
   .dropdown {
     position: relative;
-
     .btn {
       background: none;
       border: none;
@@ -140,13 +122,11 @@ body {
       align-items: center;
       color: $text-color;
       font-size: 1rem;
-
       ion-icon {
         font-size: 1.5rem;
         margin-right: 0.5rem;
       }
     }
-
     .dropdown-menu {
       border: none;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -155,81 +135,150 @@ body {
   }
 }
 
-// Main Content Area
-.container {
-  margin-top: calc($top-bar-height + 1rem); // Add margin to prevent content being hidden behind the top bar
+/* Filter Controls Styling */
+.filter-controls {
+  background-color: #fff;
   padding: 1rem;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+  margin-top: calc($top-bar-height + 2rem) !important;
+  transition: margin-left 0.3s ease;
+  position: relative;
+  z-index: 3100; // Ensure filter controls appear above the sidebar
+}
+.filter-controls:not(.sidebar-collapsed) {
+  margin-left: 250px;
+}
+.filter-controls.sidebar-collapsed {
+  margin-left: 0;
+}
 
-  .list-group {
-    .list-group-item {
-      background-color: #fff;
-      border: 1px solid #ddd;
+/* Styles for the combined search and filter inside the ion-item */
+.filter-search-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.search-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+  ion-input {
+    width: 100%;
+    position: relative;
+    z-index: 3200; // Ensure the input is above overlapping elements
+    pointer-events: auto;
+  }
+  ion-icon {
+    margin-left: 0.5rem;
+  }
+}
+
+.filter-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  ion-label {
+    margin-right: 0.5rem;
+  }
+  ion-select {
+    width: 100%;
+  }
+}
+
+/* Raffle List Container Styling */
+.raffle-list-container {
+  margin-top: 1rem;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+  width: 100%;
+}
+.raffle-list-container:not(.sidebar-collapsed) {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+}
+.raffle-list-container.sidebar-collapsed {
+  margin-left: 0;
+  width: 100%;
+}
+
+/* Updated List Group Styling */
+.list-group {
+  width: 100%;
+  box-sizing: border-box;
+  .list-group-item {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: $border-radius;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    transition: transform $transition-speed ease, box-shadow $transition-speed ease;
+    cursor: pointer;
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .raffle-item-info {
+      .raffle-item-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+      }
+      h5 {
+        font-size: 1rem;
+        color: #666;
+        margin: 0.5rem 0;
+      }
+      .raffle-details {
+        font-size: 0.9rem;
+        color: #555;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.5rem;
+      }
+    }
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.5em 0.75em;
       border-radius: $border-radius;
-      margin-bottom: 1rem;
-      padding: 1rem;
-      transition: transform $transition-speed ease, box-shadow $transition-speed ease;
-      cursor: pointer;
-
-      &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .raffle-item-info {
-        .raffle-item-title {
-          font-size: 1.25rem;
-          font-weight: bold;
-          margin-bottom: 0.25rem;
-        }
-
-        h5 {
-          font-size: 1rem;
-          color: #666;
-          margin: 0.5rem 0;
-        }
-
-        .raffle-details {
-          font-size: 0.9rem;
-          color: #555;
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-          gap: 0.5rem;
-        }
-      }
-
-      .badge {
-        font-size: 0.75rem;
-        padding: 0.5em 0.75em;
-        border-radius: $border-radius;
-      }
-
-      .bg-success {
-        background-color: $secondary-color;
-        color: $light-text;
-      }
-
-      .bg-secondary {
-        background-color: #6c757d;
-        color: $light-text;
-      }
+    }
+    .bg-success {
+      background-color: $secondary-color;
+      color: $light-text;
+    }
+    .bg-secondary {
+      background-color: #6c757d;
+      color: $light-text;
     }
   }
 }
 
-// Responsive adjustments for mobile views
+/* Zoom effect for list group when sidebar is closed */
+.container.sidebar-collapsed .list-group {
+  transform: scale(1.05);
+  transform-origin: left center;
+  transition: transform 0.3s ease;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .top-bar {
     flex-direction: column;
     align-items: stretch;
     height: auto;
-    position: relative; // Revert to relative for mobile if needed
-    .search-container {
-      margin: 1rem 0;
-    }
+    position: relative;
   }
-
   .offcanvas {
     width: 200px;
-    top: auto; // For mobile, you might adjust or remove the offset
+    top: auto;
+  }
+  .raffle-list-container:not(.sidebar-collapsed) {
+    margin-left: 200px;
+    width: calc(100% - 200px);
   }
 }

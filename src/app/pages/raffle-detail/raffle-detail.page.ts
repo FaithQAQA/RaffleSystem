@@ -116,6 +116,7 @@ export class RaffleDetailPage implements OnInit {
     this.router.navigate([`/raffle-detail/${raffleId}`]);
     this.presentToast(`Opening raffle: ${raffleId}`, 'tertiary');
   }
+  
 
   navigateToRaffleManagement() {
     this.router.navigate(['/raffle-management']);

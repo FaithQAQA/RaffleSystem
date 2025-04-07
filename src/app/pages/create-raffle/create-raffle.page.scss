@@ -1,6 +1,5 @@
-// Variables for modern design
-$primary-color: #4f46e5; // Indigo
-$secondary-color: #10b981; // Emerald
+$primary-color: #4f46e5;
+$secondary-color: #10b981;
 $light-bg: #f8f9fa;
 $dark-bg: #343a40;
 $text-color: #333;
@@ -8,8 +7,8 @@ $light-text: #fff;
 $border-radius: 8px;
 $transition-speed: 0.3s;
 $top-bar-height: 60px;
+$extra-spacing: 1rem; // Additional spacing below the top bar
 
-// Global Styles
 body {
   font-family: 'Roboto', sans-serif;
   background-color: $light-bg;
@@ -18,60 +17,65 @@ body {
   padding: 0;
 }
 
-// Off-Canvas Sidebar (Responsive & Modern)
+/* Updated Off-Canvas Sidebar (consistent with dashboard) */
 .offcanvas {
-  background-color: $dark-bg;
+  background: linear-gradient(135deg, #343a40, #23272b);
   color: $light-text;
   width: 250px;
   transform: translateX(-100%);
   transition: transform $transition-speed ease;
   position: fixed;
-  top: $top-bar-height; // Start below the top bar
+  top: $top-bar-height; // Below the fixed top bar
   bottom: 0;
   z-index: 1050;
-
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.4);
+  
   &.show {
     transform: translateX(0);
   }
-
+  
   .offcanvas-header {
     padding: 1rem;
-    border-bottom: 1px solid lighten($dark-bg, 10%);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    
     h5 {
       margin: 0;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
+      font-weight: bold;
     }
   }
-
+  
   .offcanvas-body {
     padding: 1rem;
     .sidebar-menu {
       list-style: none;
       padding: 0;
       margin: 0;
-
+      
       .list-group-item {
         background: transparent;
         border: none;
-        padding: 0.75rem 0;
+        padding: 12px 20px;
         transition: background $transition-speed ease;
-
+        
         &:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255,255,255,0.1);
         }
-
+        
         .sidebar-btn {
           color: $light-text;
           display: flex;
           align-items: center;
-          font-size: 1rem;
+          font-size: 1.1rem;
           background: none;
           border: none;
           width: 100%;
-
+          
           ion-icon {
-            font-size: 1.2rem;
-            margin-right: 0.5rem;
+            font-size: 1.3rem;
+            margin-right: 10px;
           }
         }
       }
@@ -79,7 +83,7 @@ body {
   }
 }
 
-// Fixed Top Bar
+/* Fixed Top Bar (unified toggle icon style) */
 .top-bar {
   display: flex;
   align-items: center;
@@ -93,24 +97,23 @@ body {
   right: 0;
   height: $top-bar-height;
   z-index: 1200;
-
+  
   .sidebar-toggle {
-    background: $primary-color;
+    background: transparent;
     border: none;
-    color: $light-text;
-    padding: 0.5rem;
-    border-radius: $border-radius;
-    transition: background $transition-speed ease;
-    display: flex;
-    align-items: center;
-
+    font-size: 22px;
+    color: #007bff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    
     &:hover {
-      background: darken($primary-color, 10%);
+      transform: scale(1.1);
     }
   }
-
+  
   .dropdown {
     position: relative;
+    
     .btn {
       background: none;
       border: none;
@@ -118,12 +121,13 @@ body {
       align-items: center;
       color: $text-color;
       font-size: 1rem;
-
+      
       ion-icon {
         font-size: 1.5rem;
         margin-right: 0.5rem;
       }
     }
+    
     .dropdown-menu {
       border: none;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -132,57 +136,71 @@ body {
   }
 }
 
-// Main Content Area & Form Styling
+/* Main Content Area */
 .content {
-  margin-top: calc($top-bar-height + 1rem);
-  padding: 1rem;
+  /* Increase margin-top so content is pushed further down below the top bar */
+  margin-top: calc($top-bar-height + $extra-spacing);
+  transition: margin-left 0.3s ease;
+}
 
-  .raffle-form-container {
-    background: #fff;
-    border-radius: $border-radius;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    padding: 1.5rem;
-    max-width: 600px;
-    margin: 0 auto;
+/* When sidebar is open, shift content */
+.content:not(.sidebar-collapsed) {
+  margin-left: 250px;
+}
 
-    ion-item {
-      margin-bottom: 1rem;
-    }
+/* When sidebar is collapsed */
+.content.sidebar-collapsed {
+  margin-left: 0;
+}
 
-    .button-group {
-      display: flex;
-      gap: 1rem;
-      ion-button {
-        flex: 1;
-        &:first-child {
-          background: $primary-color;
-          color: $light-text;
-          &:hover {
-            background: darken($primary-color, 10%);
-          }
+/* Raffle Form Styling */
+.raffle-form-container {
+  background: #fff;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 1.5rem;
+  max-width: 600px;
+  margin: 2rem auto; // Added top margin for extra spacing
+  ion-item {
+    margin-bottom: 1rem;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    
+    ion-button {
+      flex: 1;
+      
+      &:first-child {
+        background: $primary-color;
+        color: $light-text;
+        
+        &:hover {
+          background: darken($primary-color, 10%);
         }
-        &:last-child {
-          background: lighten($primary-color, 40%);
-          color: $text-color;
-        }
+      }
+      
+      &:last-child {
+        background: lighten($primary-color, 40%);
+        color: $text-color;
       }
     }
   }
 }
 
-// Responsive adjustments
 @media (max-width: 768px) {
   .top-bar {
     flex-direction: column;
     align-items: stretch;
     height: auto;
   }
-
+  
   .offcanvas {
     width: 200px;
-    top: auto; // Adjust if needed on mobile
+    top: auto; // Adjust for mobile if needed
   }
-
+  
   .raffle-form-container {
     padding: 1rem;
   }

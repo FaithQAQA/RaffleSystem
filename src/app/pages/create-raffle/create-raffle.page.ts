@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { ToastController } from '@ionic/angular';
+
 @Component({
   selector: 'app-create-raffle',
   templateUrl: './create-raffle.page.html',
   styleUrls: ['./create-raffle.page.scss'],
-  standalone:false,
+  standalone: false,
 })
 export class CreateRafflePage implements OnInit {
 
@@ -19,40 +20,34 @@ export class CreateRafflePage implements OnInit {
   startDate: string = '';
   endDate: string = '';
 
-  constructor(private apiService: ApiService, private router: Router,    private toastController: ToastController ) {}
-  isSidebarOpen = false; // Sidebar is initially open
-
+  constructor(private apiService: ApiService, private router: Router, private toastController: ToastController) {}
+  isSidebarOpen = false; // Sidebar is initially closed
 
   async presentToast(message: string, color: string = 'primary') {
     const toast = await this.toastController.create({
       message,
-      duration: 2000, // Display for 2 seconds
+      duration: 2000,
       position: 'top',
       color,
     });
     await toast.present();
   }
 
-
-
   createRaffle() {
-    // Create the raffle data object
     const raffleData = {
-      title: this.name, // Changed from 'name' to 'title' to match the backend structure
+      title: this.name,
       description: this.description,
       startDate: this.startDate,
       endDate: this.endDate,
-      price: this.ticketPrice, // Changed from 'ticketPrice' to 'price'
+      price: this.ticketPrice,
       category: this.category,
-      status: 'active', // Assuming a default status
-      raised: 0, // Starting with 0 raised amount
-      raffleItems: [], // Assuming an empty array for now
-      participants: [] // Assuming an empty array for now
+      status: 'active',
+      raised: 0,
+      raffleItems: [],
+      participants: []
     };
 
-    // Validate if all required fields are filled
     const missingFields: string[] = [];
-
     if (!this.name) missingFields.push('Title');
     if (!this.description) missingFields.push('Description');
     if (!this.startDate) missingFields.push('Start Date');
@@ -60,14 +55,12 @@ export class CreateRafflePage implements OnInit {
     if (!this.ticketPrice) missingFields.push('Ticket Price');
     if (!this.category) missingFields.push('Category');
 
-    // If there are missing fields, show a toast with the missing fields
     if (missingFields.length > 0) {
       const missingFieldsString = missingFields.join(', ');
       this.presentToast(`Please fill in the following fields: ${missingFieldsString}`, 'danger');
-      return; // Stop the function if fields are missing
+      return;
     }
 
-    // If everything is filled, proceed to create the raffle
     console.log('Creating raffle:', this.name, this.ticketPrice);
 
     this.apiService.createRaffle(raffleData).pipe(
@@ -83,46 +76,35 @@ export class CreateRafflePage implements OnInit {
     );
   }
 
-
   cancelCreateRaffle() {
     this.router.navigate(['/dashboard']);
   }
 
   navigateToCreateRaffle() {
     this.router.navigate(['/create-raffle']);
-   // this.presentToast('Navigating to Create Raffle', 'success');
+  }
+
+  navigateToDashboard() {
+    this.router.navigate(['/dashboard']);
   }
 
   navigateToRaffleDetail(raffleId: number) {
     this.router.navigate([`/raffle-detail/${raffleId}`]);
-  //  this.presentToast(`Opening raffle: ${raffleId}`, 'tertiary');
   }
 
   navigateToRaffleManagement() {
     this.router.navigate(['/raffle-management']);
-   // this.presentToast('Navigating to Raffle Management', 'primary');
   }
 
   logout() {
     localStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
-   // this.presentToast('You have been logged out', 'danger');
   }
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
-    const sidebar = document.getElementById('sidebarMenu');
-    if (sidebar) {
-      if (this.isSidebarOpen) {
-        sidebar.classList.add('show');
-      } else {
-        sidebar.classList.remove('show');
-      }
-    }
   }
-
 
   ngOnInit() {
   }
-
 }

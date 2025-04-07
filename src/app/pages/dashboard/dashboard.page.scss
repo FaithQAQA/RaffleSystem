@@ -1,58 +1,105 @@
-/* Dashboard Container */
 @import 'src/theme/variables.scss';
 
+/* Dashboard Container */
 .dashboard-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  margin-left: 250px; /* Sidebar default width */
+  /* Sidebar default width when open */
+  margin-left: 250px;
+  /* Smooth transition when toggling sidebar */
   transition: margin-left 0.3s ease;
+
+  /* Push all content down below the fixed top bar */
+  padding-top: 60px;
 }
 
-/* Sidebar Collapsed */
+/* When sidebar is closed, remove left margin */
 .sidebar-collapsed {
   margin-left: 0;
 }
 
+/* Remove the old margin-top on ion-content */
+.dashboard-container ion-content {
+  margin-top: 0;
+  transition: margin-left 0.3s ease;
+}
+
+/* Updated Off-Canvas Sidebar Styling */
 .offcanvas {
+  background: linear-gradient(135deg, #343a40, #23272b);
+  color: #fff;
   width: 250px !important;
   position: fixed;
-  height: 100%;
-  transition: transform 0.3s ease;
-}
-
-.offcanvas-hide {
+  top: 60px; // Placed just below the top bar
+  bottom: 0;
+  z-index: 1050;
   transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.4);
 }
 
-/* Sidebar Button Styling */
+.offcanvas.show {
+  transform: translateX(0);
+}
+
+.offcanvas-header {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  h5 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+  }
+}
+
+.sidebar-menu {
+  padding: 0;
+  margin: 0;
+}
+
+.list-group-item {
+  background: transparent;
+  border: none;
+  padding: 12px 20px;
+  transition: background 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
 .sidebar-btn {
   width: 100%;
   text-align: left;
-  font-size: 16px;
-  padding: 10px;
+  font-size: 1.1rem;
+  padding: 0;
   background: transparent;
   border: none;
-  color: #333; /* Color of text */
-  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  ion-icon {
+    font-size: 1.3rem;
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
 }
 
-.sidebar-btn:hover {
-  background: #007bff; /* Change background on hover */
-  color: white; /* Change text color to white */
-  transform: scale(1.05);
-}
-
-.sidebar-btn ion-icon {
-  margin-right: 8px;
-  transition: transform 0.3s ease;
-}
-
-.sidebar-btn:hover ion-icon {
-  transform: scale(1.2);
-}
-
-/* Sidebar Toggle Button */
+/* Unified Sidebar Toggle Button */
 .sidebar-toggle {
   background: transparent;
   border: none;
@@ -66,7 +113,7 @@
   transform: scale(1.1);
 }
 
-/* Top Bar */
+/* Fixed Top Bar */
 .top-bar {
   display: flex;
   align-items: center;
@@ -74,6 +121,12 @@
   padding: 10px 15px;
   background: #f8f9fa;
   border-bottom: 1px solid #ddd;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px; // Matches the offset we used above
+  z-index: 1200;
 }
 
 /* Search Bar */
@@ -88,12 +141,12 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.search-input:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  
+  &:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
 }
 
 .search-icon {
@@ -106,33 +159,29 @@
 
 /* Chart Card Styling */
 .chart-card {
-  flex: 1; /* Make the chart card flexible, filling its container */
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%; /* Ensure the chart container is flexible and fills the available space */
-  padding: 10px; /* Add padding inside the card */
+  height: 100%;
+  padding: 10px;
 }
 
 canvas {
-  display: block; /* Prevent inline behavior of canvas */
-  width: 100% !important; /* Ensure the canvas fills the container width */
-  height: 100% !important; /* Ensure the canvas fills the container height */
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-/* Chart Canvas Styling */
 .chart-canvas {
-  height: 150px; /* Reduced height for charts */
-  width: 100%; /* Full width of the container */
+  height: 150px;
+  width: 100%;
 }
 
-/* Chart Title Styling */
 .chart-title {
-  font-size: 1.2rem; /* Smaller font size for titles */
-  text-align: center; /* Center align titles */
+  font-size: 1.2rem;
+  text-align: center;
 }
-
-
 
 /* Recent Activity Section Styling */
 .recent-activity {
@@ -140,75 +189,60 @@ canvas {
   background-color: #f8f9fa;
   border-radius: 8px;
   padding: 20px;
-  padding-bottom: 3rem; /* Adjust as needed */
-  overflow: scroll; /* Allow content to overflow */
+  padding-bottom: 3rem;
+  /* Allow scrolling if needed, but hide scrollbars */
+  overflow: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+
+.recent-activity::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .activity-title {
   font-size: 1.5rem;
   font-weight: bold;
   color: #333;
-  text-align: center; /* Center align title */
+  text-align: center;
 }
 
-.activity-list {
-  max-height: 300px; /* Reduced height for activity list */
-  overflow-y:scroll ; /* Enable vertical scrolling */
-}
-
-.activity-card {
-  border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* Updated clickable styling for recent activity items */
+.recent-activity ul li {
+  background-color: #fff;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin: 10px 0; /* Add spacing between cards */
-  padding: 10px; /* Add padding inside cards */
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 1rem;
 }
 
-.activity-card:hover {
+.recent-activity ul li:hover {
+  background-color: #e9ecef;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.card-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #007bff;
-}
-
-.progress {
-  height: 8px;
-  border-radius: 4px;
-}
-
-.progress-bar {
-  border-radius: 4px;
-}
-
-.progress-text {
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive Grid Adjustments */
 @media (max-width: 768px) {
   .chart-canvas {
-    height: 120px; /* Further reduced height for smaller screens */
+    height: 120px;
   }
-
-  .chart-title, .activity-title {
-    font-size: 1rem; /* Smaller font size for smaller screens */
+  
+  .chart-title,
+  .activity-title {
+    font-size: 1rem;
   }
-
+  
   .dashboard-container {
     margin-left: 0;
   }
-
+  
   .sidebar-toggle {
     display: block;
   }
-
+  
   .graph-placeholder {
     text-align: center;
     background-color: #f8f9fa;
@@ -216,13 +250,14 @@ canvas {
     padding: 20px;
     border-radius: 10px;
   }
-
+  
   .graph-placeholder img {
     width: 100%;
     max-width: 300px;
     height: auto;
   }
 }
+
 .list-group-item:hover {
-  background-color: #f8f9fa; /* Highlight on hover */
+  background-color: #f8f9fa;
 }
