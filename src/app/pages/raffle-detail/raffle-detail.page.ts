@@ -116,7 +116,7 @@ export class RaffleDetailPage implements OnInit {
     this.router.navigate([`/raffle-detail/${raffleId}`]);
     this.presentToast(`Opening raffle: ${raffleId}`, 'tertiary');
   }
-  
+
 
   navigateToRaffleManagement() {
     this.router.navigate(['/raffle-management']);
@@ -132,4 +132,9 @@ export class RaffleDetailPage implements OnInit {
     this.router.navigate(['/login']);
     this.presentToast('You have been logged out', 'danger');
   }
+
+  navigateToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+
 }

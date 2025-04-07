@@ -3,7 +3,7 @@ $secondary-color: #10b981;
 $light-bg: #f8f9fa;
 $dark-bg: #343a40;
 $text-color: #333;
-$light-text: #fff;
+$lt: #fff;
 $border-radius: 8px;
 $transition-speed: 0.3s;
 $top-bar-height: 60px;
@@ -16,7 +16,6 @@ body {
   padding: 0;
 }
 
-/* Ensure ion-content is pushed down */
 ion-content {
   padding-top: calc($top-bar-height + 1rem);
 }
@@ -24,7 +23,7 @@ ion-content {
 /* Off-Canvas Sidebar */
 .offcanvas {
   background: linear-gradient(135deg, #343a40, #23272b);
-  color: $light-text;
+  color: $lt;
   width: 250px;
   transform: translateX(-100%);
   transition: transform $transition-speed ease;
@@ -43,7 +42,7 @@ ion-content {
 
   .offcanvas-header,
   .offcanvas-body {
-    pointer-events: auto;  // Allow interaction with sidebar content
+    pointer-events: auto;
   }
 
   .offcanvas-header {
@@ -71,7 +70,7 @@ ion-content {
           background: rgba(255, 255, 255, 0.1);
         }
         .sidebar-btn {
-          color: $light-text;
+          color: $lt;
           display: flex;
           align-items: center;
           font-size: 1.1rem;
@@ -249,11 +248,11 @@ ion-content {
     }
     .bg-success {
       background-color: $secondary-color;
-      color: $light-text;
+      color: $lt;
     }
     .bg-secondary {
       background-color: #6c757d;
-      color: $light-text;
+      color: $lt;
     }
   }
 }
@@ -265,7 +264,6 @@ ion-content {
   transition: transform 0.3s ease;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .top-bar {
     flex-direction: column;

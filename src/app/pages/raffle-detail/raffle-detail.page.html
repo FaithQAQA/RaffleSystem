@@ -1,20 +1,23 @@
 <!-- Sidebar -->
-<div
-  class="offcanvas offcanvas-start"
-  id="sidebarMenu"
-  [ngClass]="{'show': isSidebarOpen}"
-  data-bs-backdrop="false"
->
+<div class="offcanvas offcanvas-start" id="sidebarMenu" [ngClass]="{'show': isSidebarOpen}" data-bs-backdrop="false">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title">Admin Panel</h5>
   </div>
   <div class="offcanvas-body">
     <ul class="list-group sidebar-menu">
+      <!-- Dashboard first -->
+      <li class="list-group-item">
+        <button class="btn sidebar-btn" (click)="navigateToDashboard()">
+          <ion-icon name="home-outline"></ion-icon> Dashboard
+        </button>
+      </li>
+      <!-- Then View Raffles -->
       <li class="list-group-item">
         <button class="btn sidebar-btn" (click)="navigateToRaffleManagement()">
           <ion-icon name="eye-outline"></ion-icon> View Raffles
         </button>
       </li>
+      <!-- Finally Create Raffle -->
       <li class="list-group-item">
         <button class="btn sidebar-btn" (click)="navigateToCreateRaffle()">
           <ion-icon name="add-circle-outline"></ion-icon> Create Raffle
