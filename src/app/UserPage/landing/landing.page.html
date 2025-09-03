@@ -1,91 +1,151 @@
-<ion-app>
-  <!-- Header -->
-  <ion-header>
-    <ion-toolbar class="modern-toolbar">
-      <ion-buttons slot="start">
-        <ion-button routerLink="/landing" aria-label="Go to Home">
-          <ion-icon name="home"></ion-icon>
-        </ion-button>
-      </ion-buttons>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOICE Raffles - Enhanced</title>
 
-      <ion-buttons slot="end">
-        <ion-button routerLink="/view-raffles" aria-label="View Raffles">
-          <ion-icon name="ticket-outline"></ion-icon>
-          <ion-label>Raffles</ion-label>
-        </ion-button>
-
-        <ion-button routerLink="/view-cart" aria-label="View Cart">
-          <ion-icon name="cart"></ion-icon>
-          <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
-        </ion-button>
-
-        <!-- 🔔 Notification Center -->
-        <ion-button  aria-label="View Notifications">
-          <ion-icon name="notifications-outline"></ion-icon>
-          <ion-badge *ngIf="notificationCount > 0" color="warning">{{ notificationCount }}</ion-badge>
-        </ion-button>
-
-        <ion-button (click)="logout()" aria-label="Logout">
-          <ion-icon name="log-out-outline"></ion-icon>
-        </ion-button>
-
-        <ion-button (click)="toggleDarkMode()" aria-label="Toggle dark mode">
-          <ion-icon name="moon"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
+  <!-- Ionic Framework -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
 
 
-  <!-- Main Content -->
-  <ion-content class="modern-content ion-padding">
-    <!-- Feature Raffle Section -->
-    <section class="feature-raffle text-center">
-      <h2 class="raffle-title">Our Featured Raffle</h2>
-      <p class="raffle-subtitle">Join us for a chance to win exciting prizes!</p>
-    </section>
+</head>
+<body>
+  <ion-app>
+    <!-- Header -->
+    <ion-header>
+      <ion-toolbar class="modern-toolbar">
+        <!-- Home -->
+        <ion-buttons slot="start">
+          <ion-button routerLink="/landing" aria-label="Go to Home">
+            <ion-icon name="home"></ion-icon>
+            <ion-label>Home</ion-label>
+          </ion-button>
+        </ion-buttons>
 
-    <!-- ARIA Live Region for Announcements -->
-    <div aria-live="polite" class="visually-hidden" id="liveRegion"></div>
+        <!-- Right Actions -->
+        <ion-buttons slot="end">
+          <ion-button routerLink="/view-raffles" aria-label="View Raffles">
+            <ion-icon name="ticket-outline"></ion-icon>
+            <ion-label>Raffles</ion-label>
+          </ion-button>
 
-    <!-- Image Gallery Section -->
-    <ion-grid class="raffle-gallery">
-      <ion-row *ngIf="recentRaffles.length > 0; else noRaffles">
-        <ion-col *ngFor="let raffle of recentRaffles; let i = index" size="12" size-md="4">
-          <ion-card class="raffle-image-card" (click)="goToRaffleDetail(raffle._id)" tabindex="0">
-            <img src="https://placehold.co/600x400" [attr.alt]="'Raffle image for ' + raffle.title" loading="lazy" />
-            <ion-card-header>
-              <ion-card-title>{{ raffle.title }}</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <p>{{ raffle.description }}</p>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
+          <ion-button routerLink="/view-cart" aria-label="View Cart">
+            <ion-icon name="cart"></ion-icon>
+            <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
+            <ion-label>Cart</ion-label>
+          </ion-button>
 
-      <!-- No Raffles Template -->
-      <ng-template #noRaffles>
-        <ion-col size="12" class="text-center">
-          <p>No recent raffles available.</p>
-        </ion-col>
-      </ng-template>
-    </ion-grid>
 
-    <!-- Explore All Raffles Section -->
-    <section class="explore-raffles">
-      <ion-card class="explore-card text-center">
-        <ion-card-header>
-          <ion-card-title class="text-primary fw-bold">Explore All Raffles</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p class="text-muted">
-            Discover all our exciting raffles and get a chance to win amazing prizes. Don't miss out—join now!
-          </p>
-          <ion-button expand="block" color="primary" routerLink="/view-raffles">View All Raffles</ion-button>
-        </ion-card-content>
-      </ion-card>
-    </section>
+
+          <ion-button id="profile-menu-trigger">
+            <ion-icon name="person-circle-outline"></ion-icon>
+            <ion-label>Account</ion-label>
+          </ion-button>
+
+          <ion-popover trigger="profile-menu-trigger" side="bottom" alignment="end">
+            <ng-template>
+              <ion-content>
+                <ion-list>
+                  <ion-item button (click)="toggleDarkMode()">
+                    <ion-icon name="notifications-outline" slot="start"></ion-icon>
+                    <ion-label>View History</ion-label>
+                  </ion-item>
+                  <ion-item button (click)="logout()">
+                    <ion-icon name="log-out-outline" slot="start"></ion-icon>
+                    <ion-label>Logout</ion-label>
+                  </ion-item>
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <!-- Main Content -->
+    <ion-content class="modern-content ion-padding">
+      <!-- Featured Raffles -->
+      <section class="feature-raffle text-center">
+        <h2 class="raffle-title">Our Featured Raffles</h2>
+        <p class="raffle-subtitle">Join us for a chance to win exciting prizes and support a great cause!</p>
+      </section>
+
+      <!-- ARIA Live Region -->
+      <div aria-live="polite" class="visually-hidden" id="liveRegion"></div>
+
+      <!-- Raffles Grid -->
+      <ion-grid class="raffle-gallery">
+        <ion-row>
+          <ion-col *ngFor="let raffle of recentRaffles" size="12" size-md="4" class="raffle-col">
+            <ion-card class="raffle-image-card" (click)="goToRaffleDetail(raffle._id)" tabindex="0">
+              <img src="https://placehold.co/600x400"
+                   [attr.alt]="'Raffle image for ' + raffle.title"
+                   loading="lazy" />
+
+              <ion-card-header>
+                <ion-card-title class="raffle-title-text">{{ raffle.title }}</ion-card-title>
+              </ion-card-header>
+
+              <ion-card-content>
+                <p class="raffle-description">{{ raffle.description }}</p>
+
+                <!-- Price -->
+                <ion-chip color="primary">
+                  <ion-icon name="cash-outline"></ion-icon>
+                  <ion-label>\${{ raffle.ticketPrice }} / ticket</ion-label>
+                </ion-chip>
+
+                <!-- Progress -->
+                <ion-progress-bar
+                  [value]="raffle.ticketsSold / raffle.totalTickets"
+                  color="secondary">
+                </ion-progress-bar>
+                <small>{{ raffle.ticketsSold }} / {{ raffle.totalTickets }} tickets sold</small>
+
+                <!-- Countdown -->
+                <ion-badge color="danger" *ngIf="raffle.endsInDays <= 3">
+                  Ends in {{ raffle.endsInDays }} days!
+                </ion-badge>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+
+        <!-- Empty State -->
+        <ng-template #noRaffles>
+          <ion-row>
+            <ion-col size="12" class="text-center">
+              <div class="no-raffles-message">
+                <ion-icon name="ticket-outline" style="font-size: 4rem; color: var(--ion-color-primary); margin-bottom: 1rem;"></ion-icon>
+                <h3>No Recent Raffles</h3>
+                <p>Check back soon for exciting new raffles!</p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ng-template>
+      </ion-grid>
+
+      <!-- Explore Section -->
+      <section class="explore-raffles">
+        <ion-card class="explore-card text-center">
+          <ion-card-header>
+            <ion-card-title>Explore All Raffles</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>
+              Discover all our exciting raffles and get a chance to win amazing prizes while supporting children who are deaf and hard of hearing.
+            </p>
+            <ion-button expand="block" color="primary" routerLink="/view-raffles">
+              <ion-icon name="ticket-outline" slot="start"></ion-icon>
+              View All Raffles
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </section>
+    </ion-content>
 
     <!-- Footer -->
     <ion-footer class="modern-footer">
@@ -94,14 +154,36 @@
         <p class="footer-text">478 Dundas St. West, P.O. Box 30045</p>
         <p class="footer-text">Oakville, Ontario, L6H 6Y3</p>
         <p class="footer-text">
-          Email:
-          <a href="mailto:admin@voicefordeafkids.com" class="footer-link">adminvoicefordeafkids.com</a>
+          Email: <a href="mailto:admin@voicefordeafkids.com" class="footer-link">adminvoicefordeafkids.com</a>
         </p>
         <p class="footer-note">Please email us and we will respond via email or call back if requested.</p>
       </div>
     </ion-footer>
-  </ion-content>
-</ion-app>
+  </ion-app>
 
-<!-- Bootstrap Bundle for any additional JS components -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Script -->
+  <script>
+
+
+    function announceToScreenReader(message) {
+      const liveRegion = document.getElementById('liveRegion');
+      liveRegion.textContent = message;
+      setTimeout(() => { liveRegion.textContent = ''; }, 1000);
+    }
+
+    // Animation observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const animatedElements = document.querySelectorAll('.raffle-gallery ion-col');
+      animatedElements.forEach(el => observer.observe(el));
+    });
+  </script>
+</body>
+</html>

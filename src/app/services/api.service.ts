@@ -16,7 +16,9 @@ export interface CartItem {
 })
 export class ApiService {
 
-  private baseUrl = 'https://backendserver-euba.onrender.com/api';
+private baseUrl = window.location.hostname === 'localhost'
+  ? 'http://localhost:5000/api'
+  : 'https://backendserver-euba.onrender.com/api';
   private cart = new BehaviorSubject<any[]>([]);
     cart$ = this.cart.asObservable();
     private cartCount = new BehaviorSubject<number>(0);
@@ -193,4 +195,10 @@ getRaffleWinningChance(raffleId: string, userId: string): Observable<any> {
 }
 
 
+
+  getUserRaffles(userId: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/user/${userId}/raffles`);
+  }
 }
+
+

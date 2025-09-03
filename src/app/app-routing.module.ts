@@ -63,6 +63,10 @@ const routes: Routes = [
     path: 'view-cart',
     loadChildren: () => import('./UserPage/view-cart/view-cart.module').then( m => m.ViewCartPageModule)
   },
+  {
+    path: 'view-history',
+    loadChildren: () => import('./UserPage/view-history/view-history.module').then( m => m.ViewHistoryPageModule)
+  },
 
 
 ];

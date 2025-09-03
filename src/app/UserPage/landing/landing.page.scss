@@ -1,145 +1,74 @@
-/* Variables */
-$primary-color: #0D1B2A; // Deep navy blue
-$secondary-color: #1B263B; // Dark slate
-$accent-color: #FCA311; // Vibrant accent orange
-$light-bg: #F8F9FA;
-$light-text: #ffffff;
-$dark-text: #212529;
-$transition-speed: 0.3s;
-$border-radius: 8px;
-
-/* Global Styles */
-body {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: $light-bg;
-  color: $dark-text;
-  transition: background-color $transition-speed, color $transition-speed;
-}
-
-/* Utility for Screen Readers */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-
-/* Toolbar */
-.modern-toolbar {
-  background-color: $primary-color;
-  color: $light-text;
-}
-
-/* Main Content */
-.modern-content {
-  padding: 1rem;
-}
-
-/* Feature Raffle Section */
-.feature-raffle {
-  margin-bottom: 2rem;
-  .raffle-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: $primary-color;
-  }
-  .raffle-subtitle {
-    font-size: 1.1rem;
-    color: $secondary-color;
-  }
-}
-
-/* Raffle Gallery */
-.raffle-gallery {
-  margin-bottom: 2rem;
-  ion-card.raffle-image-card {
-    border-radius: $border-radius;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform $transition-speed ease, box-shadow $transition-speed ease;
-    &:hover,
-    &:focus {
+   .modern-toolbar {
+      --background: #fff;
+      --color: #333;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .modern-content {
+      --background: #fafafa;
+    }
+    .raffle-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin: 1rem 0 0.5rem;
+      color: #222;
+    }
+    .raffle-subtitle {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+    .raffle-image-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .raffle-image-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      outline: none;
     }
-    img {
-      width: 100%;
-      height: auto;
-      transition: transform $transition-speed ease;
+    .raffle-title-text {
+      font-size: 1.1rem;
+      font-weight: 600;
     }
-    &:hover img,
-    &:focus img {
-      transform: scale(1.05);
+    .raffle-description {
+      color: #555;
+      margin: 0.5rem 0 1rem;
     }
-  }
-}
-
-/* Explore All Raffles Section */
-.explore-raffles {
-  margin: 2rem 0;
-  .explore-card {
-    border-radius: $border-radius;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: transform $transition-speed ease, box-shadow $transition-speed ease;
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    .explore-card {
+      margin-top: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .ion-card-title {
-      color: $primary-color;
+    .modern-footer {
+      background: #f8f8f8;
+      padding: 2rem 1rem;
+      text-align: center;
+      border-top: 1px solid #ddd;
     }
-  }
-}
-
-/* Footer */
-.modern-footer {
-  background-color: $secondary-color;
-  color: $light-text;
-  padding: 1.5rem 0;
-  text-align: center;
-  .footer-container {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  .footer-title {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-  .footer-text {
-    font-size: 0.9rem;
-    margin: 0.2rem 0;
-  }
-  .footer-link {
-    color: $accent-color;
-    text-decoration: none;
-    &:hover {
+    .footer-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    .footer-text {
+      margin: 0.25rem 0;
+      color: #555;
+    }
+    .footer-link {
+      color: #0077cc;
+      text-decoration: none;
+    }
+    .footer-link:hover {
       text-decoration: underline;
     }
-  }
-  .footer-note {
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
-    color: lighten($light-text, 20%);
-  }
-}
-
-/* Dark Mode Styles */
-.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-  body {
-    background-color: #121212;
-    color: #e0e0e0;
-  }
-  .modern-toolbar {
-    background-color: #1f1f1f;
-  }
-  .modern-footer {
-    background-color: #1f1f1f;
-  }
-}
+    .footer-note {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #777;
+    }
+    .visually-hidden {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }

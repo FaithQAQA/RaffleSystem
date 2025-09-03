@@ -16,7 +16,6 @@ export class LandingPage implements OnInit {
   isLoading: boolean = true;
   errorMessage: string = '';
   cartItemCount = 0;
-  notificationCount = 3;
   constructor(
     private router: Router,
     private apiService: ApiService,
@@ -37,11 +36,10 @@ export class LandingPage implements OnInit {
     }
   }
 
-  toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
-    this.announce(`Dark mode ${isDarkMode ? 'enabled' : 'disabled'}`);
+  toggleDarkMode()
+  {
+    this.router.navigate(['/view-history'])
+
   }
 
   getRecentRaffles() {
@@ -62,6 +60,8 @@ export class LandingPage implements OnInit {
     });
   }
 
+  
+
   goToRaffleDetail(raffleId: string) {
     if (!raffleId) {
       console.error('Error: Raffle ID is undefined or null');
@@ -70,7 +70,7 @@ export class LandingPage implements OnInit {
     this.router.navigate([`/view-products/${raffleId}`]);
   }
 
-  
+
 
   logout() {
     localStorage.removeItem('adminToken');
