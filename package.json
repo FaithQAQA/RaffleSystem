@@ -34,7 +34,6 @@
     "chart.js": "^4.4.8",
     "ionicons": "^7.0.0",
     "rxjs": "~7.8.0",
-    "swiper": "^11.2.5",
     "tslib": "^2.3.0",
     "voice1": "file:",
     "zone.js": "~0.15.0"

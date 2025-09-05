@@ -10,7 +10,8 @@ import { Router } from '@angular/router';
 export class ViewHistoryPage implements OnInit {
 
   raffles: any[] = [];
-    userId = '67e1daa0be7c113786d34599';
+
+    userId = localStorage.getItem('userId')!
     cartItemCount=0;
   constructor(private apiService: ApiService, private router:Router) { }
 
@@ -45,6 +46,24 @@ export class ViewHistoryPage implements OnInit {
     localStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
   }
+
+  getStatusColor(status: string): string {
+  switch(status) {
+    case 'active': return 'success';
+    case 'completed': return 'primary';
+    case 'cancelled': return 'danger';
+    default: return 'medium';
+  }
+}
+
+getStatusIcon(status: string): string {
+  switch(status) {
+    case 'active': return 'play-circle-outline';
+    case 'completed': return 'checkmark-circle-outline';
+    case 'cancelled': return 'close-circle-outline';
+    default: return 'help-circle-outline';
+  }
+}
 
 
 }

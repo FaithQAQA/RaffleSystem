@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { ViewCartPageRoutingModule } from './view-cart-routing.module';
 
 import { ViewCartPage } from './view-cart.page';
+import { AppHeaderComponent } from "src/app/components/app-header/app-header.component";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ViewCartPageRoutingModule
-  ],
+    ViewCartPageRoutingModule,
+    AppHeaderComponent
+],
   declarations: [ViewCartPage]
 })
 export class ViewCartPageModule {}

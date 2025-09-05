@@ -9,6 +9,10 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class ViewRafflesPage implements OnInit {
+toggleDarkMode() {
+    this.router.navigate(['/view-history'])
+
+}
   darkMode: any;
   raffles: any[] = []; // Stores all raffles
   filteredRaffles: any[] = []; // Stores filtered raffles based on search
@@ -18,8 +22,8 @@ export class ViewRafflesPage implements OnInit {
   categories: string[] = ['Electronics', 'Clothing', 'Home Appliances', 'Accessories']; // Example categories
   cartItemCount = 0;
 
-  displayCount: number = 6; // Number of raffles to display initially
-  incrementCount: number = 6; // Number of raffles to load when clicking "Load More"
+  displayCount: number = 6;
+  incrementCount: number = 6; 
 
   constructor(private router: Router, private apiService: ApiService) {}
 
@@ -48,6 +52,8 @@ export class ViewRafflesPage implements OnInit {
     );
   }
 
+
+
   extractCategories() {
     const uniqueCategories = new Set(this.raffles.map((r) => r.category));
     this.categories = ['All', ...Array.from(uniqueCategories)];
@@ -59,25 +65,30 @@ export class ViewRafflesPage implements OnInit {
   }
 
   // Filter raffles based on search term and selected filter
-  filterRaffles() {
-    let filtered = this.raffles.filter((raffle) => {
-      const matchesSearch = this.searchTerm
-        ? raffle.title.toLowerCase().includes(this.searchTerm.toLowerCase())
-        : true;
+filterRaffles() {
+  let filtered = this.raffles.filter((raffle) => {
+    const title = raffle?.title ?? ''; // Fallback if missing
+    const category = raffle?.category ?? '';
 
-      const matchesCategory =
-        this.selectedFilter === 'all' || raffle.category === this.selectedFilter;
+    const matchesSearch = this.searchTerm
+      ? title.toLowerCase().includes(this.searchTerm.toLowerCase())
+      : true;
 
-      return matchesSearch && matchesCategory;
-    });
+    const matchesCategory =
+      this.selectedFilter === 'all' || category === this.selectedFilter;
 
-    this.filteredRaffles = filtered.slice(0, this.displayCount); // Only display a subset of raffles
-  }
+    return matchesSearch && matchesCategory;
+  });
+
+  this.filteredRaffles = filtered.slice(0, this.displayCount);
+}
 
   logout() {
     localStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
   }
+
+
 
   goToRaffleDetail(raffleId: string) {
     console.log('Navigating to raffle with ID:', raffleId);

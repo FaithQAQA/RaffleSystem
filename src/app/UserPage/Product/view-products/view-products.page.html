@@ -1,42 +1,14 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button routerLink="/landing">
-        <ion-icon name="home"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-
-
-    <ion-buttons slot="end">
-      <ion-button routerLink="/view-raffles">
-        <ion-icon name="ticket-outline"></ion-icon>
-        <ion-label>View Raffles</ion-label>
-      </ion-button>
-
-      <ion-button routerLink="/view-cart">
-        <ion-icon name="cart"></ion-icon>
-        <ion-badge *ngIf="cartItemCount > 0" color="danger">{{ cartItemCount }}</ion-badge>
-      </ion-button>
-
-      <ion-button (click)="logout()">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-
-<ion-content class="ion-padding">
+<app-header></app-header>
+<ion-content class="modern-product-content ion-padding">
   <div class="product-wrapper">
     <div class="product-container">
       <div class="image-container">
-        <img src="https://placehold.co/600x400" alt="Product Image" />
+        <img src="https://placehold.co/600x400" alt="Product Image" class="product-image" />
       </div>
       <div class="info-container">
         <h1 class="title">{{ raffle?.title || 'Product Name' }}</h1>
         <p class="sku">ID: {{ raffle?._id || 'N/A' }}</p>
-        <p class="price"> Price ${{ raffle?.price || '0.00' }}</p>
-
+        <p class="price">Price ${{ raffle?.price || '0.00' }}</p>
         <div class="countdown">
           Countdown: {{ countdown }}
         </div>
@@ -44,10 +16,9 @@
         <div class="ticket-info">
           <h3>Real-Time Ticket Count</h3>
           <p><strong>Total Tickets Sold:</strong> {{ raffleTicketData.totalTickets }}</p>
-          <p><strong>Tickets You have Bougts:</strong> {{ raffleTicketData.userTickets }}</p>
+          <p><strong>Tickets You have Bought:</strong> {{ raffleTicketData.userTickets }}</p>
           <p><strong>Your Winning Chance:</strong> {{ raffleTicketData.winningChance }}%</p>
         </div>
-
         <div class="quantity-selection">
           <label>Quantity:</label>
           <div class="quantity-controls">
@@ -56,11 +27,9 @@
             <ion-button fill="outline" (click)="increaseQuantity()">+</ion-button>
           </div>
         </div>
-
         <div class="buttons">
           <ion-button fill="outline" expand="full" (click)="addToCart()">Add to Cart</ion-button>
         </div>
-
         <div class="product-info">
           <h2>Product Info</h2>
           <p>{{ raffle?.description || 'No description available.' }}</p>
@@ -69,4 +38,5 @@
     </div>
   </div>
 </ion-content>
+
 

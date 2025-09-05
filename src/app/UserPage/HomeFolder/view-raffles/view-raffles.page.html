@@ -1,32 +1,10 @@
-<ion-header>
-  <ion-toolbar class="modern-toolbar">
-    <ion-buttons slot="start">
-      <ion-button routerLink="/landing" aria-label="Home">
-        <ion-icon name="home"></ion-icon>
-      </ion-button>
-    </ion-buttons>
 
-    <ion-buttons slot="end">
-      <ion-button routerLink="/view-raffles" aria-label="View Raffles">
-        <ion-icon name="ticket-outline"></ion-icon>
-        <ion-label>Raffles</ion-label>
-      </ion-button>
-      <ion-button routerLink="/view-cart" aria-label="View Cart" class="cart-button">
-        <ion-icon name="cart"></ion-icon>
-        <ion-badge *ngIf="cartItemCount > 0" color="danger">
-          {{ cartItemCount }}
-        </ion-badge>
-      </ion-button>
-      <ion-button (click)="logout()" aria-label="Logout">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+    <app-header></app-header>
 
-<ion-content class="modern-content">
+
+<ion-content class="modern-content ion-padding">
   <div class="container">
-    <!-- Search and Filter Section -->
+    <!-- Search & Filter -->
     <div class="search-filter d-flex flex-wrap justify-content-center align-items-center mb-4">
       <input
         type="text"
@@ -35,6 +13,7 @@
         placeholder="Search raffles..."
         class="form-control search-input"
         aria-label="Search raffles" />
+
       <select
         [(ngModel)]="selectedFilter"
         (ngModelChange)="filterRaffles()"
@@ -47,27 +26,36 @@
       </select>
     </div>
 
-    <!-- ARIA Live Region for Notifications -->
+    <!-- ARIA Live Region -->
     <div aria-live="polite" class="visually-hidden" id="liveRegion"></div>
 
-    <p class="section-title">Raffles Hub</p>
+    <!-- Section Title -->
+    <p class="section-title text-center">Raffles Hub</p>
+
+    <!-- Raffles Grid -->
     <div class="raffle-grid row justify-content-center">
-      <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let raffle of filteredRaffles; let i = index">
-        <div class="card modern-card" tabindex="0"
+      <div class="col-sm-6 col-md-4 col-lg-3"
+           *ngFor="let raffle of filteredRaffles; let i = index">
+        <div class="card modern-card"
+             tabindex="0"
              (click)="goToRaffleDetail(raffle._id)"
              (mouseenter)="hoverIndex = i"
              (mouseleave)="hoverIndex = -1"
              (focus)="hoverIndex = i"
              (blur)="hoverIndex = -1">
+
+          <!-- Icon -->
           <div class="icon-container" aria-hidden="true">
             <i class="bi bi-ticket-perforated raffle-icon"></i>
           </div>
+
+          <!-- Card Body -->
           <div class="card-body">
             <h5 class="card-title">{{ raffle.title }}</h5>
             <hr class="divider">
-            <p class="card-text">${{ raffle.price }}</p>
+            <p class="card-text">\${{ raffle.price }}</p>
 
-            <!-- Add to Cart Button with Fade-in Interaction -->
+            <!-- Hover Add to Cart -->
             <div class="add-to-cart" *ngIf="hoverIndex === i">
               <button class="btn btn-accent"
                       (click)="addToCart(raffle._id, $event); $event.stopPropagation();"
@@ -80,14 +68,14 @@
       </div>
     </div>
 
-    <!-- Load More Button -->
+    <!-- Load More -->
     <div class="text-center mt-4" *ngIf="filteredRaffles.length < raffles.length">
-      <button class="btn btn-primary" (click)="loadMoreRaffles()">
+      <ion-button expand="block" color="primary" (click)="loadMoreRaffles()">
         Load More
-      </button>
+      </ion-button>
     </div>
 
-    <!-- Social Media Links -->
+    <!-- Social Media -->
     <div class="social-media text-center mt-5">
       <a href="#" class="social-link" aria-label="Facebook">
         <i class="bi bi-facebook"></i>
@@ -105,23 +93,11 @@
   </div>
 
   <!-- Footer -->
-  <ion-footer class="modern-footer">
-    <div class="footer-container">
-      <h3 class="footer-title">VOICE for Children who are Deaf and Hard of Hearing</h3>
-      <p class="footer-text">478 Dundas St. West, P.O. Box 30045</p>
-      <p class="footer-text">Oakville, Ontario L6H 6Y3</p>
-      <p class="footer-text">
-        Email:
-        <a href="mailto:admin@voicefordeafkids.com" class="footer-link">
-          adminvoicefordeafkids.com
-        </a>
-      </p>
-      <p class="footer-note">
-        Please email us and we will respond via email or call back if requested.
-      </p>
-    </div>
-  </ion-footer>
+
+
+  <app-app-footer></app-app-footer>
 </ion-content>
+
 
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">

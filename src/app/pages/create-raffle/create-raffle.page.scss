@@ -1,207 +1,45 @@
-$primary-color: #4f46e5;
-$secondary-color: #10b981;
-$light-bg: #f8f9fa;
-$dark-bg: #343a40;
-$text-color: #333;
-$light-text: #fff;
-$border-radius: 8px;
-$transition-speed: 0.3s;
-$top-bar-height: 60px;
-$extra-spacing: 1rem; // Additional spacing below the top bar
+/* Page Title */
+.page-title {
+  text-align: center;
+  margin-bottom: 2rem;
 
-body {
-  font-family: 'Roboto', sans-serif;
-  background-color: $light-bg;
-  color: $text-color;
-  margin: 0;
-  padding: 0;
-}
+  h2 {
+    font-weight: 600;
+    color: var(--ion-color-primary);
+    margin-bottom: 0.25rem;
+  }
 
-/* Updated Off-Canvas Sidebar (consistent with dashboard) */
-.offcanvas {
-  background: linear-gradient(135deg, #343a40, #23272b);
-  color: $light-text;
-  width: 250px;
-  transform: translateX(-100%);
-  transition: transform $transition-speed ease;
-  position: fixed;
-  top: $top-bar-height; // Below the fixed top bar
-  bottom: 0;
-  z-index: 1050;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.4);
-  
-  &.show {
-    transform: translateX(0);
-  }
-  
-  .offcanvas-header {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    
-    h5 {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-  }
-  
-  .offcanvas-body {
-    padding: 1rem;
-    .sidebar-menu {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      
-      .list-group-item {
-        background: transparent;
-        border: none;
-        padding: 12px 20px;
-        transition: background $transition-speed ease;
-        
-        &:hover {
-          background: rgba(255,255,255,0.1);
-        }
-        
-        .sidebar-btn {
-          color: $light-text;
-          display: flex;
-          align-items: center;
-          font-size: 1.1rem;
-          background: none;
-          border: none;
-          width: 100%;
-          
-          ion-icon {
-            font-size: 1.3rem;
-            margin-right: 10px;
-          }
-        }
-      }
-    }
+  p {
+    color: #666;
+    font-size: 0.95rem;
   }
 }
 
-/* Fixed Top Bar (unified toggle icon style) */
-.top-bar {
+/* Card-style Form */
+.raffle-form-card {
+  background: var(--ion-background-color, #fff);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Two-column grid on desktop */
+.raffle-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Button Group */
+.button-group {
+  margin-top: 2rem;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
-  background-color: $light-bg;
-  border-bottom: 1px solid #ddd;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: $top-bar-height;
-  z-index: 1200;
-  
-  .sidebar-toggle {
-    background: transparent;
-    border: none;
-    font-size: 22px;
-    color: #007bff;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-  
-  .dropdown {
-    position: relative;
-    
-    .btn {
-      background: none;
-      border: none;
-      display: flex;
-      align-items: center;
-      color: $text-color;
-      font-size: 1rem;
-      
-      ion-icon {
-        font-size: 1.5rem;
-        margin-right: 0.5rem;
-      }
-    }
-    
-    .dropdown-menu {
-      border: none;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      border-radius: $border-radius;
-    }
-  }
-}
-
-/* Main Content Area */
-.content {
-  /* Increase margin-top so content is pushed further down below the top bar */
-  margin-top: calc($top-bar-height + $extra-spacing);
-  transition: margin-left 0.3s ease;
-}
-
-/* When sidebar is open, shift content */
-.content:not(.sidebar-collapsed) {
-  margin-left: 250px;
-}
-
-/* When sidebar is collapsed */
-.content.sidebar-collapsed {
-  margin-left: 0;
-}
-
-/* Raffle Form Styling */
-.raffle-form-container {
-  background: #fff;
-  border-radius: $border-radius;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  padding: 1.5rem;
-  max-width: 600px;
-  margin: 2rem auto; // Added top margin for extra spacing
-  ion-item {
-    margin-bottom: 1rem;
-  }
-  
-  .button-group {
-    display: flex;
-    gap: 1rem;
-    
-    ion-button {
-      flex: 1;
-      
-      &:first-child {
-        background: $primary-color;
-        color: $light-text;
-        
-        &:hover {
-          background: darken($primary-color, 10%);
-        }
-      }
-      
-      &:last-child {
-        background: lighten($primary-color, 40%);
-        color: $text-color;
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .top-bar {
-    flex-direction: column;
-    align-items: stretch;
-    height: auto;
-  }
-  
-  .offcanvas {
-    width: 200px;
-    top: auto; // Adjust for mobile if needed
-  }
-  
-  .raffle-form-container {
-    padding: 1rem;
-  }
+  flex-direction: column;
+  gap: 1rem;
 }

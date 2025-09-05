@@ -14,6 +14,10 @@ Chart.register(...registerables);
   standalone: false,
 })
 export class DashboardPage implements OnInit, AfterViewInit {
+userMenuOpen: any;
+toggleUserMenu() {
+throw new Error('Method not implemented.');
+}
 onSearch($event: Event) {
 throw new Error('Method not implemented.');
 }

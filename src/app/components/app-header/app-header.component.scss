@@ -1,0 +1,169 @@
+/* Modern Header with Glassmorphism */
+.modern-header {
+  --background: rgba(255, 255, 255, 0.95);
+  --color: #333;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.modern-toolbar {
+  --background: transparent;
+  --color: #333;
+  padding: 8px 16px;
+  min-height: 70px;
+}
+
+/* Home Button */
+.home-button {
+  --color: #007bff;
+  --border-radius: 12px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  transition: all 0.3s ease;
+}
+
+.home-button:hover {
+  --background: rgba(0, 123, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.home-button ion-icon {
+  font-size: 24px;
+}
+
+/* Navigation Section */
+.nav-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-button {
+  --color: #495057;
+  --border-radius: 12px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 50px;
+}
+
+.nav-button:hover {
+  --background: rgba(0, 123, 255, 0.08);
+  --color: #007bff;
+  transform: translateY(-2px);
+}
+
+.nav-button ion-icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.nav-button ion-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Cart Button Specific Styles */
+.cart-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  border-radius: 9px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Modern Popover */
+.modern-popover {
+  --width: 200px;
+  --border-radius: 16px;
+  --box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.popover-content {
+  --background: white;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.popover-content ion-list {
+  padding: 8px 0;
+}
+
+.menu-item {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --min-height: 48px;
+  --border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover {
+  --background: rgba(0, 123, 255, 0.05);
+}
+
+.menu-item ion-icon {
+  color: #6c757d;
+}
+
+.menu-item ion-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.logout-item:hover {
+  --background: rgba(220, 53, 69, 0.05);
+}
+
+.logout-item:hover ion-icon,
+.logout-item:hover ion-label {
+  color: #dc3545 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav-button ion-label {
+    display: none;
+  }
+
+  .nav-button {
+    min-height: 40px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .nav-section {
+    gap: 4px;
+  }
+
+  .modern-toolbar {
+    padding: 4px 8px;
+    min-height: 60px;
+  }
+}
+
