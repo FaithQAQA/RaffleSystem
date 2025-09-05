@@ -1,7 +1,1 @@
-@import './styles/variables';
-@import './styles/base';
-@import './styles/hero';
-@import './styles/featured-raffles';
-@import './styles/how-it-works';
-@import './styles/countdown';
-@import './styles/cta';
+@use './styles/index' as *;
