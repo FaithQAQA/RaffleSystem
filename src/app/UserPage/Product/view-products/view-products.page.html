@@ -18,6 +18,10 @@
           <p><strong>Total Tickets Sold:</strong> {{ raffleTicketData.totalTickets }}</p>
           <p><strong>Tickets You have Bought:</strong> {{ raffleTicketData.userTickets }}</p>
           <p><strong>Your Winning Chance:</strong> {{ raffleTicketData.winningChance }}%</p>
+          <p class="status" [ngClass]="raffle?.status">
+  Status: {{ raffle?.status | titlecase }}
+</p>
+
         </div>
         <div class="quantity-selection">
           <label>Quantity:</label>
@@ -28,7 +32,13 @@
           </div>
         </div>
         <div class="buttons">
-          <ion-button fill="outline" expand="full" (click)="addToCart()">Add to Cart</ion-button>
+<ion-button
+  expand="block"
+  color="primary"
+  (click)="addToCart()"
+  [disabled]="raffle?.status !== 'active'">
+  Add to Cart
+</ion-button>
         </div>
         <div class="product-info">
           <h2>Product Info</h2>

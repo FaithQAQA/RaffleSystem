@@ -23,6 +23,10 @@
   --padding-end: 12px;
   transition: all 0.3s ease;
 }
+.modern-header, .modern-toolbar {
+  position: relative;
+  z-index: 1000;
+}
 
 .home-button:hover {
   --background: rgba(0, 123, 255, 0.1);
@@ -101,6 +105,11 @@
   --width: 200px;
   --border-radius: 16px;
   --box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  z-index: 2001 !important; /* force above header */
+}
+
+ion-popover {
+  z-index: 2000 !important; /* default Ionic popover */
 }
 
 .popover-content {

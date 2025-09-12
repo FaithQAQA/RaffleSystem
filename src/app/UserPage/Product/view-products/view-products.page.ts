@@ -139,18 +139,31 @@ throw new Error('Method not implemented.');
   }
 
 
-  async addToCart() {
-    this.apiService.addToCart(this.raffle._id, this.quantity);
-    console.log("Added 1 of Test Raffle to cart")
-    // Show toast notification
+ async addToCart() {
+  if (!this.raffle || this.raffle.status !== 'active') {
     const toast = await this.toastController.create({
-      message: `Added ${this.quantity} of ${this.raffle.title} to cart`,
-      duration: 2000,  // Show for 2 seconds
+      message: `This raffle is not active. Tickets cannot be purchased.`,
+      duration: 2000,
       position: 'bottom',
-      color: 'success'
+      color: 'danger'
     });
     await toast.present();
+    return;
   }
+
+  this.apiService.addToCart(this.raffle._id, this.quantity);
+  console.log("Added to cart:", this.raffle.title);
+
+  // Show success toast
+  const toast = await this.toastController.create({
+    message: `Added ${this.quantity} of ${this.raffle.title} to cart`,
+    duration: 2000,
+    position: 'bottom',
+    color: 'success'
+  });
+  await toast.present();
+}
+
 
   fetchTicketCount() {
     console.log('test getting called')

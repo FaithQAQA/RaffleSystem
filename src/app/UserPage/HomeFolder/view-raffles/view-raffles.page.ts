@@ -19,11 +19,12 @@ toggleDarkMode() {
   searchTerm: string = '';
   selectedFilter: string = 'all';
   hoverIndex: number = -1; // Used for showing Add to Cart button on hover
+  selectedStatus: string = 'all';  //  new: status filter
   categories: string[] = ['Electronics', 'Clothing', 'Home Appliances', 'Accessories']; // Example categories
   cartItemCount = 0;
 
   displayCount: number = 6;
-  incrementCount: number = 6; 
+  incrementCount: number = 6;
 
   constructor(private router: Router, private apiService: ApiService) {}
 
@@ -66,22 +67,27 @@ toggleDarkMode() {
 
   // Filter raffles based on search term and selected filter
 filterRaffles() {
-  let filtered = this.raffles.filter((raffle) => {
-    const title = raffle?.title ?? ''; // Fallback if missing
-    const category = raffle?.category ?? '';
+    let filtered = this.raffles.filter((raffle) => {
+      const title = raffle?.title ?? '';
+      const category = raffle?.category ?? '';
+      const status = raffle?.status ?? 'completed'; // fallback
 
-    const matchesSearch = this.searchTerm
-      ? title.toLowerCase().includes(this.searchTerm.toLowerCase())
-      : true;
+      const matchesSearch = this.searchTerm
+        ? title.toLowerCase().includes(this.searchTerm.toLowerCase())
+        : true;
 
-    const matchesCategory =
-      this.selectedFilter === 'all' || category === this.selectedFilter;
+      const matchesCategory =
+        this.selectedFilter === 'all' || category === this.selectedFilter;
 
-    return matchesSearch && matchesCategory;
-  });
+      const matchesStatus =
+        this.selectedStatus === 'all' || status === this.selectedStatus;
 
-  this.filteredRaffles = filtered.slice(0, this.displayCount);
-}
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+
+    this.filteredRaffles = filtered.slice(0, this.displayCount);
+  }
+
 
   logout() {
     localStorage.removeItem('adminToken');

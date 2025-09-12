@@ -24,6 +24,17 @@
           {{ category }}
         </option>
       </select>
+
+        <select
+    [(ngModel)]="selectedStatus"
+    (ngModelChange)="filterRaffles()"
+    class="form-select filter-select"
+    aria-label="Filter by status">
+    <option value="all">All Status</option>
+    <option value="upcoming">Upcoming</option>
+    <option value="active">Active</option>
+    <option value="completed">Completed</option>
+  </select>
     </div>
 
     <!-- ARIA Live Region -->

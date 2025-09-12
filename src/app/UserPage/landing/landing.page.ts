@@ -57,10 +57,12 @@ export class LandingPage implements OnInit {
         .slice(0, 3);
       this.isLoading = false;
       this.announce('Recent raffles loaded successfully.');
+            console.log(this.recentRaffles);
+
     });
   }
 
-  
+
 
   goToRaffleDetail(raffleId: string) {
     if (!raffleId) {

@@ -108,7 +108,7 @@
                       <p class="mb-2">Total (Incl. taxes)</p>
                       <p class="mb-2">${{ totalCost + (totalCost * 0.13) }}</p>
                     </div>
-                    <button type="button" class="btn btn-info btn-block btn-lg">
+                    <button type="button" class="btn btn-info btn-block btn-lg" (click)="buyTickets()">
                       <div class="d-flex justify-content-between">
                         <span> ${{totalCost +  (totalCost * 0.13)  }}</span>
                         <span> Checkout  <i class="fas fa-long-arrow-alt-right ms-2"></i></span>

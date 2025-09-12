@@ -33,7 +33,7 @@
           >
             <div class="card-image-container">
               <img
-                src="{{ raffle.imageUrl }}"
+                src="https://static.thenounproject.com/png/303988-200.png"
                 [attr.alt]="'Raffle image for ' + raffle.title"
                 loading="lazy"
                 class="raffle-image"
@@ -56,7 +56,7 @@
               <!-- Price Chip -->
               <ion-chip color="primary" class="price-chip">
                 <ion-icon name="cash-outline"></ion-icon>
-                <ion-label>\${{ raffle.ticketPrice }} / ticket</ion-label>
+                <ion-label>${{ raffle.price }} / ticket</ion-label>
               </ion-chip>
 
               <!-- Progress Section -->
@@ -66,7 +66,7 @@
                   color="secondary"
                   class="progress-bar"
                 ></ion-progress-bar>
-                <small class="progress-text">{{ raffle.ticketsSold }} / {{ raffle.totalTickets }} tickets sold</small>
+                <small class="progress-text">{{ raffle.totalTicketsSold }} / {{ raffle.totalTicketsSold }} tickets sold</small>
               </div>
 
               <!-- Countdown Badge -->

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
-
+import { AlertController } from '@ionic/angular';
 interface CartItem {
   raffleId: string;
   title?: string; // Add title field to store raffle title
@@ -20,7 +20,9 @@ export class ViewCartPage implements OnInit {
   cartItems: CartItem[] = [];
   totalCost = 0;
   cartItemCount = 0;
-  constructor(private apiService: ApiService, private router: Router) {}
+        UserID=localStorage.getItem('userId');
+
+  constructor(private apiService: ApiService, private router: Router, private alertController: AlertController,) {}
 
   ngOnInit(): void {
     this.apiService.cart$.subscribe((items) => {
@@ -70,6 +72,47 @@ export class ViewCartPage implements OnInit {
     this.apiService.clearCart()
     this.ngOnInit()
     }
+
+
+ async showSuccessPopup() {
+    const alert = await this.alertController.create({
+      header: 'Success',
+      message: 'Tickets purchased successfully!',
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+            this.router.navigate(['/view-raffles']);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  buyTickets() {
+    if (!this.UserID) {
+      console.error('User not logged in');
+      return;
+    }
+
+    this.cartItems.forEach((item) => {
+      const raffleId = item.raffleId;
+      const userId = this.UserID!;
+      const ticketsBought = item.quantity;
+
+      this.apiService.purchaseTickets(raffleId, userId, ticketsBought).subscribe({
+        next: (res) => {
+          console.log(`Success for raffle ${raffleId}:`, res);
+          this.clearCart();
+          this.showSuccessPopup();
+        },
+        error: (err) => console.error(`Error purchasing for raffle ${raffleId}:`, err),
+      });
+    });
+  }
+
 
   // Logout function
   logout() {
