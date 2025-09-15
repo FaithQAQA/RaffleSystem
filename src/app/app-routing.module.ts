@@ -75,7 +75,6 @@ const routes: Routes = [
     pathMatch: 'full'
   },
 
-  // Wildcard route (optional: handle 404)
   {
     path: '**',
     redirectTo: 'login'
@@ -84,7 +83,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes /* remove preloadingStrategy for now */)
+    RouterModule.forRoot(routes )
   ],
   exports: [RouterModule]
 })

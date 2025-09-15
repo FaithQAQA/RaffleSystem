@@ -22,6 +22,11 @@
         <ion-label>Cart</ion-label>
       </ion-button>
 
+       <ion-button  fill="clear" class="nav-button" button (click)="viewHistory()">
+          <ion-icon name="notifications-outline" slot="start"></ion-icon>
+        <ion-label>View History</ion-label>
+      </ion-button>
+
       <!-- Account -->
       <ion-button id="profile-menu-trigger" fill="clear" class="nav-button">
         <ion-icon name="person-circle-outline"></ion-icon>
@@ -31,7 +36,6 @@
   </ion-toolbar>
 </ion-header>
 
-<!-- Move popover HERE, outside header -->
 <ion-popover trigger="profile-menu-trigger" side="bottom" alignment="end" class="modern-popover">
   <ng-template>
     <ion-content class="popover-content">

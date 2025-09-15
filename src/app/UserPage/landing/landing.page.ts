@@ -29,11 +29,7 @@ export class LandingPage implements OnInit {
     this.apiService.loadCart(); // Load cart initially
     this.getRecentRaffles();
 
-    // Initialize dark mode based on saved preference
-    const darkModeSetting = localStorage.getItem('darkMode');
-    if (darkModeSetting === 'enabled') {
-      document.body.classList.add('dark-mode');
-    }
+
   }
 
   toggleDarkMode()
@@ -56,7 +52,7 @@ export class LandingPage implements OnInit {
         .sort((a: any, b: any) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
         .slice(0, 3);
       this.isLoading = false;
-      this.announce('Recent raffles loaded successfully.');
+     // this.announce('Recent raffles loaded successfully.');
             console.log(this.recentRaffles);
 
     });

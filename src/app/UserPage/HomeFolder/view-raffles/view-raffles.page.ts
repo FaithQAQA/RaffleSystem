@@ -109,6 +109,5 @@ filterRaffles() {
     event.stopPropagation(); // Prevent navigation when clicking the button
     console.log('Added to cart:', raffleId);
     this.apiService.addToCart(raffleId, 1);
-    // Add your cart logic here
   }
 }

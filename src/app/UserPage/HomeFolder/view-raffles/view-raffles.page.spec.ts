@@ -9,8 +9,8 @@ describe('ViewRafflesPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ViewRafflesPage],
-      imports: [HttpClientTestingModule], // ✅ Provide HttpClient
-      providers: [ApiService], // ✅ Provide ApiService
+      imports: [HttpClientTestingModule], //  Provide HttpClient
+      providers: [ApiService], //  Provide ApiService
     }).compileComponents();
 
     fixture = TestBed.createComponent(ViewRafflesPage);

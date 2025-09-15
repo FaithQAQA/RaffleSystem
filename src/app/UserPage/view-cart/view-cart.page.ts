@@ -49,7 +49,7 @@ export class ViewCartPage implements OnInit {
 
       this.apiService.getRaffleById(raffleId).subscribe(
         (raffle) => {
-          item.title = raffle.title; // Assign the raffle title
+          item.title = raffle.title;
           item.raffleId = raffle._id
         },
         (error) => console.error('Error fetching raffle details:', error)
