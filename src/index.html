@@ -3,24 +3,38 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Ionic App</title>
-
+  <title>Ionic Raffle App</title>
   <base href="/" />
 
+  <!-- Square Sandbox JS -->
+  <script type="text/javascript" src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+
+  <!-- Content Security Policy -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://sandbox.web.squarecdn.com 'unsafe-inline';
+  style-src 'self' 'unsafe-inline' https://sandbox.web.squarecdn.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+  img-src 'self' data: https://sandbox.web.squarecdn.com https://wallpapersok.com https://media.istockphoto.com https://placehold.co;
+  font-src 'self' https://sandbox.web.squarecdn.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+  connect-src 'self' http://localhost:5000 https://sandbox.web.squarecdn.com https://pci-connect.squareupsandbox.com;
+  frame-src https://sandbox.web.squarecdn.com;
+">
+
+
   <meta name="color-scheme" content="light dark" />
-  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />
 
   <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
-
-  <!-- add to homescreen for ios -->
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 </head>
 
 <body>
   <app-root></app-root>
+
+  <!-- Optional: Polyfills / Ionic scripts -->
+  <script src="build/polyfills.js"></script>
+  <script src="build/main.js"></script>
 </body>
 
 </html>

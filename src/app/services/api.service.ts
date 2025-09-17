@@ -200,12 +200,22 @@ getRaffleWinningChance(raffleId: string, userId: string): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/user/${userId}/raffles`);
   }
 
-purchaseTickets(raffleId: string, userId: string, ticketsBought: number): Observable<any> {
+purchaseTickets(
+  raffleId: string,
+  userId: string,
+  ticketsBought: number,
+  paymentToken: string
+): Observable<any> {
   const url = `${this.baseUrl}/raffles/${raffleId}/purchase`;
   const headers = this.getHeaders();
 
-  return this.http.post(url, { userId, ticketsBought }, { headers });
+  return this.http.post(
+    url,
+    { userId, ticketsBought, paymentToken },
+    { headers }
+  );
 }
+
 
 
 }
