@@ -11,14 +11,19 @@
 
   <!-- Content Security Policy -->
 <meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self' https://sandbox.web.squarecdn.com 'unsafe-inline';
-  style-src 'self' 'unsafe-inline' https://sandbox.web.squarecdn.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
-  img-src 'self' data: https://sandbox.web.squarecdn.com https://wallpapersok.com https://media.istockphoto.com https://placehold.co;
-  font-src 'self' https://sandbox.web.squarecdn.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
-  connect-src 'self' http://localhost:5000 https://sandbox.web.squarecdn.com https://pci-connect.squareupsandbox.com https://backendserver-euba.onrender.com;
-  frame-src https://sandbox.web.squarecdn.com;
+  default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;
+  script-src * 'unsafe-inline' 'unsafe-eval' data: blob:;
+  script-src-elem * 'unsafe-inline' 'unsafe-eval' data: blob:;
+  style-src * 'unsafe-inline' 'unsafe-eval' data: blob:;
+  style-src-elem * 'unsafe-inline' 'unsafe-eval' data: blob:;
+  img-src * data: blob:;
+  font-src * data: blob:;
+  connect-src * ws: wss:;
+  frame-src *;
 ">
+
+
+
 
 
   <meta name="color-scheme" content="light dark" />
