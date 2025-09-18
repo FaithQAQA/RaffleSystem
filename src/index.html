@@ -1,26 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8" />
   <title>Ionic Raffle App</title>
   <base href="/" />
 
   <!-- Square Sandbox JS -->
-  <script type="text/javascript" src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+  <script
+    type="text/javascript"
+    src="https://sandbox.web.squarecdn.com/v1/square.js"
+    crossorigin="anonymous">
+  </script>
 
-  <!-- Content Security Policy -->
 <meta http-equiv="Content-Security-Policy" content="
-  default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;
-  script-src * 'unsafe-inline' 'unsafe-eval' data: blob:;
-  script-src-elem * 'unsafe-inline' 'unsafe-eval' data: blob:;
-  style-src * 'unsafe-inline' 'unsafe-eval' data: blob:;
-  style-src-elem * 'unsafe-inline' 'unsafe-eval' data: blob:;
-  img-src * data: blob:;
-  font-src * data: blob:;
-  connect-src * ws: wss:;
-  frame-src *;
+  default-src 'self';
+
+  script-src 'self' 'unsafe-inline' 'unsafe-eval'
+    https://sandbox.web.squarecdn.com
+    https://connect.squareupsandbox.com;
+
+  style-src 'self' 'unsafe-inline'
+    https://fonts.googleapis.com
+    https://cdn.jsdelivr.net
+    https://sandbox.web.squarecdn.com;
+
+  connect-src 'self'
+    http://localhost:5000
+    https://backendserver-euba.onrender.com
+    https://sandbox.web.squarecdn.com
+    https://connect.squareupsandbox.com
+    https://pci-connect.squareupsandbox.com
+    https://*.cardinalcommerce.com;
+
+  font-src 'self'
+    https://fonts.gstatic.com
+    https://sandbox.web.squarecdn.com
+    https://cdn.jsdelivr.net
+    https://square-fonts-production-f.squarecdn.com
+    https://d1g145x70srn7h.cloudfront.net;
+
+  img-src 'self' data:
+  https://sandbox.web.squarecdn.com
+  https://wallpapersok.com
+  https://placehold.co;
+
+
+  frame-src 'self'
+    https://sandbox.web.squarecdn.com
+    https://*.cardinalcommerce.com;
+
+  object-src 'none';
+  base-uri 'self';
 ">
+
 
 
 
@@ -32,14 +64,14 @@
   <meta name="msapplication-tap-highlight" content="no" />
 
   <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
 </head>
-
 <body>
   <app-root></app-root>
-
-  <!-- Optional: Polyfills / Ionic scripts -->
   <script src="build/polyfills.js"></script>
   <script src="build/main.js"></script>
 </body>
-
 </html>
