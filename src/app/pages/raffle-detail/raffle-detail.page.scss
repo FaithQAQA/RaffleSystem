@@ -1,37 +1,30 @@
 
 
-/* Dashboard Container */
 .dashboard-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  /* Sidebar default width when open */
   margin-left: 250px;
-  /* Smooth transition when toggling sidebar */
   transition: margin-left 0.3s ease;
 
-  /* Push all content down below the fixed top bar */
   padding-top: 60px;
 }
 
-/* When sidebar is closed, remove left margin */
 .sidebar-collapsed {
   margin-left: 0;
 }
 
-/* Remove the old margin-top on ion-content */
 .dashboard-container ion-content {
   margin-top: 0;
   transition: margin-left 0.3s ease;
 }
 
-/* Updated Off-Canvas Sidebar Styling */
 .offcanvas {
   background: linear-gradient(135deg, #343a40, #23272b);
   color: #fff;
   width: 250px !important;
   position: fixed;
-  top: 60px; // Placed just below the top bar
+  top: 60px;
   bottom: 0;
   z-index: 1050;
   transform: translateX(-100%);
@@ -73,7 +66,7 @@
 }
 
 .offcanvas {
-  z-index: 1040; /* Ensure sidebar is above other content */
+  z-index: 1040;
 }
 
 .sidebar-btn {
@@ -103,7 +96,6 @@
   }
 }
 
-/* Unified Sidebar Toggle Button */
 .sidebar-toggle {
   background: transparent;
   border: none;
@@ -125,7 +117,7 @@
   padding: 10px 15px;
   background: #f8f9fa;
   border-bottom: 1px solid #ddd;
-  z-index: 1050; /* Ensure top bar is above sidebar */
+  z-index: 1050;
 }
 
 /* Raffle Detail Page Styling */
@@ -165,7 +157,7 @@ ion-button.mt-2 {
 
 ion-label {
   font-weight: 600;
-  color: #000 !important; /* Change to black or any contrasting color */
+  color: #000 !important;
 
 }
 
@@ -210,7 +202,6 @@ ion-button {
   padding: 20px;
 }
 
-/* Optional: Add some padding to the top of the form for better spacing */
 .centered-form ion-card-header {
   padding-top: 20px;
 }

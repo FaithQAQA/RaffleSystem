@@ -20,7 +20,7 @@ describe('LoginPage', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [LoginPage],
-      imports: [HttpClientTestingModule, RouterTestingModule], // ✅ Ensure HttpClientTestingModule is imported
+      imports: [HttpClientTestingModule, RouterTestingModule],
       providers: [ApiService, ToastController],
     }).compileComponents();
 
@@ -53,9 +53,9 @@ describe('LoginPage', () => {
       expect(loginSpy).toHaveBeenCalledWith(email, password);
       expect(toastController.create).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          message: 'An unexpected error occurred. Please try again.', // ✅ Matches actual component message
-          duration: 3000, // ✅ Matches actual component duration
-          position: 'top', // ✅ Matches actual component position
+          message: 'An unexpected error occurred. Please try again.',
+          duration: 3000,
+          position: 'top',
           color: 'danger',
         })
       );
@@ -72,13 +72,12 @@ describe('LoginPage', () => {
 
       component.email = email;
       component.password = password;
-      await component.login(); // Ensure async execution
+      await component.login();
 
       expect(loginSpy).toHaveBeenCalledWith(email, password);
       expect(toastController.create).toHaveBeenCalledWith({
-        message: 'Invalid email or password', // Match actual component message
-        duration: 3000, // Match actual component duration
-        position: 'top', // Match actual component position
+        message: 'Invalid email or password',
+        duration: 3000,
         color: 'danger',
       });
       expect(toastSpy.present).toHaveBeenCalled();

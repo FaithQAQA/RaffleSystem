@@ -33,5 +33,4 @@ describe('DashboardPage', () => {
     expect(component).toBeTruthy();
   });
 
-  // Add other test cases for your component
 });

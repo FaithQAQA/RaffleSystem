@@ -1,4 +1,3 @@
-/* Modern Header with Glassmorphism */
 .modern-header {
   --background: rgba(255, 255, 255, 0.95);
   --color: #333;
@@ -15,7 +14,6 @@
   min-height: 70px;
 }
 
-/* Home Button */
 .home-button {
   --color: #007bff;
   --border-radius: 12px;
@@ -37,7 +35,6 @@
   font-size: 24px;
 }
 
-/* Navigation Section */
 .nav-section {
   display: flex;
   align-items: center;
@@ -75,7 +72,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Cart Button Specific Styles */
 .cart-container {
   position: relative;
   display: flex;
@@ -100,7 +96,6 @@
   100% { transform: scale(1); }
 }
 
-/* Modern Popover */
 .modern-popover {
   --width: 200px;
   --border-radius: 16px;
@@ -109,7 +104,7 @@
 }
 
 ion-popover {
-  z-index: 2000 !important; /* default Ionic popover */
+  z-index: 2000 !important;
 }
 
 .popover-content {
@@ -152,7 +147,6 @@ ion-popover {
   color: #dc3545 !important;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .nav-button ion-label {
     display: none;

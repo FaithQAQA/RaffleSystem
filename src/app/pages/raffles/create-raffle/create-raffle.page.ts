@@ -4,6 +4,8 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app-create-raffle',
   templateUrl: './create-raffle.page.html',
   styleUrls: ['./create-raffle.page.scss'],
+    standalone: false,
+
 })
 export class CreateRafflePage implements OnInit {
 

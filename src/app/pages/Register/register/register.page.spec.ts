@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RegisterPage } from './register.page';
-import { HttpClientTestingModule } from '@angular/common/http/testing'; // ✅ Import this
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ApiService } from 'src/app/services/api.service';
 describe('RegisterPage', () => {
   let component: RegisterPage;
@@ -8,9 +8,9 @@ describe('RegisterPage', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule], // ✅ Add this line
+      imports: [HttpClientTestingModule],
       declarations: [RegisterPage],
-      providers: [ApiService], // ✅ Ensure ApiService is provided
+      providers: [ApiService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegisterPage);

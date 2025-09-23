@@ -53,7 +53,7 @@ export class ViewCartPage implements OnInit, AfterViewInit {
   async ngAfterViewInit() {
     try {
       if (!window.Square) {
-        console.error('❌ Square.js not loaded. Make sure the script is in index.html');
+        console.error(' Square.js not loaded. Make sure the script is in index.html');
         return;
       }
 
@@ -64,9 +64,9 @@ export class ViewCartPage implements OnInit, AfterViewInit {
 
       this.card = await payments.card();
       await this.card.attach('#card-container');
-      console.log('✅ Square Card attached to #card-container');
+      console.log(' Square Card attached to #card-container');
     } catch (err) {
-      console.error('❌ Square init failed:', err);
+      console.error(' Square init failed:', err);
     }
   }
 
@@ -119,12 +119,12 @@ export class ViewCartPage implements OnInit, AfterViewInit {
 
   async buyTickets() {
     if (!this.UserID) {
-      console.error('❌ User not logged in');
+      console.error(' User not logged in');
       return;
     }
 
     if (!this.card) {
-      console.error('❌ Card element not initialized');
+      console.error(' Card element not initialized');
       return;
     }
 
@@ -133,7 +133,7 @@ export class ViewCartPage implements OnInit, AfterViewInit {
 
       if (result.status !== 'OK') {
         const errorMsg = result.errors?.[0]?.message || 'Payment failed';
-        console.error('❌ Tokenization failed:', result.errors);
+        console.error(' Tokenization failed:', result.errors);
         const errorDiv = document.getElementById('card-errors');
         if (errorDiv) errorDiv.innerText = errorMsg;
         return;
@@ -151,16 +151,16 @@ export class ViewCartPage implements OnInit, AfterViewInit {
           .purchaseTickets(raffleId, userId, ticketsBought, paymentToken)
           .subscribe({
             next: async (res) => {
-              console.log(`✅ Success for raffle ${raffleId}:`, res);
+              console.log(` Success for raffle ${raffleId}:`, res);
               this.clearCart();
               await this.showSuccessPopup();
             },
             error: (err) =>
-              console.error(`❌ Error purchasing for raffle ${raffleId}:`, err),
+              console.error(` Error purchasing for raffle ${raffleId}:`, err),
           });
       }
     } catch (err) {
-      console.error('❌ Error during tokenize:', err);
+      console.error(' Error during tokenize:', err);
     }
   }
 

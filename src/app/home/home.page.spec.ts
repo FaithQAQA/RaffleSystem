@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { HomePage } from './home.page';
-import { HttpClientTestingModule } from '@angular/common/http/testing'; // ✅ Import this
-import { ApiService } from '../services/api.service'; // ✅ Import ApiService
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ApiService } from '../services/api.service';
 
 describe('HomePage', () => {
   let component: HomePage;
@@ -11,8 +11,8 @@ describe('HomePage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [HomePage],
-      imports: [IonicModule.forRoot(), HttpClientTestingModule], // ✅ Add HttpClientTestingModule
-      providers: [ApiService], // ✅ Provide ApiService
+      imports: [IonicModule.forRoot(), HttpClientTestingModule],
+      providers: [ApiService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomePage);

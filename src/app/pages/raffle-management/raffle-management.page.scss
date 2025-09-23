@@ -204,7 +204,6 @@ ion-content {
   width: 100%;
 }
 
-/* Updated List Group Styling */
 .list-group {
   width: 100%;
   box-sizing: border-box;
@@ -257,7 +256,6 @@ ion-content {
   }
 }
 
-/* Zoom effect for list group when sidebar is closed */
 .container.sidebar-collapsed .list-group {
   transform: scale(1.05);
   transform-origin: left center;

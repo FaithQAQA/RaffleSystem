@@ -8,7 +8,7 @@ describe('ApiService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule], // ✅ Fixed duplicate import
+      imports: [HttpClientTestingModule],
       providers: [ApiService],
     });
 
@@ -36,7 +36,7 @@ describe('ApiService', () => {
         expect(localStorage.setItem).toHaveBeenCalledWith('token', 'dummyToken');
       });
 
-      const req = httpMock.expectOne(`${service['baseUrl']}/auth/login`); // ✅ Fixed reference
+      const req = httpMock.expectOne(`${service['baseUrl']}/auth/login`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ email, password });
       req.flush(mockResponse);
@@ -54,7 +54,7 @@ describe('ApiService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`${service['baseUrl']}/auth/register`); // ✅ Fixed reference
+      const req = httpMock.expectOne(`${service['baseUrl']}/auth/register`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ username, email, password });
       req.flush(mockResponse);

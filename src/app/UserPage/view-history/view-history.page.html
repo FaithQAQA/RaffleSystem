@@ -2,21 +2,38 @@
   <ion-toolbar class="modern-toolbar">
     <!-- Home -->
     <ion-buttons slot="start">
-      <ion-button routerLink="/landing" fill="clear" class="home-button" aria-label="Go to Home">
+      <ion-button
+        routerLink="/landing"
+        fill="clear"
+        class="home-button"
+        aria-label="Go to Home"
+      >
         <ion-icon name="home"></ion-icon>
         <ion-label>Home</ion-label>
       </ion-button>
     </ion-buttons>
     <!-- Right Actions -->
     <ion-buttons slot="end" class="nav-section">
-      <ion-button routerLink="/view-raffles" fill="clear" class="nav-button" aria-label="View Raffles">
+      <ion-button
+        routerLink="/view-raffles"
+        fill="clear"
+        class="nav-button"
+        aria-label="View Raffles"
+      >
         <ion-icon name="ticket-outline"></ion-icon>
         <ion-label>Raffles</ion-label>
       </ion-button>
-      <ion-button routerLink="/view-cart" fill="clear" class="nav-button cart-button" aria-label="View Cart">
+      <ion-button
+        routerLink="/view-cart"
+        fill="clear"
+        class="nav-button cart-button"
+        aria-label="View Cart"
+      >
         <div class="cart-container">
           <ion-icon name="cart"></ion-icon>
-          <ion-badge *ngIf="cartItemCount > 0" color="danger" class="cart-badge">{{ cartItemCount }}</ion-badge>
+          <ion-badge *ngIf="cartItemCount > 0" color="danger" class="cart-badge"
+            >{{ cartItemCount }}</ion-badge
+          >
         </div>
         <ion-label>Cart</ion-label>
       </ion-button>
@@ -24,7 +41,12 @@
         <ion-icon name="person-circle-outline"></ion-icon>
         <ion-label>Account</ion-label>
       </ion-button>
-      <ion-popover trigger="profile-menu-trigger" side="bottom" alignment="end" class="modern-popover">
+      <ion-popover
+        trigger="profile-menu-trigger"
+        side="bottom"
+        alignment="end"
+        class="modern-popover"
+      >
         <ng-template>
           <ion-content class="popover-content">
             <ion-list>
@@ -53,7 +75,11 @@
 
   <!-- Raffle List -->
   <div class="history-container" *ngIf="raffles.length > 0; else noData">
-    <div class="raffle-card" *ngFor="let raffle of raffles; let i = index" [style.animation-delay]="(i * 0.1) + 's'">
+    <div
+      class="raffle-card"
+      *ngFor="let raffle of raffles; let i = index"
+      [style.animation-delay]="(i * 0.1) + 's'"
+    >
       <div class="card-content">
         <div class="raffle-header">
           <h2 class="raffle-title">{{ raffle.title }}</h2>
@@ -73,8 +99,11 @@
           <div class="detail-item" *ngIf="raffle.status === 'completed'">
             <ion-icon name="trophy-outline" class="detail-icon"></ion-icon>
             <span class="detail-label">Result:</span>
-            <span class="detail-value" [class]="raffle.didUserWin ? 'win-text' : 'lose-text'">
-              {{ raffle.didUserWin ? 'You Won 🎉' : 'You Lost ❌' }}
+            <span
+              class="detail-value"
+              [class]="raffle.didUserWin ? 'win-text' : 'lose-text'"
+            >
+              {{ raffle.didUserWin ? 'You Won ' : 'You Lost ' }}
             </span>
           </div>
         </div>
@@ -88,11 +117,14 @@
       <ion-icon name="ticket-outline" class="empty-icon"></ion-icon>
       <h2 class="empty-title">No Raffle History</h2>
       <p class="empty-text">You haven't joined any raffles yet.</p>
-      <ion-button routerLink="/view-raffles" color="primary" class="empty-action-btn">
+      <ion-button
+        routerLink="/view-raffles"
+        color="primary"
+        class="empty-action-btn"
+      >
         <ion-icon name="ticket-outline" slot="start"></ion-icon>
         Browse Raffles
       </ion-button>
     </div>
   </ng-template>
 </ion-content>
-

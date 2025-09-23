@@ -6,11 +6,11 @@ import { Router } from '@angular/router';
 
 
  interface raffleData  {
-  title: string; // Changed from 'name' to 'title' to match the backend structure
+  title: string;
   description: string
   _id: string
-  raffleItems: [], // Assuming an empty array for now
-  participants: [] // Assuming an empty array for now
+  raffleItems: [],
+  participants: []
 };
 
 
