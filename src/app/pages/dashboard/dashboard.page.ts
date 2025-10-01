@@ -14,24 +14,24 @@ Chart.register(...registerables);
   standalone: false,
 })
 export class DashboardPage implements OnInit, AfterViewInit {
-userMenuOpen: any;
-toggleUserMenu() {
-throw new Error('Method not implemented.');
-}
-onSearch($event: Event) {
-throw new Error('Method not implemented.');
-}
+  userMenuOpen: any;
+
   recentRaffles: any[] = [];
   allRaffles: any[] = [];
   totalRaffles: number = 0;
   activeRaffles: number = 0;
+  upcomingRaffles: number = 0;
+  completedRaffles: number = 0;
+
   isLoading: boolean = true;
   errorMessage: string = '';
 
   @ViewChild('raffleChart') raffleChart!: ElementRef;
   @ViewChild('salesChart') salesChartCanvas!: ElementRef;
 
-  chart: any;
+  raffleChartInstance: any;
+  salesChartInstance: any;
+
   isSidebarOpen = true;
 
   constructor(
@@ -67,7 +67,7 @@ throw new Error('Method not implemented.');
       })
     ).subscribe(response => {
       this.recentRaffles = response
-        .sort((a: { startDate: string | number | Date; }, b: { startDate: string | number | Date; }) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+        .sort((a: { startDate: string }, b: { startDate: string }) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
         .slice(0, 3)
         .map((raffle: any) => ({ ...raffle, progress: this.calculateProgress(raffle) }));
       this.isLoading = false;
@@ -77,15 +77,19 @@ throw new Error('Method not implemented.');
   getAllRafflesWithStatus() {
     this.apiService.getAllRaffles().subscribe(
       raffles => {
-        this.allRaffles = raffles.map((raffle: { startDate: string | number | Date; endDate: string | number | Date; }) => {
+        this.allRaffles = raffles.map((raffle: { startDate: string; endDate: string }) => {
           const now = Date.now();
           const start = new Date(raffle.startDate).getTime();
           const end = new Date(raffle.endDate).getTime();
           let status = now < start ? 'Upcoming' : now <= end ? 'Active' : 'Completed';
           return { ...raffle, status };
         });
+
         this.totalRaffles = this.allRaffles.length;
         this.activeRaffles = this.allRaffles.filter(r => r.status === 'Active').length;
+        this.upcomingRaffles = this.allRaffles.filter(r => r.status === 'Upcoming').length;
+        this.completedRaffles = this.allRaffles.filter(r => r.status === 'Completed').length;
+
         this.loadAllRafflesForChart();
       },
       error => {
@@ -105,15 +109,15 @@ throw new Error('Method not implemented.');
 
   createChart() {
     if (!this.raffleChart?.nativeElement) return;
-    if (this.chart) this.chart.destroy();
+    if (this.raffleChartInstance) this.raffleChartInstance.destroy();
 
-    this.chart = new Chart(this.raffleChart.nativeElement, {
+    this.raffleChartInstance = new Chart(this.raffleChart.nativeElement, {
       type: 'doughnut',
       data: {
-        labels: ['Active Raffles', 'Inactive Raffles'],
+        labels: ['Active Raffles', 'Upcoming Raffles', 'Completed Raffles'],
         datasets: [{
-          data: [this.activeRaffles, this.totalRaffles - this.activeRaffles],
-          backgroundColor: ['#4CAF50', '#FF5733'],
+          data: [this.activeRaffles, this.upcomingRaffles, this.completedRaffles],
+          backgroundColor: ['#4CAF50', '#2196F3', '#FF5733'], // green, blue, red
         }],
       },
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
@@ -125,49 +129,38 @@ throw new Error('Method not implemented.');
     const ctx = this.salesChartCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['January', 'February', 'March', 'April', 'May'],
-        datasets: [{
-          label: 'Sales (Temp Money)',
-          data: [10, 20, 30, 40, 50],
-          borderColor: 'rgba(0, 123, 255, 0.8)',
-          fill: false,
-        }]
-      },
-      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+    this.apiService.getMonthlySales().subscribe((data) => {
+      const labels = data.map(d => `${d.year}-${String(d.month).padStart(2, '0')}`);
+      const salesData = data.map(d => d.totalSales);
+
+      if (this.salesChartInstance) this.salesChartInstance.destroy();
+
+      this.salesChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Monthly Sales ($)',
+            data: salesData,
+            borderColor: 'rgba(0, 123, 255, 0.8)',
+            backgroundColor: 'rgba(0, 123, 255, 0.3)',
+            fill: true,
+            tension: 0.3,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
     });
   }
 
   loadAllRafflesForChart() {
-    this.apiService.getAllRaffles().subscribe(
-      allRaffles => this.updateChartWithAllRaffles(allRaffles),
-      error => console.error('Error fetching all raffles:', error)
-    );
-  }
-
-  updateChartWithAllRaffles(allRaffles: any[]) {
-    if (!this.raffleChart?.nativeElement) return;
-    if (this.chart) this.chart.destroy();
-
-    const activeAllRaffles = allRaffles.filter(r => {
-      const start = new Date(r.startDate).getTime();
-      const end = new Date(r.endDate).getTime();
-      return Date.now() >= start && Date.now() <= end;
-    }).length;
-
-    this.chart = new Chart(this.raffleChart.nativeElement, {
-      type: 'doughnut',
-      data: {
-        labels: ['Active Raffles (All)', 'Inactive Raffles (All)'],
-        datasets: [{
-          data: [activeAllRaffles, allRaffles.length - activeAllRaffles],
-          backgroundColor: ['#4CAF50', '#FF5733'],
-        }],
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-    });
+    this.createChart(); // just use computed values
   }
 
   async presentToast(message: string, color: string) {
@@ -184,7 +177,6 @@ throw new Error('Method not implemented.');
   }
 
   navigateToRaffleDetail(raffleId: number) {
-   // this.router.navigate([/raffle-detail/${raffleId}]);
     this.router.navigate([`/raffle-detail/${raffleId}`]);
     this.presentToast(`Opening raffle: ${raffleId}`, 'tertiary');
   }
@@ -198,5 +190,4 @@ throw new Error('Method not implemented.');
     this.router.navigate(['/create-raffle']);
     this.presentToast('Navigating to Create Raffle', 'success');
   }
-
 }

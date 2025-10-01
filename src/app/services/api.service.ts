@@ -200,6 +200,13 @@ getRaffleWinningChance(raffleId: string, userId: string): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/user/${userId}/raffles`);
   }
 
+// sales.service.ts
+getMonthlySales(): Observable<any[]> {
+  const url = `${this.baseUrl}/orders/monthly-sales`;
+  const headers = this.getHeaders();
+  return this.http.get<any[]>(url, { headers }).pipe(catchError(this.handleError));
+}
+
 purchaseTickets(
   raffleId: string,
   userId: string,

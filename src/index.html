@@ -16,6 +16,7 @@
   default-src 'self';
 
   script-src 'self' 'unsafe-inline' 'unsafe-eval'
+    http://localhost:4200
     https://sandbox.web.squarecdn.com
     https://connect.squareupsandbox.com;
 
@@ -25,6 +26,7 @@
     https://sandbox.web.squarecdn.com;
 
   connect-src 'self'
+    http://localhost:4200
     http://localhost:5000
     https://backendserver-euba.onrender.com
     https://sandbox.web.squarecdn.com
@@ -40,10 +42,9 @@
     https://d1g145x70srn7h.cloudfront.net;
 
   img-src 'self' data:
-  https://sandbox.web.squarecdn.com
-  https://wallpapersok.com
-  https://placehold.co;
-
+    https://sandbox.web.squarecdn.com
+    https://wallpapersok.com
+    https://placehold.co;
 
   frame-src 'self'
     https://sandbox.web.squarecdn.com
@@ -52,7 +53,6 @@
   object-src 'none';
   base-uri 'self';
 ">
-
 
 
 
@@ -71,7 +71,6 @@
 </head>
 <body>
   <app-root></app-root>
-  <script src="build/polyfills.js"></script>
-  <script src="build/main.js"></script>
+
 </body>
 </html>
