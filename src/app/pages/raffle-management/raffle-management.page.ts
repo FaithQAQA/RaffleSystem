@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-raffle-management',
@@ -15,7 +16,7 @@ export class RaffleManagementPage implements OnInit {
   selectedFilter: string = 'all';
   isSidebarOpen = true; // Sidebar is initially open
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(private apiService: ApiService, private router: Router, private toastController: ToastController) {}
 
   ngOnInit() {
     this.loadRaffles();
@@ -83,5 +84,15 @@ export class RaffleManagementPage implements OnInit {
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastController.create({ message, duration: 2000, color });
+    await toast.present();
+  }
+
+  exportCSV(raffleId: string) {
+    this.apiService.exportRaffleToCSV(raffleId);
+    this.presentToast('Exporting raffle data...', 'primary');
   }
 }

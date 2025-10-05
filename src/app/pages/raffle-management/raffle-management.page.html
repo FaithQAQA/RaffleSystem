@@ -102,8 +102,16 @@
             <div><strong>Raised:</strong> ${{ raffle.raised }}</div>
           </div>
         </div>
-        <span *ngIf="raffle.status === 'active'" class="badge bg-success">Active</span>
-        <span *ngIf="raffle.status === 'completed'" class="badge bg-secondary">Completed</span>
+        <div>
+          <span *ngIf="raffle.status === 'active'" class="badge bg-success">Active</span>
+          <span *ngIf="raffle.status === 'completed'" class="badge bg-secondary">Completed</span>
+        </div>
+        <div>
+          <button class="btn btn-primary btn-sm ms-2"
+                (click)="exportCSV(raffle._id); $event.stopPropagation()">
+                  <ion-icon name="download-outline"></ion-icon> Export Raffle Data
+          </button>
+        </div>
       </li>
     </ul>
   </div>

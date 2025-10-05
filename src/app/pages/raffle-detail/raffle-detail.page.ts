@@ -137,4 +137,9 @@ export class RaffleDetailPage implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 
+  exportCSV(raffleId: string) {
+    this.apiService.exportRaffleToCSV(raffleId);
+    this.presentToast('Exporting raffle data...', 'primary');
+  }
+
 }

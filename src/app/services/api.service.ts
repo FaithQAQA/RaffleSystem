@@ -223,6 +223,24 @@ purchaseTickets(
   );
 }
 
+exportRaffleToCSV(raffleId: string): void {
+  const url = `${this.baseUrl}/raffles/${raffleId}/export`;
+  const headers = this.getHeaders();
 
+  this.http.get(url, { headers, responseType: 'blob' }).subscribe({
+    next: (blob) => {
+      const a = document.createElement('a');
+      const objectUrl = window.URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = `raffle_${raffleId}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(objectUrl);
+    },
+    error: (err) => {
+      console.error('Failed to export raffle CSV', err);
+      alert('Error exporting raffle data.');
+    },
+  });
+}
 
 }

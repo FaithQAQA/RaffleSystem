@@ -94,6 +94,10 @@
                 Progress: {{ raffle.progress | number:'1.0-0' }}%
               </p>
             </div>
+              <button class="btn btn-primary btn-sm ms-2"
+              (click)="exportCSV(raffle._id); $event.stopPropagation()">
+                <ion-icon name="download-outline"></ion-icon> Export Raffle Data
+              </button>
           </div>
         </li>
       </ul>

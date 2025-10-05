@@ -129,6 +129,10 @@
       <ion-button expand="block" color="danger" (click)="deleteRaffle()"
         >Delete Raffle</ion-button
       >
+      <ion-button expand="block" color="tertiary"
+            (click)="exportCSV(raffle._id); $event.stopPropagation()">
+        <ion-icon name="download-outline"></ion-icon> Export Raffle Data
+      </ion-button>
     </div>
   </form>
 </ion-content>

@@ -190,4 +190,9 @@ export class DashboardPage implements OnInit, AfterViewInit {
     this.router.navigate(['/create-raffle']);
     this.presentToast('Navigating to Create Raffle', 'success');
   }
+
+  exportCSV(raffleId: string) {
+    this.apiService.exportRaffleToCSV(raffleId);
+    this.presentToast('Exporting raffle data...', 'primary');
+  }
 }
