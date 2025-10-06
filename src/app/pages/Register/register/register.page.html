@@ -7,7 +7,7 @@
         <a routerLink="/login" class="text-primary">Already have an account?</a>
       </div>
 
-      <!-- Username Input -->
+      <!-- Username -->
       <div class="form-group mb-3">
         <label for="username" class="form-label">Username</label>
         <input
@@ -20,7 +20,7 @@
         />
       </div>
 
-      <!-- Email Input -->
+      <!-- Email -->
       <div class="form-group mb-3">
         <label for="email" class="form-label">Email Address</label>
         <input
@@ -33,22 +33,58 @@
         />
       </div>
 
-      <!-- Password Input -->
+      <!-- Password -->
       <div class="form-group mb-3 position-relative">
         <label for="password" class="form-label">Password</label>
         <input
-          type="password"
+          [type]="showPassword ? 'text' : 'password'"
           [(ngModel)]="user.password"
           class="form-control"
           id="password"
           placeholder="Enter password"
           required
         />
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+          (click)="togglePasswordVisibility()"
+        >
+          <i [ngClass]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+        </button>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group mb-3 position-relative">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          [(ngModel)]="user.confirmPassword"
+          class="form-control"
+          id="confirmPassword"
+          placeholder="Re-enter password"
+          required
+        />
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+          (click)="toggleConfirmPasswordVisibility()"
+        >
+          <i [ngClass]="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+        </button>
+      </div>
+
+      <!-- Password Mismatch Warning -->
+      <div *ngIf="user.password && user.confirmPassword && user.password !== user.confirmPassword" class="text-danger small mb-2">
+        Passwords do not match.
       </div>
 
       <!-- Register Button -->
       <div class="d-grid mt-4">
-        <button class="btn btn-primary btn-block" (click)="register()">
+        <button
+          class="btn btn-primary btn-block"
+          [disabled]="user.password !== user.confirmPassword"
+          (click)="register()"
+        >
           Register
         </button>
       </div>
