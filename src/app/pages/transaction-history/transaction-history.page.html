@@ -1,0 +1,400 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Transaction History</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshData()" [disabled]="isLoading">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="exportData()" [disabled]="!hasData">
+        <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="glass-content-container">
+    <!-- Header Section -->
+    <div class="page-title">
+      <h2>Transaction History</h2>
+      <p>View {{ isAdmin ? 'system transactions and analytics' : 'your order history and receipts' }}</p>
+    </div>
+
+    <!-- View Selector for Admin -->
+    <div class="glass-card" *ngIf="isAdmin">
+      <div class="view-selector">
+        <ion-segment [value]="selectedView" (ionChange)="changeView($event.detail.value)">
+          <ion-segment-button value="user-orders">
+            <ion-label>All Orders</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="monthly-sales">
+            <ion-label>Monthly</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="raffle-sales">
+            <ion-label>By Raffle</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="daily-sales">
+            <ion-label>Daily</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="statistics">
+            <ion-label>Statistics</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="pending-receipts">
+            <ion-label>Pending Receipts</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="glass-card" *ngIf="selectedView === 'daily-sales' || selectedView === 'user-orders'">
+      <div class="filter-controls">
+        <div class="filter-row">
+          <ion-item class="filter-item">
+            <ion-label position="stacked">Start Date</ion-label>
+            <ion-input type="date" [(ngModel)]="dateRange.startDate" (ionChange)="applyDateFilter()"></ion-input>
+          </ion-item>
+
+          <ion-item class="filter-item">
+            <ion-label position="stacked">End Date</ion-label>
+            <ion-input type="date" [(ngModel)]="dateRange.endDate" (ionChange)="applyDateFilter()"></ion-input>
+          </ion-item>
+
+          <ion-button *ngIf="selectedView === 'daily-sales'" fill="outline" (click)="loadDailySales()">
+            Apply
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Year Filter for Monthly Sales -->
+    <div class="glass-card" *ngIf="selectedView === 'monthly-sales'">
+      <div class="filter-controls">
+        <ion-item>
+          <ion-label>Select Year</ion-label>
+          <ion-select [(ngModel)]="selectedYear" (ionChange)="applyYearFilter()">
+            <ion-select-option [value]="2024">2024</ion-select-option>
+            <ion-select-option [value]="2023">2023</ion-select-option>
+            <ion-select-option [value]="2022">2022</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <ion-spinner></ion-spinner>
+      <p>Loading data...</p>
+    </div>
+
+    <!-- User Orders View -->
+    <div class="glass-card" *ngIf="selectedView === 'user-orders' && !isLoading">
+      <div class="card-header">
+        <h3>Your Order History</h3>
+        <div class="total-badge">
+          {{ userOrders.length }} order(s)
+        </div>
+      </div>
+
+      <div class="card-content" *ngIf="userOrders.length > 0">
+        <div class="transaction-list">
+          <div class="transaction-item" *ngFor="let order of userOrders">
+            <div class="transaction-main">
+              <div class="transaction-info">
+                <div class="transaction-title">
+                  <strong>{{ order.raffle?.title || 'Raffle Ticket Purchase' }}</strong>
+                </div>
+                <div class="transaction-details">
+                  <span class="tickets">{{ order.ticketsBought }} ticket(s)</span>
+                  <span class="date">{{ formatDate(order.createdAt) }}</span>
+                </div>
+                <div class="transaction-status">
+                  <span class="status-badge" [class]="getOrderStatusClass(order.status)">
+                    {{ order.status }}
+                  </span>
+                  <span class="receipt-badge" [class]="getReceiptStatus(order).class">
+                    {{ getReceiptStatus(order).text }}
+                  </span>
+                </div>
+              </div>
+              <div class="transaction-amount">
+                <div class="amount">{{ formatCurrency(order.amount) }}</div>
+                <div class="tax-amount">Tax: {{ formatCurrency(order.taxAmount) }}</div>
+              </div>
+            </div>
+            <div class="transaction-actions" *ngIf="isAdmin">
+              <ion-button size="small" fill="outline" (click)="markReceiptAsSent(order)"
+                         *ngIf="!order.receiptSent">
+                Mark Receipt Sent
+              </ion-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="userOrders.length === 0">
+        <ion-icon name="receipt-outline"></ion-icon>
+        <h4>No Orders Found</h4>
+        <p>You haven't made any purchases yet.</p>
+      </div>
+    </div>
+
+    <!-- Monthly Sales View -->
+    <div class="glass-card" *ngIf="selectedView === 'monthly-sales' && !isLoading">
+      <div class="card-header">
+        <h3>Monthly Sales Analytics - {{ selectedYear }}</h3>
+        <div class="total-badge">
+          {{ monthlySales.length }} month(s)
+        </div>
+      </div>
+
+      <div class="card-content" *ngIf="monthlySales.length > 0">
+        <div class="analytics-grid">
+          <div class="analytics-item" *ngFor="let month of monthlySales">
+            <div class="analytics-header">
+              <h4>{{ formatMonthYear(month.year, month.month) }}</h4>
+            </div>
+            <div class="analytics-body">
+              <div class="metric">
+                <span class="metric-label">Total Sales:</span>
+                <span class="metric-value">{{ formatCurrency(month.totalSales) }}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Orders:</span>
+                <span class="metric-value">{{ month.totalOrders }}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Tickets:</span>
+                <span class="metric-value">{{ month.totalTickets }}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Avg Order:</span>
+                <span class="metric-value">{{ formatCurrency(month.averageOrderValue) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="monthlySales.length === 0">
+        <ion-icon name="bar-chart-outline"></ion-icon>
+        <h4>No Data Available</h4>
+        <p>No sales data found for {{ selectedYear }}.</p>
+      </div>
+    </div>
+
+    <!-- Raffle Sales View -->
+    <div class="glass-card" *ngIf="selectedView === 'raffle-sales' && !isLoading">
+      <div class="card-header">
+        <h3>Sales by Raffle</h3>
+        <div class="total-badge">
+          {{ raffleSales.length }} raffle(s)
+        </div>
+      </div>
+
+      <div class="card-content" *ngIf="raffleSales.length > 0">
+        <div class="raffle-sales-list">
+          <div class="raffle-sale-item" *ngFor="let raffle of raffleSales">
+            <div class="raffle-info">
+              <h4>{{ raffle.raffleName }}</h4>
+              <div class="raffle-metrics">
+                <div class="metric">
+                  <span class="metric-label">Total Sales:</span>
+                  <span class="metric-value">{{ formatCurrency(raffle.totalSales) }}</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">Tickets Sold:</span>
+                  <span class="metric-value">{{ raffle.totalTickets }}</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">Orders:</span>
+                  <span class="metric-value">{{ raffle.totalOrders }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="raffleSales.length === 0">
+        <ion-icon name="ticket-outline"></ion-icon>
+        <h4>No Raffle Data</h4>
+        <p>No sales data available for raffles.</p>
+      </div>
+    </div>
+
+    <!-- Daily Sales View -->
+    <div class="glass-card" *ngIf="selectedView === 'daily-sales' && !isLoading">
+      <div class="card-header">
+        <h3>Daily Sales</h3>
+        <div class="total-badge">
+          {{ dailySales.length }} day(s)
+        </div>
+      </div>
+
+      <div class="card-content" *ngIf="dailySales.length > 0">
+        <div class="daily-sales-list">
+          <div class="daily-sale-item" *ngFor="let day of dailySales">
+            <div class="date-header">
+              <strong>{{ day.date }}</strong>
+            </div>
+            <div class="daily-metrics">
+              <div class="metric">
+                <span class="metric-label">Sales:</span>
+                <span class="metric-value">{{ formatCurrency(day.totalSales) }}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Orders:</span>
+                <span class="metric-value">{{ day.totalOrders }}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Tickets:</span>
+                <span class="metric-value">{{ day.totalTickets }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="dailySales.length === 0">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <h4>No Daily Data</h4>
+        <p>No sales data available for the selected period.</p>
+      </div>
+    </div>
+
+    <!-- Statistics View -->
+    <div class="glass-card" *ngIf="selectedView === 'statistics' && !isLoading && salesStats">
+      <div class="card-header">
+        <h3>Sales Statistics Overview</h3>
+      </div>
+
+      <div class="card-content">
+        <div class="stats-grid">
+          <div class="stat-card primary">
+            <div class="stat-icon">
+              <ion-icon name="cash-outline"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ formatCurrency(salesStats.totalRevenue) }}</div>
+              <div class="stat-label">Total Revenue</div>
+            </div>
+          </div>
+
+          <div class="stat-card secondary">
+            <div class="stat-icon">
+              <ion-icon name="cart-outline"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ salesStats.totalOrders }}</div>
+              <div class="stat-label">Total Orders</div>
+            </div>
+          </div>
+
+          <div class="stat-card tertiary">
+            <div class="stat-icon">
+              <ion-icon name="ticket-outline"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ salesStats.totalTicketsSold }}</div>
+              <div class="stat-label">Tickets Sold</div>
+            </div>
+          </div>
+
+          <div class="stat-card success">
+            <div class="stat-icon">
+              <ion-icon name="trending-up-outline"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ formatCurrency(salesStats.averageOrderValue) }}</div>
+              <div class="stat-label">Avg Order Value</div>
+            </div>
+          </div>
+
+          <div class="stat-card warning">
+            <div class="stat-icon">
+              <ion-icon name="calculator-outline"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ salesStats.averageTicketsPerOrder?.toFixed(1) || '0.0' }}</div>
+              <div class="stat-label">Avg Tickets/Order</div>
+            </div>
+          </div>
+
+          <div class="stat-card info">
+            <div class="stat-icon">
+              <ion-icon name="receipt-outline"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ formatCurrency(salesStats.totalTaxAmount) }}</div>
+              <div class="stat-label">Total Tax</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Receipts View -->
+    <div class="glass-card" *ngIf="selectedView === 'pending-receipts' && !isLoading">
+      <div class="card-header">
+        <h3>Pending Receipts</h3>
+        <div class="total-badge warning">
+          {{ pendingReceipts.length }} pending
+        </div>
+      </div>
+
+      <div class="card-content" *ngIf="pendingReceipts.length > 0">
+        <div class="pending-receipts-list">
+          <div class="pending-receipt-item" *ngFor="let order of pendingReceipts">
+            <div class="receipt-main">
+              <div class="receipt-info">
+                <div class="receipt-title">
+                  <strong>{{ order.raffle?.title || 'Raffle Ticket Purchase' }}</strong>
+                </div>
+                <div class="receipt-details">
+                  <span class="user">User: {{ order.userId }}</span>
+                  <span class="date">{{ formatDate(order.createdAt) }}</span>
+                  <span class="tickets">{{ order.ticketsBought }} ticket(s)</span>
+                </div>
+                <div class="receipt-amount">
+                  {{ formatCurrency(order.amount) }}
+                </div>
+              </div>
+              <div class="receipt-actions">
+                <ion-button size="small" fill="solid" color="primary"
+                           (click)="markReceiptAsSent(order)">
+                  Mark as Sent
+                </ion-button>
+              </div>
+            </div>
+            <div class="receipt-error" *ngIf="order.receiptError">
+              <ion-icon name="warning-outline"></ion-icon>
+              <span>Error: {{ order.receiptError }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state success" *ngIf="pendingReceipts.length === 0">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <h4>All Caught Up!</h4>
+        <p>No pending receipts to process.</p>
+      </div>
+    </div>
+
+    <!-- Pagination for User Orders -->
+    <div class="pagination-controls" *ngIf="selectedView === 'user-orders' && userOrders.length > 0">
+      <ion-button fill="outline" (click)="previousPage()" [disabled]="currentPage === 1">
+        Previous
+      </ion-button>
+      <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+      <ion-button fill="outline" (click)="nextPage()" [disabled]="currentPage === totalPages">
+        Next
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

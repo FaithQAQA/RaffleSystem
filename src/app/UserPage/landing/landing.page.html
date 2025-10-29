@@ -1,129 +1,241 @@
-<ion-app>
+<ion-app class="app-container">
   <!-- Header -->
   <app-header></app-header>
 
   <!-- Main Content -->
-  <ion-content class="modern-content ion-padding">
-    <!-- Featured Raffles Hero Section -->
-    <section class="feature-raffle">
-      <div class="hero-content">
-        <h2 class="raffle-title">Our Featured Raffles</h2>
-        <p class="raffle-subtitle">
-          Join us for a chance to win exciting prizes and support a great cause!
-        </p>
+  <ion-content class="modern-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-content glass-card">
+        <ion-spinner color="primary"></ion-spinner>
+        <p>Loading featured raffles...</p>
       </div>
-    </section>
+    </div>
 
-    <div aria-live="polite" class="visually-hidden" id="liveRegion"></div>
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="error-container">
+      <div class="error-content glass-card">
+        <ion-icon name="warning-outline" class="error-icon"></ion-icon>
+        <h3>Unable to Load Raffles</h3>
+        <p>{{ errorMessage }}</p>
+        <ion-button fill="solid" color="primary" (click)="getRecentRaffles()">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Try Again
+        </ion-button>
+      </div>
+    </div>
 
-    <!-- Raffles Grid -->
-    <ion-grid class="raffle-gallery">
-      <ion-row>
-        <ion-col
-          *ngFor="let raffle of recentRaffles"
-          size="12"
-          size-md="4"
-          class="raffle-col"
-        >
-          <ion-card
-            class="raffle-card"
-            (click)="goToRaffleDetail(raffle._id)"
-            tabindex="0"
-          >
-            <div class="card-image-container">
-              <img
-                src="https://media.istockphoto.com/id/1750326573/vector/raffle-icon-choosing-random-numbered-ticket-prize-giveaway.jpg?s=612x612&w=0&k=20&c=JJw2CNLGniwQj6UoA-68oMS7oIAclLc3cJ3wp-2GSJ8="
-                [attr.alt]="'Raffle image for ' + raffle.title"
-                loading="lazy"
-                class="raffle-image"
-              />
-              <div class="image-overlay">
-                <ion-button fill="solid" color="light" class="quick-view-btn">
-                  <ion-icon name="eye-outline"></ion-icon>
-                  Quick View
-                </ion-button>
-              </div>
+    <!-- Main Content when loaded -->
+    <div *ngIf="!isLoading && !errorMessage">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content glass-card">
+          <h1 class="hero-title gradient-text">Featured Raffles</h1>
+          <p class="hero-subtitle">
+            Support children who are deaf and hard of hearing while winning amazing prizes!
+          </p>
+
+          <!-- Cart Indicator -->
+          <div class="cart-indicator" *ngIf="cartItemCount > 0">
+            <ion-badge color="primary" class="cart-badge">
+              <ion-icon name="cart-outline"></ion-icon>
+              {{ cartItemCount }} item(s) in cart
+            </ion-badge>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat-item">
+              <ion-icon name="ticket-outline" class="stat-icon"></ion-icon>
+              <span class="stat-number">{{ recentRaffles?.length || 0 }}</span>
+              <span class="stat-label">Active Raffles</span>
             </div>
-
-            <ion-card-header class="card-header">
-              <ion-card-title class="raffle-title-text">{{ raffle.title }}</ion-card-title>
-            </ion-card-header>
-
-            <ion-card-content class="card-content">
-              <p class="raffle-description">{{ raffle.description }}</p>
-
-              <!-- Price Chip -->
-              <ion-chip color="primary" class="price-chip">
-                <ion-icon name="cash-outline"></ion-icon>
-                <ion-label>${{ raffle.price }} / ticket</ion-label>
-              </ion-chip>
-
-              <!-- Progress Section -->
-              <div class="progress-section">
-                <ion-progress-bar
-                  [value]="raffle.ticketsSold / raffle.totalTickets"
-                  color="secondary"
-                  class="progress-bar"
-                ></ion-progress-bar>
-                <small class="progress-text">{{ raffle.totalTicketsSold }} / {{ raffle.totalTicketsSold }} tickets sold</small>
-              </div>
-
-              <!-- Countdown Badge -->
-              <ion-badge color="danger" class="countdown-badge" *ngIf="raffle.endsInDays <= 3">
-                <ion-icon name="time-outline"></ion-icon>
-                Ends in {{ raffle.endsInDays }} days!
-              </ion-badge>
-
-              <!-- Add to Cart Button (hover effect) -->
-              <ion-button expand="block" color="primary" class="add-to-cart-btn">
-                <ion-icon name="cart-outline" slot="start"></ion-icon>
-                Add to Cart
-              </ion-button>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-
-      <!-- Empty State -->
-      <ng-template #noRaffles>
-        <ion-row>
-          <ion-col size="12" class="text-center">
-            <div class="no-raffles-message">
-              <ion-icon
-                name="ticket-outline"
-                class="empty-state-icon"
-              ></ion-icon>
-              <h3>No Recent Raffles</h3>
-              <p>Check back soon for exciting new raffles!</p>
+            <div class="stat-item">
+              <ion-icon name="trending-up-outline" class="stat-icon"></ion-icon>
+              <span class="stat-number">{{ getTotalTicketsSold() }}</span>
+              <span class="stat-label">Total Tickets Sold</span>
             </div>
-          </ion-col>
-        </ion-row>
-      </ng-template>
-    </ion-grid>
-
-    <!-- Explore Section -->
-    <section class="explore-raffles">
-      <ion-card class="explore-card">
-        <div class="explore-content">
-          <ion-card-header class="explore-header">
-            <ion-card-title>Explore All Raffles</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <p class="explore-description">
-              Discover all our exciting raffles and get a chance to win amazing
-              prizes while supporting children who are deaf and hard of hearing.
-            </p>
-            <ion-button expand="block" color="primary" routerLink="/view-raffles" class="explore-btn">
-              <ion-icon name="ticket-outline" slot="start"></ion-icon>
-              View All Raffles
-            </ion-button>
-          </ion-card-content>
+            <div class="stat-item">
+              <ion-icon name="time-outline" class="stat-icon"></ion-icon>
+              <span class="stat-number">{{ getEndingSoonCount() }}</span>
+              <span class="stat-label">Ending Soon</span>
+            </div>
+          </div>
         </div>
-      </ion-card>
-    </section>
+      </section>
+
+      <div aria-live="polite" class="visually-hidden" id="liveRegion"></div>
+
+      <!-- Raffles Grid -->
+      <section class="raffles-section">
+        <div class="section-header">
+          <h2 class="section-title">Current Raffles</h2>
+          <p class="section-subtitle">Choose your favorite and make a difference</p>
+        </div>
+
+        <ion-grid class="raffle-gallery">
+          <ion-row>
+            <ion-col
+              *ngFor="let raffle of recentRaffles; let i = index"
+              size="12"
+              size-md="6"
+              size-lg="4"
+              class="raffle-col"
+            >
+              <ion-card
+                class="raffle-card glass-card"
+                (click)="goToRaffleDetail(raffle._id)"
+                tabindex="0"
+                [attr.aria-label]="getRaffleAriaLabel(raffle)"
+              >
+                <!-- Status Badges -->
+                <div class="card-badges">
+                  <!-- Urgent Badge -->
+                  <div class="card-badge" *ngIf="isEndingSoon(raffle)">
+                    <ion-badge color="danger" class="urgent-badge">
+                      <ion-icon name="flash-outline"></ion-icon>
+                      Ends in {{ getDaysUntilEnd(raffle) }} days!
+                    </ion-badge>
+                  </div>
+
+                  <!-- New Badge -->
+                  <div class="card-badge new-badge" *ngIf="isNewRaffle(raffle)">
+                    <ion-badge color="success" class="new-arrival-badge">
+                      <ion-icon name="sparkles-outline"></ion-icon>
+                      New
+                    </ion-badge>
+                  </div>
+
+                  <!-- Sold Out Badge -->
+                  <div class="card-badge" *ngIf="isSoldOut(raffle)">
+                    <ion-badge color="dark" class="sold-out-badge">
+                      <ion-icon name="close-circle-outline"></ion-icon>
+                      Sold Out
+                    </ion-badge>
+                  </div>
+                </div>
+
+                <div class="card-image-container">
+                  <img
+                    [src]="getRaffleImage(raffle)"
+                    [attr.alt]="'Raffle image for ' + raffle.title"
+                    loading="lazy"
+                    class="raffle-image"
+                    (error)="handleImageError($event)"
+                  />
+                  <div class="image-overlay">
+                    <div class="overlay-content">
+                      <ion-button fill="clear" color="light" class="quick-view-btn">
+                        <ion-icon name="eye-outline" slot="start"></ion-icon>
+                        View Details
+                      </ion-button>
+                    </div>
+                  </div>
+                </div>
+
+                <ion-card-header class="card-header">
+                  <ion-card-title class="raffle-title-text">{{ raffle.title || 'Untitled Raffle' }}</ion-card-title>
+                  <ion-card-subtitle class="raffle-subtitle-text">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    {{ getRaffleDateInfo(raffle) }}
+                  </ion-card-subtitle>
+                </ion-card-header>
+
+                <ion-card-content class="card-content">
+                  <p class="raffle-description">{{ getRaffleDescription(raffle) }}</p>
+
+                  <!-- Progress Section -->
+                  <div class="progress-section" *ngIf="!isSoldOut(raffle)">
+                    <div class="progress-header">
+                      <span class="progress-label">Tickets Sold</span>
+                      <span class="progress-percentage">
+                        {{ calculateProgress(raffle) }}%
+                      </span>
+                    </div>
+                    <ion-progress-bar
+                      [value]="getProgressValue(raffle)"
+                      [color]="getProgressColor(raffle)"
+                      class="progress-bar"
+                    ></ion-progress-bar>
+                    <div class="progress-stats">
+                      <small class="progress-text">
+                        {{ getTicketsSold(raffle) }} / {{ getTotalTickets(raffle) }} tickets
+                      </small>
+                      <small class="progress-remaining">
+                        {{ getRemainingTickets(raffle) }} remaining
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Price and Action Section -->
+                  <div class="action-section">
+                    <div class="price-info">
+                      <ion-chip [color]="isSoldOut(raffle) ? 'medium' : 'primary'" class="price-chip" [outline]="!isSoldOut(raffle)">
+                        <ion-icon name="cash-outline"></ion-icon>
+                        <ion-label>${{ getRafflePrice(raffle) }} per ticket</ion-label>
+                      </ion-chip>
+
+                      <!-- Popular Badge -->
+                      <ion-badge *ngIf="isPopularRaffle(raffle) && !isSoldOut(raffle)" color="warning" class="popular-badge">
+                        <ion-icon name="flame-outline"></ion-icon>
+                        Popular
+                      </ion-badge>
+                    </div>
+
+                    <ion-button
+                      expand="block"
+                      [color]="isSoldOut(raffle) ? 'medium' : 'primary'"
+                      [fill]="isSoldOut(raffle) ? 'outline' : 'solid'"
+                      class="add-to-cart-btn"
+                      (click)="$event.stopPropagation(); handleRaffleAction(raffle)"
+                      [disabled]="isSoldOut(raffle)"
+                    >
+                      <ion-icon [name]="isSoldOut(raffle) ? 'close-circle-outline' : 'cart-outline'" slot="start"></ion-icon>
+                      {{ isSoldOut(raffle) ? 'Sold Out' : 'Add to Cart' }}
+                    </ion-button>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+
+          <!-- Empty State -->
+          <div *ngIf="recentRaffles.length === 0" class="empty-state">
+            <ion-row>
+              <ion-col size="12" class="text-center">
+                <div class="no-raffles-message glass-card">
+                  <ion-icon name="ticket-outline" class="empty-state-icon"></ion-icon>
+                  <h3>No Active Raffles Available</h3>
+                  <p>We're preparing new exciting raffles for you. Check back soon!</p>
+                  <ion-button fill="outline" color="primary" (click)="getRecentRaffles()">
+                    <ion-icon name="refresh-outline" slot="start"></ion-icon>
+                    Refresh
+                  </ion-button>
+                </div>
+              </ion-col>
+            </ion-row>
+          </div>
+        </ion-grid>
+      </section>
+
+      <!-- Quick Actions Section -->
+      <section class="quick-actions-section">
+        <div class="actions-grid">
+
+
+          <ion-card class="action-card glass-card" routerLink="/view-raffles">
+            <div class="action-content">
+              <ion-icon name="list-outline" class="action-icon"></ion-icon>
+              <h3>All Raffles</h3>
+              <p>Browse through all available raffles and opportunities</p>
+            </div>
+          </ion-card>
+
+
+        </div>
+      </section>
+    </div>
+
+    <app-app-footer></app-app-footer>
   </ion-content>
-
-  <!-- Footer -->
-  <app-app-footer ></app-app-footer>
 </ion-app>
-

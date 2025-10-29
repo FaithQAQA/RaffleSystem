@@ -17,7 +17,7 @@
           <h3>Real-Time Ticket Count</h3>
           <p><strong>Total Tickets Sold:</strong> {{ raffleTicketData.totalTickets }}</p>
           <p><strong>Tickets You have Bought:</strong> {{ raffleTicketData.userTickets }}</p>
-          <p><strong>Your Winning Chance:</strong> {{ raffleTicketData.winningChance }}%</p>
+          <p><strong>Your Winning Chance:</strong> {{ raffleTicketData.winningChance | number:'1.0-2' }}%</p>
           <p class="status" [ngClass]="raffle?.status">
   Status: {{ raffle?.status | titlecase }}
 </p>

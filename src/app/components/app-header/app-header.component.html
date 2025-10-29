@@ -1,11 +1,18 @@
 <ion-header class="modern-header">
-  <ion-toolbar class="modern-toolbar">
+  <ion-toolbar class="modern-toolbar glass-toolbar">
+    <!-- Left: Home Button -->
     <ion-buttons slot="start">
-      <ion-button (click)="viewHome()" fill="clear" class="nav-button cart-button" aria-label="Home">
-        <ion-icon name="home"></ion-icon>
+      <ion-button (click)="viewHome()" fill="clear" class="nav-button home-button" aria-label="Home">
+        <ion-icon name="home-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
 
+    <!-- Center: Brand -->
+    <div class="brand-title gradient-text" (click)="viewHome()">
+      🎟️ TicketStack
+    </div>
+
+    <!-- Right: Navigation Buttons -->
     <ion-buttons slot="end" class="nav-section">
       <!-- Raffles -->
       <ion-button (click)="viewRaffles()" fill="clear" class="nav-button" aria-label="View Raffles">
@@ -15,16 +22,17 @@
 
       <!-- Cart -->
       <ion-button (click)="viewCart()" fill="clear" class="nav-button cart-button" aria-label="View Cart">
-        <ion-icon name="cart"></ion-icon>
+        <ion-icon name="cart-outline"></ion-icon>
         <ion-badge *ngIf="cartItemCount > 0" color="danger" class="cart-badge">
           {{ cartItemCount }}
         </ion-badge>
         <ion-label>Cart</ion-label>
       </ion-button>
 
-       <ion-button  fill="clear" class="nav-button" button (click)="viewHistory()">
-          <ion-icon name="notifications-outline" slot="start"></ion-icon>
-        <ion-label>View History</ion-label>
+      <!-- History -->
+      <ion-button fill="clear" class="nav-button" (click)="viewHistory()">
+        <ion-icon name="time-outline"></ion-icon>
+        <ion-label>History</ion-label>
       </ion-button>
 
       <!-- Account -->
@@ -36,12 +44,13 @@
   </ion-toolbar>
 </ion-header>
 
+<!-- Profile Menu Popover -->
 <ion-popover trigger="profile-menu-trigger" side="bottom" alignment="end" class="modern-popover">
   <ng-template>
     <ion-content class="popover-content">
       <ion-list>
         <ion-item button (click)="viewHistory()" class="menu-item">
-          <ion-icon name="notifications-outline" slot="start"></ion-icon>
+          <ion-icon name="time-outline" slot="start"></ion-icon>
           <ion-label>View History</ion-label>
         </ion-item>
         <ion-item button (click)="logout()" class="menu-item logout-item">

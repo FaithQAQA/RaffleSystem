@@ -53,6 +53,16 @@ export class HomePage implements OnInit {
         : response; // If less than 3 raffles, return all
     });
   }
+  getRandomIcon(): string {
+  const icons = ['bi-gift', 'bi-stars', 'bi-fire', 'bi-snow2', 'bi-award', 'bi-lightning'];
+  return icons[Math.floor(Math.random() * icons.length)];
+}
+
+getBadgeLabel(raffle: raffleData): string {
+  const labels = ['New', 'Hot', 'Popular', 'Exclusive'];
+  return labels[Math.floor(Math.random() * labels.length)];
+}
+
 
   goToRaffleDetail(raffleId: string) {
     console.log('Navigating to raffle with ID:', raffleId);

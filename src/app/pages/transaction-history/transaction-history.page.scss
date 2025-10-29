@@ -1,0 +1,350 @@
+.glass-content-container {
+  padding: 16px;
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+    font-size: 14px;
+  }
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+}
+
+.total-badge {
+  background: var(--ion-color-primary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.warning {
+    background: var(--ion-color-warning);
+  }
+}
+
+.view-selector {
+  ion-segment {
+    --background: transparent;
+  }
+}
+
+.filter-controls {
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+    flex-wrap: wrap;
+  }
+
+  .filter-item {
+    flex: 1;
+    min-width: 140px;
+
+    ion-item {
+      --background: transparent;
+    }
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: 40px;
+
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+}
+
+// Transaction List Styles
+.transaction-list, .pending-receipts-list {
+  .transaction-item, .pending-receipt-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+
+    .transaction-main, .receipt-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .transaction-info, .receipt-info {
+      flex: 1;
+    }
+
+    .transaction-title, .receipt-title {
+      margin-bottom: 8px;
+    }
+
+    .transaction-details, .receipt-details {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--ion-color-medium);
+      margin-bottom: 8px;
+    }
+
+    .transaction-status {
+      display: flex;
+      gap: 8px;
+    }
+
+    .transaction-amount {
+      text-align: right;
+
+      .amount {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .tax-amount {
+        font-size: 12px;
+        color: var(--ion-color-medium);
+      }
+    }
+  }
+}
+
+// Status Badges
+.status-badge, .receipt-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-completed {
+  background: var(--ion-color-success-tint);
+  color: var(--ion-color-success-shade);
+}
+
+.status-pending {
+  background: var(--ion-color-warning-tint);
+  color: var(--ion-color-warning-shade);
+}
+
+.status-failed {
+  background: var(--ion-color-danger-tint);
+  color: var(--ion-color-danger-shade);
+}
+
+.receipt-sent {
+  background: var(--ion-color-success-tint);
+  color: var(--ion-color-success-shade);
+}
+
+.receipt-pending {
+  background: var(--ion-color-warning-tint);
+  color: var(--ion-color-warning-shade);
+}
+
+.receipt-failed {
+  background: var(--ion-color-danger-tint);
+  color: var(--ion-color-danger-shade);
+}
+
+// Analytics Grid
+.analytics-grid, .raffle-sales-list, .daily-sales-list {
+  display: grid;
+  gap: 12px;
+}
+
+.analytics-grid {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.analytics-item, .raffle-sale-item, .daily-sale-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+
+  .analytics-header, .date-header {
+    margin-bottom: 12px;
+
+    h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+
+  .metric-label {
+    color: var(--ion-color-medium);
+  }
+
+  .metric-value {
+    font-weight: 600;
+  }
+}
+
+// Statistics Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  &.primary { border-left: 4px solid var(--ion-color-primary); }
+  &.secondary { border-left: 4px solid var(--ion-color-secondary); }
+  &.tertiary { border-left: 4px solid var(--ion-color-tertiary); }
+  &.success { border-left: 4px solid var(--ion-color-success); }
+  &.warning { border-left: 4px solid var(--ion-color-warning); }
+  &.info { border-left: 4px solid var(--ion-color-medium); }
+
+  .stat-icon {
+    font-size: 24px;
+    opacity: 0.8;
+  }
+
+  .stat-content {
+    .stat-value {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--ion-color-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+
+  ion-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  h4 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+  }
+
+  p {
+    margin: 0;
+    color: var(--ion-color-medium);
+  }
+
+  &.success {
+    ion-icon {
+      color: var(--ion-color-success);
+    }
+  }
+}
+
+// Pagination
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+
+  .page-info {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+  }
+}
+
+// Receipt Error
+.receipt-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(var(--ion-color-danger-rgb), 0.1);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--ion-color-danger);
+
+  ion-icon {
+    font-size: 16px;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-row {
+    flex-direction: column;
+
+    .filter-item {
+      min-width: 100%;
+    }
+  }
+
+  .transaction-main, .receipt-main {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .transaction-amount {
+    text-align: left !important;
+  }
+}

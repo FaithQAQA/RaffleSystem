@@ -1,52 +1,57 @@
-<!-- Sidebar -->
-<div class="offcanvas offcanvas-start" id="sidebarMenu" [ngClass]="{'show': isSidebarOpen}" data-bs-backdrop="false">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title">Admin Panel</h5>
+<!-- Glass Morphism Sidebar -->
+<div class="offcanvas offcanvas-start glass-sidebar" id="sidebarMenu" [ngClass]="{'show': isSidebarOpen}" data-bs-backdrop="false">
+  <div class="offcanvas-header glass-sidebar-header">
+    <h5 class="offcanvas-title glass-sidebar-title">Admin Panel</h5>
   </div>
-  <div class="offcanvas-body">
-    <ul class="list-group sidebar-menu">
-      <!-- Dashboard first -->
-      <li class="list-group-item">
-        <button class="btn sidebar-btn" (click)="navigateToDashboard()">
-          <ion-icon name="home-outline"></ion-icon> Dashboard
-        </button>
-      </li>
-      <!-- Then View Raffles -->
-      <li class="list-group-item">
-        <button class="btn sidebar-btn" (click)="navigateToRaffleManagement()">
-          <ion-icon name="eye-outline"></ion-icon> View Raffles
-        </button>
-      </li>
-      <!-- Finally Create Raffle -->
-      <li class="list-group-item">
-        <button class="btn sidebar-btn" (click)="navigateToCreateRaffle()">
-          <ion-icon name="add-circle-outline"></ion-icon> Create Raffle
-        </button>
-      </li>
-    </ul>
+  <div class="offcanvas-body glass-sidebar-body">
+    <!-- Sidebar Sections -->
+    <div class="sidebar-section">
+      <h6 class="sidebar-section-title">Navigation</h6>
+      <ul class="list-group sidebar-menu">
+        <li class="list-group-item glass-sidebar-item">
+          <button class="btn glass-sidebar-btn" (click)="navigateToDashboard()">
+            <ion-icon name="home-outline" class="sidebar-icon"></ion-icon>
+            <span class="sidebar-text">Dashboard</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <h6 class="sidebar-section-title">Raffle Management</h6>
+      <ul class="list-group sidebar-menu">
+        <li class="list-group-item glass-sidebar-item">
+          <button class="btn glass-sidebar-btn" (click)="navigateToRaffleManagement()">
+            <ion-icon name="eye-outline" class="sidebar-icon"></ion-icon>
+            <span class="sidebar-text">View Raffles</span>
+          </button>
+        </li>
+        <li class="list-group-item glass-sidebar-item">
+          <button class="btn glass-sidebar-btn" (click)="navigateToCreateRaffle()">
+            <ion-icon name="add-circle-outline" class="sidebar-icon"></ion-icon>
+            <span class="sidebar-text">Create Raffle</span>
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 
-<!-- Top Bar with Sidebar Toggle -->
-<div class="top-bar">
-  <button
-    class="btn btn-outline-primary sidebar-toggle"
-    (click)="toggleSidebar()"
-  >
-    <ion-icon name="menu-outline"></ion-icon>
+<!-- Glass Morphism Top Bar -->
+<div class="top-bar glass-top-bar">
+  <button class="btn glass-sidebar-toggle" (click)="toggleSidebar()">
+    <ion-icon name="menu-outline" class="toggle-icon"></ion-icon>
   </button>
-  <div class="dropdown">
-    <button
-      class="btn btn-light dropdown-toggle"
-      type="button"
-      id="userMenu"
-      data-bs-toggle="dropdown"
-    >
-      <ion-icon name="person-circle-outline"></ion-icon> Admin
+
+  <div class="dropdown glass-dropdown">
+    <button class="btn glass-user-menu" type="button" id="userMenu" data-bs-toggle="dropdown">
+      <ion-icon name="person-circle-outline" class="user-icon"></ion-icon>
+      <span class="user-text">Admin</span>
     </button>
-    <ul class="dropdown-menu dropdown-menu-end">
+    <ul class="dropdown-menu dropdown-menu-end glass-dropdown-menu">
       <li>
-        <button class="dropdown-item text-danger" (click)="logout()">
+        <button class="dropdown-item glass-logout-btn" (click)="logout()">
+          <ion-icon name="log-out-outline" class="logout-icon"></ion-icon>
           Logout
         </button>
       </li>
@@ -55,84 +60,120 @@
 </div>
 
 <!-- Main Content -->
-<ion-content [fullscreen]="true" class="content" padding>
-  <!-- Pre-filled Form -->
-  <form (ngSubmit)="updateRaffle()">
-    <ion-card class="centered-form">
-      <ion-card-header>
-        <ion-card-title>{{ raffle.title }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-item>
-          <ion-label position="floating">Raffle Title</ion-label>
-          <ion-input
-            [(ngModel)]="raffle.title"
-            name="title"
-            required
-          ></ion-input>
-        </ion-item>
+<ion-content [fullscreen]="true" class="glass-content">
+  <!-- Glass Morphism Form Card -->
+  <div class="glass-form-container">
+    <form (ngSubmit)="updateRaffle()">
+      <div class="glass-form-card">
+        <div class="glass-form-header">
+          <h2 class="glass-form-title">{{ raffle.title }}</h2>
+          <p class="glass-form-subtitle">Update raffle details below</p>
+        </div>
 
-        <ion-item>
-          <ion-label position="floating">Description</ion-label>
-          <ion-textarea
-            [(ngModel)]="raffle.description"
-            name="description"
-            required
-          ></ion-textarea>
-        </ion-item>
+        <div class="glass-form-content">
+          <div class="glass-form-grid">
+            <!-- Column 1 -->
+            <div class="form-column">
+              <div class="glass-form-group">
+                <ion-item class="glass-form-item">
+                  <ion-label position="stacked" class="glass-form-label">Raffle Title</ion-label>
+                  <ion-input
+                    [(ngModel)]="raffle.title"
+                    name="title"
+                    required
+                    class="glass-input"
+                  ></ion-input>
+                </ion-item>
+              </div>
 
-        <ion-item>
-          <ion-label position="floating">Category</ion-label>
-          <ion-input
-            [(ngModel)]="raffle.category"
-            name="category"
-            required
-          ></ion-input>
-        </ion-item>
+              <div class="glass-form-group">
+                <ion-item class="glass-form-item">
+                  <ion-label position="stacked" class="glass-form-label">Category</ion-label>
+                  <ion-input
+                    [(ngModel)]="raffle.category"
+                    name="category"
+                    required
+                    class="glass-input"
+                  ></ion-input>
+                </ion-item>
+              </div>
 
-        <ion-item>
-          <ion-label position="floating">Ticket Price</ion-label>
-          <ion-input
-            [(ngModel)]="raffle.price"
-            name="ticketPrice"
-            type="number"
-            required
-          ></ion-input>
-        </ion-item>
+              <div class="glass-form-group">
+                <ion-item class="glass-form-item">
+                  <ion-label position="stacked" class="glass-form-label">Ticket Price ($)</ion-label>
+                  <ion-input
+                    [(ngModel)]="raffle.price"
+                    name="ticketPrice"
+                    type="number"
+                    required
+                    class="glass-input"
+                  ></ion-input>
+                </ion-item>
+              </div>
+            </div>
 
-        <ion-item>
-          <ion-label position="floating">Start Date</ion-label>
-          <br /><br />
-          <ion-datetime
-            [(ngModel)]="raffle.startDate"
-            name="startDate"
-            required
-          ></ion-datetime>
-        </ion-item>
+            <!-- Column 2 -->
+            <div class="form-column">
+              <div class="glass-form-group">
+                <ion-item class="glass-form-item">
+                  <ion-label position="stacked" class="glass-form-label">Description</ion-label>
+                  <ion-textarea
+                    [(ngModel)]="raffle.description"
+                    name="description"
+                    required
+                    class="glass-textarea"
+                    rows="4"
+                  ></ion-textarea>
+                </ion-item>
+              </div>
 
-        <ion-item>
-          <ion-label position="floating">End Date</ion-label>
-          <ion-datetime
-            [(ngModel)]="raffle.endDate"
-            name="endDate"
-            required
-          ></ion-datetime>
-        </ion-item>
-      </ion-card-content>
-    </ion-card>
+              <div class="glass-form-group">
+                <ion-item class="glass-form-item">
+                  <ion-label position="stacked" class="glass-form-label">Start Date</ion-label>
+                  <ion-datetime
+                    [(ngModel)]="raffle.startDate"
+                    name="startDate"
+                    presentation="date-time"
+                    required
+                    class="glass-datetime"
+                  ></ion-datetime>
+                </ion-item>
+              </div>
 
-    <!-- Update and Delete Buttons -->
-    <div class="button-container">
-      <ion-button expand="block" type="submit" color="primary"
-        >Update Raffle</ion-button
-      >
-      <ion-button expand="block" color="danger" (click)="deleteRaffle()"
-        >Delete Raffle</ion-button
-      >
-      <ion-button expand="block" color="tertiary"
-            (click)="exportCSV(raffle._id); $event.stopPropagation()">
-        <ion-icon name="download-outline"></ion-icon> Export Raffle Data
-      </ion-button>
-    </div>
-  </form>
+              <div class="glass-form-group">
+                <ion-item class="glass-form-item">
+                  <ion-label position="stacked" class="glass-form-label">End Date</ion-label>
+                  <ion-datetime
+                    [(ngModel)]="raffle.endDate"
+                    name="endDate"
+                    presentation="date-time"
+                    required
+                    class="glass-datetime"
+                  ></ion-datetime>
+                </ion-item>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enhanced Action Buttons -->
+      <div class="glass-button-container">
+        <ion-button expand="block" type="submit" class="glass-primary-btn">
+          <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+          Update Raffle
+        </ion-button>
+
+        <ion-button expand="block" class="glass-danger-btn" (click)="deleteRaffle()">
+          <ion-icon slot="start" name="trash-outline"></ion-icon>
+          Delete Raffle
+        </ion-button>
+
+        <ion-button expand="block" class="glass-secondary-btn" (click)="exportCSV(raffle._id); $event.stopPropagation()">
+          <ion-icon slot="start" name="download-outline"></ion-icon>
+          Export Raffle Data
+        </ion-button>
+      </div>
+    </form>
+  </div>
 </ion-content>

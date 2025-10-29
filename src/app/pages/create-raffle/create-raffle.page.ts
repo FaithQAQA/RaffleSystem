@@ -105,6 +105,22 @@ export class CreateRafflePage implements OnInit {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
+  navigateToUserManagement() {
+  this.router.navigate(['/user-management']);
+}
+
+navigateToTransactionHistory() {
+  this.router.navigate(['/transaction-history']);
+}
+
+navigateToOrderManagement() {
+  this.router.navigate(['/order-management']);
+}
+
+navigateToAnalytics() {
+  this.router.navigate(['/analytics']);
+}
+
   ngOnInit() {
   }
 }

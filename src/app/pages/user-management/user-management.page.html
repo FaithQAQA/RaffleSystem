@@ -1,0 +1,245 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="glass-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" class="glass-back-button"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="page-title">User Management</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshUsers()" class="glass-refresh-btn">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="glass-content">
+  <div class="glass-container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="main-title">User Management</h1>
+      <p class="subtitle">Manage system users and their permissions</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card glass-card">
+        <div class="stat-icon primary">
+          <ion-icon name="people-outline"></ion-icon>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ stats.totalUsers || 0 }}</h3>
+          <p class="stat-label">Total Users</p>
+        </div>
+      </div>
+
+      <div class="stat-card glass-card">
+        <div class="stat-icon success">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ stats.adminUsers || 0 }}</h3>
+          <p class="stat-label">Admin Users</p>
+        </div>
+      </div>
+
+      <div class="stat-card glass-card">
+        <div class="stat-icon warning">
+          <ion-icon name="mail-open-outline"></ion-icon>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ stats.verifiedUsers || 0 }}</h3>
+          <p class="stat-label">Verified Users</p>
+        </div>
+      </div>
+
+      <div class="stat-card glass-card">
+        <div class="stat-icon danger">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ stats.lockedUsers || 0 }}</h3>
+          <p class="stat-label">Locked Users</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="filters-card glass-card">
+      <div class="filters-header">
+        <h3>Filters & Search</h3>
+      </div>
+      <div class="filters-content">
+        <div class="search-section">
+          <ion-item class="glass-search-item">
+            <ion-icon slot="start" name="search-outline" class="search-icon"></ion-icon>
+            <ion-input
+              [(ngModel)]="searchTerm"
+              (ionChange)="onSearchChange($event)"
+              placeholder="Search by username or email..."
+              class="glass-input"
+            ></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="filter-sections">
+          <div class="filter-group">
+            <ion-label class="filter-label">Admin Status</ion-label>
+            <ion-segment [(ngModel)]="filterAdmin" (ionChange)="onFilterChange()" class="glass-segment">
+              <ion-segment-button value="all">
+                <ion-label>All</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="true">
+                <ion-label>Admin</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="false">
+                <ion-label>User</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+
+          <div class="filter-group">
+            <ion-label class="filter-label">Verification</ion-label>
+            <ion-segment [(ngModel)]="filterVerified" (ionChange)="onFilterChange()" class="glass-segment">
+              <ion-segment-button value="all">
+                <ion-label>All</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="true">
+                <ion-label>Verified</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="false">
+                <ion-label>Unverified</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="users-card glass-card">
+      <div class="card-header">
+        <h3>Users List</h3>
+        <div class="pagination-info">
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ getDisplayEnd() }} of {{ totalUsers }} users
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Loading users...</p>
+      </div>
+
+      <!-- Users Table -->
+      <div *ngIf="!loading" class="users-table">
+        <div class="table-header">
+          <div class="table-cell">User</div>
+          <div class="table-cell">Email</div>
+          <div class="table-cell">Status</div>
+          <div class="table-cell">Joined</div>
+          <div class="table-cell">Actions</div>
+        </div>
+
+        <div *ngFor="let user of users" class="table-row glass-table-row">
+          <!-- Updated with safe property access -->
+          <div class="table-cell user-info">
+            <div class="user-avatar">
+              {{ getSafeInitial(user) }}
+            </div>
+            <div class="user-details">
+              <strong class="username">{{ getSafeUsername(user) }}</strong>
+              <div class="user-id">ID: {{ getSafeUserId(user) }}</div>
+            </div>
+          </div>
+
+          <div class="table-cell email-cell">
+            <div class="email">{{ getSafeEmail(user) }}</div>
+            <div class="email-status" [class.verified]="user.emailVerified">
+              {{ user.emailVerified ? 'Verified' : 'Unverified' }}
+            </div>
+          </div>
+
+          <div class="table-cell status-cell">
+            <div class="status-badges">
+              <ion-badge [color]="user.isAdmin ? 'success' : 'medium'" class="role-badge">
+                {{ user.isAdmin ? 'Admin' : 'User' }}
+              </ion-badge>
+              <ion-badge [color]="user.isLocked ? 'danger' : 'success'" class="status-badge">
+                {{ user.isLocked ? 'Locked' : 'Active' }}
+              </ion-badge>
+            </div>
+            <div *ngIf="user.failedLoginAttempts > 0" class="failed-attempts">
+              {{ user.failedLoginAttempts }} failed attempts
+            </div>
+          </div>
+
+          <div class="table-cell date-cell">
+            {{ getSafeCreatedDate(user) }}
+          </div>
+
+          <div class="table-cell actions-cell">
+            <div class="action-buttons">
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="toggleAdminStatus(user)"
+                class="action-btn admin-btn"
+                [color]="user.isAdmin ? 'warning' : 'success'"
+              >
+                <ion-icon
+                  [name]="user.isAdmin ? 'person-remove-outline' : 'person-add-outline'"
+                  slot="icon-only"
+                ></ion-icon>
+              </ion-button>
+
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="deleteUser(user)"
+                class="action-btn delete-btn"
+                color="danger"
+              >
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="users.length === 0" class="empty-state">
+          <ion-icon name="people-outline" class="empty-icon"></ion-icon>
+          <h3>No Users Found</h3>
+          <p>Try adjusting your search or filters</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!loading && users.length > 0" class="pagination">
+        <ion-button
+          fill="clear"
+          (click)="prevPage()"
+          [disabled]="currentPage === 1"
+          class="pagination-btn"
+        >
+          <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+          Previous
+        </ion-button>
+
+        <div class="page-info">
+          Page {{ currentPage }} of {{ totalPages }}
+        </div>
+
+        <ion-button
+          fill="clear"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          class="pagination-btn"
+        >
+          Next
+          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

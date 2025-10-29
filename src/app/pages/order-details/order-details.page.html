@@ -1,0 +1,175 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+    </ion-buttons>
+    <ion-title>Order Details</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshOrder()" *ngIf="order">
+        <ion-icon slot="icon-only" name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading order details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title color="danger">
+          <ion-icon name="warning" slot="start"></ion-icon>
+          Error
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ error }}</p>
+        <ion-button expand="block" (click)="browseMoreRaffles()">
+          Browse Raffles
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Order Details -->
+  <div *ngIf="order && !loading" class="order-container">
+
+    <!-- Success Header -->
+    <ion-card class="header-card">
+      <ion-card-header>
+        <ion-card-title class="success-title">
+          <ion-icon name="checkmark-circle" color="success"></ion-icon>
+          Order Confirmed
+        </ion-card-title>
+        <ion-card-subtitle>
+          Thank you for your purchase! Your order has been confirmed.
+        </ion-card-subtitle>
+      </ion-card-header>
+    </ion-card>
+
+    <!-- Order Summary -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Order Summary</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Order Header -->
+        <div class="order-header">
+          <div class="order-info">
+            <h2>Order #{{ getShortOrderId(order?._id) }}</h2>
+            <p class="order-date">Placed on {{ formatDate(order?.createdAt) }}</p>
+          </div>
+          <ion-badge [color]="getStatusColor(order?.status)" class="status-badge">
+            {{ (order?.status || '').toUpperCase() }}
+          </ion-badge>
+        </div>
+
+        <!-- Purchase Details -->
+        <ion-list-header>
+          <ion-label>Purchase Details</ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-label>Order ID</ion-label>
+          <ion-text slot="end" class="monospace">#{{ getShortOrderId(order?._id) }}</ion-text>
+        </ion-item>
+
+
+        <ion-item>
+          <ion-label>Purchase Date</ion-label>
+          <ion-text slot="end">{{ formatDate(order?.createdAt) }}</ion-text>
+        </ion-item>
+
+        <!-- Raffle Information -->
+        <ion-list-header>
+          <ion-label>Raffle Information</ion-label>
+        </ion-list-header>
+
+        <ion-item class="raffle-info">
+          <ion-label>
+            <h3>{{ order?.raffle?.title || 'Raffle' }}</h3>
+            <p>Raffle ID: {{ getShortOrderId(order?.raffleId) }}</p>
+          </ion-label>
+        </ion-item>
+
+        <!-- Ticket Information -->
+        <ion-list-header>
+          <ion-label>Ticket Information</ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-label>Tickets Purchased</ion-label>
+          <ion-text slot="end">{{ order?.ticketsBought || 0 }} tickets</ion-text>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Price per Ticket</ion-label>
+          <ion-text slot="end">{{ formatCurrency(order?.raffle?.price) }}</ion-text>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Subtotal</ion-label>
+          <ion-text slot="end">{{ formatCurrency(order?.amount) }}</ion-text>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Tax</ion-label>
+          <ion-text slot="end">{{ formatCurrency(0) }}</ion-text>
+        </ion-item>
+
+        <ion-item class="total-row">
+          <ion-label><strong>Total Amount</strong></ion-label>
+          <ion-text slot="end" color="primary">
+            <strong>{{ formatCurrency(order?.amount) }}</strong>
+          </ion-text>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Action Buttons -->
+    <ion-card>
+      <ion-card-content>
+        <ion-button expand="block" (click)="browseMoreRaffles()" class="action-button">
+          <ion-icon slot="start" name="ticket"></ion-icon>
+          Browse More Raffles
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" (click)="contactSupport()" class="action-button">
+          <ion-icon slot="start" name="help-circle"></ion-icon>
+          Contact Support
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Support Information -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="information-circle" slot="start"></ion-icon>
+          Need Help?
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p class="support-text">
+          If you have any questions about your order, please contact our support team
+          with your Order Number <strong>#{{ getShortOrderId(order?._id) }}</strong>
+        </p>
+
+        <ion-list lines="none">
+          <ion-item>
+            <ion-icon slot="start" name="mail" color="primary"></ion-icon>
+            <ion-label>{{ 'admin@voicefordeafkids.com' }}</ion-label>
+          </ion-item>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

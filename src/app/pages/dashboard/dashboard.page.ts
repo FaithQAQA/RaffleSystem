@@ -195,4 +195,17 @@ export class DashboardPage implements OnInit, AfterViewInit {
     this.apiService.exportRaffleToCSV(raffleId);
     this.presentToast('Exporting raffle data...', 'primary');
   }
+
+  // Navigation methods for new sidebar buttons
+navigateToUserManagement() {
+  this.router.navigate(['/user-management']);
+  console.log('navToUser')
+}
+
+navigateToTransactionHistory() {
+  this.router.navigate(['/transaction-history']); // Removed extra space
+    console.log('navToHistory')
+
+}
+
 }

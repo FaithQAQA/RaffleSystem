@@ -1,114 +1,258 @@
+<app-header></app-header>
 
-    <app-header></app-header>
+<ion-content class="modern-content">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content glass-card">
+      <h1 class="hero-title gradient-text">Raffles Hub</h1>
+      <p class="hero-subtitle">
+        Discover amazing raffles and support children who are deaf and hard of hearing
+      </p>
 
-
-<ion-content class="modern-content ion-padding">
-  <div class="container">
-    <!-- Search & Filter -->
-    <div class="search-filter d-flex flex-wrap justify-content-center align-items-center mb-4">
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        (input)="filterRaffles()"
-        placeholder="Search raffles..."
-        class="form-control search-input"
-        aria-label="Search raffles" />
-
-      <select
-        [(ngModel)]="selectedFilter"
-        (ngModelChange)="filterRaffles()"
-        class="form-select filter-select"
-        aria-label="Filter by category">
-        <option value="all">All Categories</option>
-        <option *ngFor="let category of categories" [value]="category">
-          {{ category }}
-        </option>
-      </select>
-
-        <select
-    [(ngModel)]="selectedStatus"
-    (ngModelChange)="filterRaffles()"
-    class="form-select filter-select"
-    aria-label="Filter by status">
-    <option value="all">All Status</option>
-    <option value="upcoming">Upcoming</option>
-    <option value="active">Active</option>
-    <option value="completed">Completed</option>
-  </select>
+      <!-- Quick Stats -->
+      <div class="hero-stats">
+        <div class="stat-item">
+          <ion-icon name="ticket-outline" class="stat-icon"></ion-icon>
+          <span class="stat-number">{{ raffles?.length || 0 }}</span>
+          <span class="stat-label">Total Raffles</span>
+        </div>
+        <div class="stat-item">
+          <ion-icon name="people-outline" class="stat-icon"></ion-icon>
+          <span class="stat-number">{{ getActiveRafflesCount() }}</span>
+          <span class="stat-label">Active Now</span>
+        </div>
+        <div class="stat-item">
+          <ion-icon name="trending-up-outline" class="stat-icon"></ion-icon>
+          <span class="stat-number">{{ getEndingSoonCount() }}</span>
+          <span class="stat-label">Ending Soon</span>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- ARIA Live Region -->
-    <div aria-live="polite" class="visually-hidden" id="liveRegion"></div>
+  <!-- Search & Filter Section -->
+  <section class="filter-section">
+    <div class="container">
+      <div class="search-filter-container glass-card">
+        <!-- Search Input -->
+        <div class="search-group">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="filterRaffles()"
+            placeholder="Search raffles by title or description..."
+            class="search-input"
+            aria-label="Search raffles" />
+        </div>
 
-    <!-- Section Title -->
-    <p class="section-title text-center">Raffles Hub</p>
-
-    <!-- Raffles Grid -->
-    <div class="raffle-grid row justify-content-center">
-      <div class="col-sm-6 col-md-4 col-lg-3"
-           *ngFor="let raffle of filteredRaffles; let i = index">
-        <div class="card modern-card"
-             tabindex="0"
-             (click)="goToRaffleDetail(raffle._id)"
-             (mouseenter)="hoverIndex = i"
-             (mouseleave)="hoverIndex = -1"
-             (focus)="hoverIndex = i"
-             (blur)="hoverIndex = -1">
-
-          <!-- Icon -->
-          <div class="icon-container" aria-hidden="true">
-            <i class="bi bi-ticket-perforated raffle-icon"></i>
+        <!-- Filter Controls -->
+        <div class="filter-controls">
+          <div class="filter-group">
+            <ion-icon name="folder-outline" class="filter-icon"></ion-icon>
+            <select
+              [(ngModel)]="selectedFilter"
+              (ngModelChange)="filterRaffles()"
+              class="filter-select"
+              aria-label="Filter by category">
+              <option value="all">All Categories</option>
+              <option *ngFor="let category of categories" [value]="category">
+                {{ category }}
+              </option>
+            </select>
           </div>
 
-          <!-- Card Body -->
-          <div class="card-body">
-            <h5 class="card-title">{{ raffle.title }}</h5>
-            <hr class="divider">
-            <p class="card-text">\${{ raffle.price }}</p>
+          <div class="filter-group">
+            <ion-icon name="time-outline" class="filter-icon"></ion-icon>
+            <select
+              [(ngModel)]="selectedStatus"
+              (ngModelChange)="filterRaffles()"
+              class="filter-select"
+              aria-label="Filter by status">
+              <option value="all">All Status</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
 
-            <!-- Hover Add to Cart -->
-            <div class="add-to-cart" *ngIf="hoverIndex === i">
-              <button class="btn btn-accent"
-                      (click)="addToCart(raffle._id, $event); $event.stopPropagation();"
-                      aria-label="Add to Cart">
-                Add to Cart
-              </button>
-            </div>
+          <!-- Sort Control -->
+          <div class="filter-group">
+            <ion-icon name="swap-vertical-outline" class="filter-icon"></ion-icon>
+            <select
+              [(ngModel)]="sortBy"
+              (ngModelChange)="sortRaffles()"
+              class="filter-select"
+              aria-label="Sort raffles">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="ending">Ending Soon</option>
+            </select>
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Load More -->
-    <div class="text-center mt-4" *ngIf="filteredRaffles.length < raffles.length">
-      <ion-button expand="block" color="primary" (click)="loadMoreRaffles()">
-        Load More
-      </ion-button>
+  <!-- ARIA Live Region -->
+  <div aria-live="polite" class="visually-hidden" id="liveRegion"></div>
+
+  <!-- Raffles Grid Section -->
+  <section class="raffles-section">
+    <div class="container">
+      <!-- Results Count -->
+      <div class="results-info">
+        <p class="results-count">
+          Showing {{ filteredRaffles.length }} of {{ raffles.length }} raffles
+          <span *ngIf="searchTerm"> for "{{ searchTerm }}"</span>
+        </p>
+      </div>
+
+      <!-- Raffles Grid -->
+      <div class="raffle-grid">
+        <div class="raffle-col"
+             *ngFor="let raffle of filteredRaffles; let i = index">
+          <ion-card class="raffle-card glass-card"
+                   tabindex="0"
+                   (click)="goToRaffleDetail(raffle._id)"
+                   (keyup.enter)="goToRaffleDetail(raffle._id)"
+                   (mouseenter)="hoverIndex = i"
+                   (mouseleave)="hoverIndex = -1"
+                   (focus)="hoverIndex = i"
+                   (blur)="hoverIndex = -1">
+
+            <!-- Status Badges -->
+            <div class="card-badges">
+              <ion-badge *ngIf="isNewRaffle(raffle)" color="success" class="status-badge">
+                <ion-icon name="sparkles-outline"></ion-icon>
+                New
+              </ion-badge>
+              <ion-badge *ngIf="isEndingSoon(raffle)" color="danger" class="status-badge">
+                <ion-icon name="time-outline"></ion-icon>
+                Ending Soon
+              </ion-badge>
+              <ion-badge *ngIf="isPopular(raffle)" color="warning" class="status-badge">
+                <ion-icon name="flame-outline"></ion-icon>
+                Popular
+              </ion-badge>
+            </div>
+
+            <!-- Card Image -->
+            <div class="card-image-container">
+              <img
+                [src]="getRaffleImage(raffle)"
+                [alt]="'Raffle image for ' + raffle.title"
+                class="raffle-image"
+                (error)="handleImageError($event)" />
+              <div class="image-overlay" [class.visible]="hoverIndex === i">
+                <ion-button fill="clear" color="light" class="view-details-btn">
+                  <ion-icon name="eye-outline" slot="start"></ion-icon>
+                  View Details
+                </ion-button>
+              </div>
+            </div>
+
+            <!-- Card Content -->
+            <ion-card-content class="card-content">
+              <div class="card-header">
+                <h3 class="raffle-title">{{ raffle.title }}</h3>
+                <p class="raffle-description">{{ getShortDescription(raffle.description) }}</p>
+              </div>
+
+              <div class="card-details">
+                <!-- Price -->
+                <div class="price-section">
+                  <ion-chip color="primary" outline class="price-chip">
+                    <ion-icon name="cash-outline"></ion-icon>
+                    <ion-label>${{ raffle.price }} per ticket</ion-label>
+                  </ion-chip>
+                </div>
+
+                <!-- Progress -->
+                <div class="progress-section" *ngIf="raffle.status === 'active'">
+                  <div class="progress-info">
+                    <span class="progress-text">Tickets Sold: {{ raffle.ticketsSold }}/{{ raffle.totalTickets }}</span>
+                    <span class="progress-percent">{{ calculateProgress(raffle) }}%</span>
+                  </div>
+                  <ion-progress-bar
+                    [value]="raffle.ticketsSold / raffle.totalTickets"
+                    [color]="getProgressColor(raffle)"
+                    class="progress-bar">
+                  </ion-progress-bar>
+                </div>
+
+                <!-- Status Info -->
+                <div class="status-info">
+                  <ion-icon [name]="getStatusIcon(raffle.status)"
+                           [color]="getStatusColor(raffle.status)"></ion-icon>
+                  <span class="status-text">{{ getStatusText(raffle.status) }}</span>
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <div class="action-section" [class.visible]="hoverIndex === i">
+                <ion-button expand="block"
+                           [color]="raffle.status === 'active' ? 'primary' : 'medium'"
+                           [fill]="raffle.status === 'active' ? 'solid' : 'outline'"
+                           (click)="handleRaffleAction(raffle, $event)"
+                           [disabled]="raffle.status !== 'active'">
+                  <ion-icon [name]="getActionIcon(raffle.status)" slot="start"></ion-icon>
+                  {{ getActionText(raffle.status) }}
+                </ion-button>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="filteredRaffles.length === 0" class="empty-state">
+        <div class="empty-content glass-card">
+          <ion-icon name="search-outline" class="empty-icon"></ion-icon>
+          <h3>No Raffles Found</h3>
+          <p *ngIf="searchTerm">No raffles match your search for "{{ searchTerm }}"</p>
+          <p *ngIf="!searchTerm">No raffles available at the moment. Check back later!</p>
+          <ion-button fill="outline" color="primary" (click)="clearFilters()">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            Clear Filters
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Load More -->
+      <div class="load-more-section" *ngIf="filteredRaffles.length < raffles.length && filteredRaffles.length > 0">
+        <ion-button expand="block" fill="outline" color="primary" (click)="loadMoreRaffles()" class="load-more-btn">
+          <ion-icon name="chevron-down-outline" slot="start"></ion-icon>
+          Load More Raffles
+        </ion-button>
+      </div>
     </div>
+  </section>
 
-    <!-- Social Media -->
-    <div class="social-media text-center mt-5">
-      <a href="#" class="social-link" aria-label="Facebook">
-        <i class="bi bi-facebook"></i>
-      </a>
-      <a href="#" class="social-link" aria-label="Twitter">
-        <i class="bi bi-twitter"></i>
-      </a>
-      <a href="#" class="social-link" aria-label="Instagram">
-        <i class="bi bi-instagram"></i>
-      </a>
-      <a href="#" class="social-link" aria-label="LinkedIn">
-        <i class="bi bi-linkedin"></i>
-      </a>
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content glass-card">
+        <div class="cta-text">
+          <h2>Can't Find What You're Looking For?</h2>
+          <p>Be the first to know when new raffles are available</p>
+        </div>
+        <div class="cta-actions">
+          <ion-button color="primary" fill="solid" (click)="subscribeNotifications()">
+            <ion-icon name="notifications-outline" slot="start"></ion-icon>
+            Get Notified
+          </ion-button>
+          <ion-button color="medium" fill="outline" routerLink="/contact">
+            <ion-icon name="help-circle-outline" slot="start"></ion-icon>
+            Contact Support
+          </ion-button>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <!-- Footer -->
-
+  </section>
 
   <app-app-footer></app-app-footer>
 </ion-content>
-
-
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">

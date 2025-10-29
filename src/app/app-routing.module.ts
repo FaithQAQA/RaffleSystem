@@ -68,6 +68,26 @@ const routes: Routes = [
     loadChildren: () => import('./UserPage/view-history/view-history.module').then(m => m.ViewHistoryPageModule)
   },
 
+  // Order Details routes
+  {
+    path: 'orders/:id',
+    loadChildren: () => import('./pages/order-details/order-details.module').then(m => m.OrderDetailsPageModule)
+  },
+  {
+    path: 'order-details',
+    loadChildren: () => import('./pages/order-details/order-details.module').then( m => m.OrderDetailsPageModule)
+  },
+
+  // NEW MANAGEMENT ROUTES - ADDED BEFORE WILDCARD
+  {
+    path: 'user-management',
+    loadChildren: () => import('./pages/user-management/user-management.module').then( m => m.UserManagementPageModule)
+  },
+  {
+    path: 'transaction-history',
+    loadChildren: () => import('./pages/transaction-history/transaction-history.module').then( m => m.TransactionHistoryPageModule)
+  },
+
   // Default route
   {
     path: '',
@@ -75,6 +95,7 @@ const routes: Routes = [
     pathMatch: 'full'
   },
 
+  // WILDCARD ROUTE MUST BE LAST
   {
     path: '**',
     redirectTo: 'login'
@@ -83,7 +104,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes )
+    RouterModule.forRoot(routes)
   ],
   exports: [RouterModule]
 })

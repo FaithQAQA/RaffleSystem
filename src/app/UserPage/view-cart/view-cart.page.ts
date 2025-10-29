@@ -25,6 +25,9 @@ declare global {
 export class ViewCartPage implements OnInit, AfterViewInit {
   cartItems: CartItem[] = [];
   totalCost = 0;
+  taxRate = 0.13; // 13% tax
+  taxAmount = 0;
+  totalWithTax = 0;
   cartItemCount = 0;
   UserID = localStorage.getItem('userId');
   private card: any; // Square Card instance
@@ -40,7 +43,7 @@ export class ViewCartPage implements OnInit, AfterViewInit {
     this.apiService.cart$.subscribe((items) => {
       this.cartItems = items || [];
       this.loadRaffleDetails();
-      this.calculateTotal();
+      this.calculateTotals();
     });
 
     this.apiService.cartCount$.subscribe((count) => {
@@ -87,8 +90,32 @@ export class ViewCartPage implements OnInit, AfterViewInit {
     });
   }
 
-  calculateTotal() {
+  calculateTotals() {
+    // Calculate subtotal
     this.totalCost = this.cartItems.reduce((sum, item) => sum + item.totalCost, 0);
+
+    // Calculate tax amount (rounded to 2 decimal places)
+    this.taxAmount = Math.round(this.totalCost * this.taxRate * 100) / 100;
+
+    // Calculate total with tax (rounded to 2 decimal places)
+    this.totalWithTax = Math.round((this.totalCost + this.taxAmount) * 100) / 100;
+  }
+
+  // Helper methods for template formatting
+  getSubtotal(): number {
+    return Math.round(this.totalCost * 100) / 100;
+  }
+
+  getTaxAmount(): number {
+    return Math.round(this.totalCost * this.taxRate * 100) / 100;
+  }
+
+  getTotalWithTax(): number {
+    return Math.round((this.totalCost + this.getTaxAmount()) * 100) / 100;
+  }
+
+  formatCurrency(amount: number): string {
+    return amount.toFixed(2);
   }
 
   removeItem(item: CartItem) {
@@ -117,6 +144,29 @@ export class ViewCartPage implements OnInit, AfterViewInit {
     await alert.present();
   }
 
+  async showOrderConfirmation(orderData: any) {
+    const alert = await this.alertController.create({
+      header: 'Order Confirmed!',
+      message: `Your order #${orderData.orderId} has been processed successfully. A receipt has been sent to your email.`,
+      buttons: [
+        {
+          text: 'View Order',
+          handler: () => {
+            this.router.navigate(['/orders', orderData.orderId]);
+          },
+        },
+        {
+          text: 'Continue Shopping',
+          handler: () => {
+            this.router.navigate(['/view-raffles']);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
   async buyTickets() {
     if (!this.UserID) {
       console.error(' User not logged in');
@@ -125,6 +175,11 @@ export class ViewCartPage implements OnInit, AfterViewInit {
 
     if (!this.card) {
       console.error(' Card element not initialized');
+      return;
+    }
+
+    if (this.cartItems.length === 0) {
+      console.error(' Cart is empty');
       return;
     }
 
@@ -140,6 +195,8 @@ export class ViewCartPage implements OnInit, AfterViewInit {
       }
 
       const paymentToken = result.token;
+      let successfulPurchases = 0;
+      let lastOrderData: any = null;
 
       // Loop through items in cart and purchase tickets
       for (const item of this.cartItems) {
@@ -147,17 +204,29 @@ export class ViewCartPage implements OnInit, AfterViewInit {
         const userId = this.UserID!;
         const ticketsBought = item.quantity;
 
-        this.apiService
-          .purchaseTickets(raffleId, userId, ticketsBought, paymentToken)
-          .subscribe({
-            next: async (res) => {
-              console.log(` Success for raffle ${raffleId}:`, res);
-              this.clearCart();
-              await this.showSuccessPopup();
-            },
-            error: (err) =>
-              console.error(` Error purchasing for raffle ${raffleId}:`, err),
-          });
+        try {
+          const res = await this.apiService
+            .purchaseTickets(raffleId, userId, ticketsBought, paymentToken)
+            .toPromise();
+
+          console.log(` Success for raffle ${raffleId}:`, res);
+          successfulPurchases++;
+          lastOrderData = res; // Store the last order data for confirmation
+        } catch (err) {
+          console.error(` Error purchasing for raffle ${raffleId}:`, err);
+        }
+      }
+
+      if (successfulPurchases > 0) {
+        this.clearCart();
+
+        if (successfulPurchases === this.cartItems.length) {
+          // All purchases successful
+          await this.showOrderConfirmation(lastOrderData);
+        } else {
+          // Some purchases failed
+          await this.showSuccessPopup();
+        }
       }
     } catch (err) {
       console.error(' Error during tokenize:', err);

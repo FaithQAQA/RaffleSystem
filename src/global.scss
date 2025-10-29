@@ -1,2 +1,22 @@
 /* In styles.css or global SCSS */
 @import "~@ionic/angular/css/core.css";
+/* In your global styles or component styles */
+ion-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+ion-content.modern-content {
+  flex: 1;
+  --background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+/* Ensure the footer component has these styles */
+app-app-footer {
+  display: block;
+  width: 100%;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}

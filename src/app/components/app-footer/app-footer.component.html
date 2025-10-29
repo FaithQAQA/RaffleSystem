@@ -1,16 +1,71 @@
-<ion-footer class="modern-footer">
+<!-- footer.component.html -->
+<footer class="modern-footer glass-footer fixed-footer">
+  <div class="footer-overlay"></div>
+
   <div class="footer-container">
-    <h3 class="footer-title">VOICE for Children who are Deaf and Hard of Hearing</h3>
-    <p class="footer-text">478 Dundas St. West, P.O. Box 30045</p>
-    <p class="footer-text">Oakville, Ontario L6H 6Y3</p>
-    <p class="footer-text">
-      Email:
-      <a href="mailto:admin@voicefordeafkids.com" class="footer-link">
-        adminvoicefordeafkids.com
-      </a>
-    </p>
-    <p class="footer-note">
-      Please email us and we will respond via email or call back if requested.
-    </p>
+    <div class="footer-brand">
+      <div class="logo-container">
+        <ion-icon name="ear-outline" class="footer-logo"></ion-icon>
+      </div>
+      <h3 class="footer-title gradient-text">
+        VOICE for Children who are Deaf and Hard of Hearing
+      </h3>
+    </div>
+
+    <div class="footer-content">
+      <div class="footer-contact">
+        <div class="contact-item glass-card">
+          <ion-icon name="location-outline" class="contact-icon"></ion-icon>
+          <div class="contact-text">
+            <p class="footer-text">
+              478 Dundas St. West, P.O. Box 30045<br />
+              Oakville, Ontario L6H 6Y3
+            </p>
+          </div>
+        </div>
+
+        <div class="contact-item glass-card">
+          <ion-icon name="mail-outline" class="contact-icon"></ion-icon>
+          <div class="contact-text">
+            <p class="footer-text">
+              Email:
+              <a href="mailto:admin@voicefordeafkids.com" class="footer-link">
+                {{'admin@voicefordeafkids.com'}}
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <div class="contact-note glass-card">
+          <p class="footer-note">
+            Please email us — we'll respond promptly via email or call back if requested.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-social">
+        <h4 class="social-title">Connect With Us</h4>
+        <div class="social-icons">
+          <a href="#" aria-label="Facebook" class="social-icon">
+            <ion-icon name="logo-facebook"></ion-icon>
+          </a>
+          <a href="#" aria-label="Instagram" class="social-icon">
+            <ion-icon name="logo-instagram"></ion-icon>
+          </a>
+          <a href="#" aria-label="Twitter" class="social-icon">
+            <ion-icon name="logo-twitter"></ion-icon>
+          </a>
+          <a href="#" aria-label="LinkedIn" class="social-icon">
+            <ion-icon name="logo-linkedin"></ion-icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-legal">
+        © {{ currentYear }} VOICE for Deaf Kids — All Rights Reserved
+      </p>
+    </div>
   </div>
-</ion-footer>
+</footer>
