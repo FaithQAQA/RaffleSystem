@@ -1,6 +1,19 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4 w-100" style="max-width: 400px">
-    <div class="card-body">
+  <div class="card shadow-lg p-4 w-100" style="max-width: 400px; position: relative;">
+
+    <!-- Overlay Loader (optional full-card overlay) -->
+    <div
+      *ngIf="isLoading"
+      class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center bg-white bg-opacity-75 rounded"
+      style="z-index: 10;"
+    >
+      <div class="spinner-border text-primary mb-2" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <div class="fw-semibold text-secondary small">Registering your account...</div>
+    </div>
+
+    <div class="card-body" [class.opacity-50]="isLoading">
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0"><b>Register</b></h3>
@@ -17,6 +30,7 @@
           id="username"
           placeholder="Enter username"
           required
+          [disabled]="isLoading"
         />
       </div>
 
@@ -30,6 +44,7 @@
           id="email"
           placeholder="Enter email"
           required
+          [disabled]="isLoading"
         />
       </div>
 
@@ -43,11 +58,13 @@
           id="password"
           placeholder="Enter password"
           required
+          [disabled]="isLoading"
         />
         <button
           type="button"
           class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
           (click)="togglePasswordVisibility()"
+          [disabled]="isLoading"
         >
           <i [ngClass]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
         </button>
@@ -63,11 +80,13 @@
           id="confirmPassword"
           placeholder="Re-enter password"
           required
+          [disabled]="isLoading"
         />
         <button
           type="button"
           class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
           (click)="toggleConfirmPasswordVisibility()"
+          [disabled]="isLoading"
         >
           <i [ngClass]="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
         </button>
@@ -82,10 +101,14 @@
       <div class="d-grid mt-4">
         <button
           class="btn btn-primary btn-block"
-          [disabled]="user.password !== user.confirmPassword"
+          [disabled]="user.password !== user.confirmPassword || isLoading"
           (click)="register()"
         >
-          Register
+          <span *ngIf="!isLoading">Register</span>
+          <div *ngIf="isLoading" class="d-flex align-items-center justify-content-center">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            <span>Processing...</span>
+          </div>
         </button>
       </div>
     </div>
