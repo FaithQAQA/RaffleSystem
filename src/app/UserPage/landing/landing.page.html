@@ -18,7 +18,7 @@
         <ion-icon name="warning-outline" class="error-icon"></ion-icon>
         <h3>Unable to Load Raffles</h3>
         <p>{{ errorMessage }}</p>
-        <ion-button fill="solid" color="primary" (click)="getRecentRaffles()">
+        <ion-button fill="solid" color="primary" (click)="refreshRaffles()">
           <ion-icon name="refresh-outline" slot="start"></ion-icon>
           Try Again
         </ion-button>
@@ -76,7 +76,7 @@
         <ion-grid class="raffle-gallery">
           <ion-row>
             <ion-col
-              *ngFor="let raffle of recentRaffles; let i = index"
+              *ngFor="let raffle of recentRaffles; trackBy: trackByRaffleId"
               size="12"
               size-md="6"
               size-lg="4"
@@ -91,10 +91,18 @@
                 <!-- Status Badges -->
                 <div class="card-badges">
                   <!-- Urgent Badge -->
-                  <div class="card-badge" *ngIf="isEndingSoon(raffle)">
+                  <div class="card-badge" *ngIf="raffle._remainingTickets > 0 && raffle._remainingTickets <= 20">
                     <ion-badge color="danger" class="urgent-badge">
                       <ion-icon name="flash-outline"></ion-icon>
-                      Ends in {{ getDaysUntilEnd(raffle) }} days!
+                      Only {{ raffle._remainingTickets }} left!
+                    </ion-badge>
+                  </div>
+
+                  <!-- Ending Soon Badge -->
+                  <div class="card-badge" *ngIf="isEndingSoon(raffle)">
+                    <ion-badge color="warning" class="ending-badge">
+                      <ion-icon name="time-outline"></ion-icon>
+                      Ends in {{ getDaysUntilEnd(raffle) }} days
                     </ion-badge>
                   </div>
 
@@ -107,7 +115,7 @@
                   </div>
 
                   <!-- Sold Out Badge -->
-                  <div class="card-badge" *ngIf="isSoldOut(raffle)">
+                  <div class="card-badge" *ngIf="raffle._remainingTickets <= 0">
                     <ion-badge color="dark" class="sold-out-badge">
                       <ion-icon name="close-circle-outline"></ion-icon>
                       Sold Out
@@ -145,24 +153,24 @@
                   <p class="raffle-description">{{ getRaffleDescription(raffle) }}</p>
 
                   <!-- Progress Section -->
-                  <div class="progress-section" *ngIf="!isSoldOut(raffle)">
+                  <div class="progress-section" *ngIf="raffle._remainingTickets > 0">
                     <div class="progress-header">
                       <span class="progress-label">Tickets Sold</span>
                       <span class="progress-percentage">
-                        {{ calculateProgress(raffle) }}%
+                        {{ raffle._progress }}%
                       </span>
                     </div>
                     <ion-progress-bar
-                      [value]="getProgressValue(raffle)"
+                      [value]="raffle._progress / 100"
                       [color]="getProgressColor(raffle)"
                       class="progress-bar"
                     ></ion-progress-bar>
                     <div class="progress-stats">
                       <small class="progress-text">
-                        {{ getTicketsSold(raffle) }} / {{ getTotalTickets(raffle) }} tickets
+                        {{ raffle.ticketsSold }} / {{ raffle.totalTickets }} tickets
                       </small>
                       <small class="progress-remaining">
-                        {{ getRemainingTickets(raffle) }} remaining
+                        {{ raffle._remainingTickets }} remaining
                       </small>
                     </div>
                   </div>
@@ -170,13 +178,21 @@
                   <!-- Price and Action Section -->
                   <div class="action-section">
                     <div class="price-info">
-                      <ion-chip [color]="isSoldOut(raffle) ? 'medium' : 'primary'" class="price-chip" [outline]="!isSoldOut(raffle)">
+                      <ion-chip
+                        [color]="raffle._remainingTickets <= 0 ? 'medium' : 'primary'"
+                        class="price-chip"
+                        [outline]="raffle._remainingTickets > 0"
+                      >
                         <ion-icon name="cash-outline"></ion-icon>
-                        <ion-label>${{ getRafflePrice(raffle) }} per ticket</ion-label>
+                        <ion-label>${{ raffle.price }} per ticket</ion-label>
                       </ion-chip>
 
                       <!-- Popular Badge -->
-                      <ion-badge *ngIf="isPopularRaffle(raffle) && !isSoldOut(raffle)" color="warning" class="popular-badge">
+                      <ion-badge
+                        *ngIf="raffle._progress > 70 && raffle._remainingTickets > 0"
+                        color="warning"
+                        class="popular-badge"
+                      >
                         <ion-icon name="flame-outline"></ion-icon>
                         Popular
                       </ion-badge>
@@ -184,14 +200,17 @@
 
                     <ion-button
                       expand="block"
-                      [color]="isSoldOut(raffle) ? 'medium' : 'primary'"
-                      [fill]="isSoldOut(raffle) ? 'outline' : 'solid'"
+                      [color]="raffle._remainingTickets <= 0 ? 'medium' : 'primary'"
+                      [fill]="raffle._remainingTickets <= 0 ? 'outline' : 'solid'"
                       class="add-to-cart-btn"
                       (click)="$event.stopPropagation(); handleRaffleAction(raffle)"
-                      [disabled]="isSoldOut(raffle)"
+                      [disabled]="raffle._remainingTickets <= 0"
                     >
-                      <ion-icon [name]="isSoldOut(raffle) ? 'close-circle-outline' : 'cart-outline'" slot="start"></ion-icon>
-                      {{ isSoldOut(raffle) ? 'Sold Out' : 'Add to Cart' }}
+                      <ion-icon
+                        [name]="raffle._remainingTickets <= 0 ? 'close-circle-outline' : 'cart-outline'"
+                        slot="start"
+                      ></ion-icon>
+                      {{ raffle._remainingTickets <= 0 ? 'Sold Out' : 'Add to Cart' }}
                     </ion-button>
                   </div>
                 </ion-card-content>
@@ -207,7 +226,7 @@
                   <ion-icon name="ticket-outline" class="empty-state-icon"></ion-icon>
                   <h3>No Active Raffles Available</h3>
                   <p>We're preparing new exciting raffles for you. Check back soon!</p>
-                  <ion-button fill="outline" color="primary" (click)="getRecentRaffles()">
+                  <ion-button fill="outline" color="primary" (click)="refreshRaffles()">
                     <ion-icon name="refresh-outline" slot="start"></ion-icon>
                     Refresh
                   </ion-button>
@@ -221,8 +240,6 @@
       <!-- Quick Actions Section -->
       <section class="quick-actions-section">
         <div class="actions-grid">
-
-
           <ion-card class="action-card glass-card" routerLink="/view-raffles">
             <div class="action-content">
               <ion-icon name="list-outline" class="action-icon"></ion-icon>
@@ -230,8 +247,6 @@
               <p>Browse through all available raffles and opportunities</p>
             </div>
           </ion-card>
-
-
         </div>
       </section>
     </div>

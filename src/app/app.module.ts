@@ -7,10 +7,12 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { NotificationPopoverComponent } from './components/notification-popover/notification-popover.component';
+import { SettingsPage } from './pages/settings/settings.page'; // Import your component
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [AppComponent,NotificationPopoverComponent],
 
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, FormsModule],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, FormsModule, ReactiveFormsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA]

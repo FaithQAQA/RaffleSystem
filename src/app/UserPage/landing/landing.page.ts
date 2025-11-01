@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { throwError, Subject } from 'rxjs';
+import { catchError, takeUntil, debounceTime } from 'rxjs/operators';
 import { ApiService } from 'src/app/services/api.service';
 import { ToastController } from '@ionic/angular';
 
@@ -10,12 +10,17 @@ import { ToastController } from '@ionic/angular';
   templateUrl: './landing.page.html',
   styleUrls: ['./landing.page.scss'],
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush // Add this for performance
 })
-export class LandingPage implements OnInit {
+export class LandingPage implements OnInit, OnDestroy {
   recentRaffles: any[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
   cartItemCount = 0;
+
+  // Add destruction subject for memory leak prevention
+  private destroy$ = new Subject<void>();
+  private readonly CACHE_KEY = 'landing-recent-raffles';
 
   constructor(
     private router: Router,
@@ -24,20 +29,42 @@ export class LandingPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.apiService.cartCount$.subscribe(count => {
-      this.cartItemCount = count;
-    });
+    // Optimized subscription with debouncing and memory leak prevention
+    this.apiService.cartCount$
+      .pipe(
+        takeUntil(this.destroy$),
+        debounceTime(50) // Reduce rapid updates
+      )
+      .subscribe(count => {
+        this.cartItemCount = count;
+      });
+
     this.apiService.loadCart();
     this.getRecentRaffles();
   }
 
-  // ============ DATA HANDLING METHODS ============
+  ngOnDestroy() {
+    // Prevent memory leaks
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // ============ OPTIMIZED DATA HANDLING METHODS ============
 
   getRecentRaffles() {
+    // Check cache first to avoid unnecessary API calls
+    const cached = this.getFromCache();
+    if (cached && !this.isCacheExpired(cached)) {
+      this.recentRaffles = cached.data;
+      this.isLoading = false;
+      return;
+    }
+
     this.isLoading = true;
     this.errorMessage = '';
 
     this.apiService.getRecentRaffles().pipe(
+      takeUntil(this.destroy$), // Prevent memory leaks
       catchError(error => {
         console.error('Error fetching recent raffles:', error);
         this.errorMessage = this.getErrorMessage(error);
@@ -49,32 +76,69 @@ export class LandingPage implements OnInit {
       console.log('Raw API response:', response);
 
       // Handle different response formats
+      let processedRaffles: any[] = [];
+
       if (Array.isArray(response)) {
-        this.recentRaffles = this.processRafflesData(response);
+        processedRaffles = this.processRafflesData(response);
       } else if (response && Array.isArray(response.raffles)) {
-        this.recentRaffles = this.processRafflesData(response.raffles);
+        processedRaffles = this.processRafflesData(response.raffles);
       } else if (response && Array.isArray(response.data)) {
-        this.recentRaffles = this.processRafflesData(response.data);
+        processedRaffles = this.processRafflesData(response.data);
       } else {
         console.warn('Unexpected response format:', response);
-        this.recentRaffles = [];
+        processedRaffles = [];
       }
 
+      // Cache the processed data
+      this.setCache(processedRaffles);
+      this.recentRaffles = processedRaffles;
       this.isLoading = false;
+
       console.log('Processed raffles:', this.recentRaffles);
     });
+  }
+
+  // Simple caching mechanism for this component
+  private getFromCache(): { data: any[], timestamp: number } | null {
+    const cached = localStorage.getItem(this.CACHE_KEY);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.warn('Failed to parse cache:', e);
+        localStorage.removeItem(this.CACHE_KEY);
+      }
+    }
+    return null;
+  }
+
+  private setCache(data: any[]): void {
+    const cacheData = {
+      data,
+      timestamp: Date.now()
+    };
+    try {
+      localStorage.setItem(this.CACHE_KEY, JSON.stringify(cacheData));
+    } catch (e) {
+      console.warn('Failed to cache data:', e);
+    }
+  }
+
+  private isCacheExpired(cached: { timestamp: number }): boolean {
+    return Date.now() - cached.timestamp > 5 * 60 * 1000; // 5 minutes cache
   }
 
   private processRafflesData(raffles: any[]): any[] {
     if (!Array.isArray(raffles)) return [];
 
+    // Use more efficient processing
     return raffles
       .map(raffle => this.normalizeRaffleData(raffle))
       .filter(raffle => raffle !== null)
       .sort((a, b) => {
-        // Sort by end date (soonest first) or by creation date
-        const dateA = a.endDate ? new Date(a.endDate).getTime() : new Date(a.createdAt).getTime();
-        const dateB = b.endDate ? new Date(b.endDate).getTime() : new Date(b.createdAt).getTime();
+        // Optimized date comparison - cache date values
+        const dateA = a._endDate || (a.endDate ? new Date(a.endDate).getTime() : new Date(a.createdAt).getTime());
+        const dateB = b._endDate || (b.endDate ? new Date(b.endDate).getTime() : new Date(b.createdAt).getTime());
         return dateA - dateB;
       })
       .slice(0, 6); // Limit to 6 raffles
@@ -84,20 +148,32 @@ export class LandingPage implements OnInit {
     if (!raffle) return null;
 
     try {
-      return {
+      // Pre-calculate expensive values
+      const price = this.safeNumber(raffle.price, 0);
+      const ticketsSold = this.safeNumber(raffle.ticketsSold, 0);
+      const totalTickets = this.safeNumber(raffle.totalTickets, 100);
+      const endDate = raffle.endDate || this.calculateEndDate(raffle.createdAt);
+
+      const normalized = {
         _id: raffle._id || raffle.id || '',
         title: raffle.title || 'Untitled Raffle',
         description: raffle.description || 'No description available',
-        price: this.safeNumber(raffle.price, 0),
-        ticketsSold: this.safeNumber(raffle.ticketsSold, 0),
-        totalTickets: this.safeNumber(raffle.totalTickets, 100),
+        price: price,
+        ticketsSold: ticketsSold,
+        totalTickets: totalTickets,
         startDate: raffle.startDate || raffle.createdAt || new Date().toISOString(),
-        endDate: raffle.endDate || this.calculateEndDate(raffle.createdAt),
+        endDate: endDate,
         image: raffle.image || raffle.imageUrl || null,
         status: raffle.status || 'active',
         createdAt: raffle.createdAt || new Date().toISOString(),
-        updatedAt: raffle.updatedAt || new Date().toISOString()
+        updatedAt: raffle.updatedAt || new Date().toISOString(),
+        // Pre-calculated values for performance
+        _endDate: new Date(endDate).getTime(),
+        _remainingTickets: Math.max(0, totalTickets - ticketsSold),
+        _progress: totalTickets === 0 ? 0 : Math.round((ticketsSold / totalTickets) * 100)
       };
+
+      return normalized;
     } catch (error) {
       console.error('Error normalizing raffle data:', error, raffle);
       return null;
@@ -105,6 +181,7 @@ export class LandingPage implements OnInit {
   }
 
   private safeNumber(value: any, defaultValue: number): number {
+    if (typeof value === 'number') return value;
     const num = Number(value);
     return isNaN(num) ? defaultValue : Math.max(0, num);
   }
@@ -131,7 +208,7 @@ export class LandingPage implements OnInit {
     return 'Failed to load recent raffles. Please try again.';
   }
 
-  // ============ UI HELPER METHODS ============
+  // ============ OPTIMIZED UI HELPER METHODS ============
 
   getRaffleAriaLabel(raffle: any): string {
     return `Raffle: ${raffle.title}. ${raffle.description}. Price: $${raffle.price} per ticket. ${this.isEndingSoon(raffle) ? 'Ending soon!' : ''} ${this.isSoldOut(raffle) ? 'Sold out.' : ''}`;
@@ -151,7 +228,7 @@ export class LandingPage implements OnInit {
   }
 
   getRafflePrice(raffle: any): number {
-    return this.safeNumber(raffle.price, 0);
+    return raffle.price; // Already normalized
   }
 
   getRaffleDateInfo(raffle: any): string {
@@ -162,10 +239,11 @@ export class LandingPage implements OnInit {
     return 'Starting soon';
   }
 
-  // ============ CALCULATION METHODS ============
+  // ============ OPTIMIZED CALCULATION METHODS ============
 
   getTotalTicketsSold(): number {
-    return this.recentRaffles.reduce((total, raffle) => total + this.getTicketsSold(raffle), 0);
+    // Use pre-calculated values for better performance
+    return this.recentRaffles.reduce((total, raffle) => total + raffle.ticketsSold, 0);
   }
 
   getEndingSoonCount(): number {
@@ -173,71 +251,64 @@ export class LandingPage implements OnInit {
   }
 
   getTicketsSold(raffle: any): number {
-    return this.safeNumber(raffle.ticketsSold, 0);
+    return raffle.ticketsSold; // Already normalized
   }
 
   getTotalTickets(raffle: any): number {
-    return this.safeNumber(raffle.totalTickets, 100);
+    return raffle.totalTickets; // Already normalized
   }
 
   getRemainingTickets(raffle: any): number {
-    return Math.max(0, this.getTotalTickets(raffle) - this.getTicketsSold(raffle));
+    return raffle._remainingTickets; // Use pre-calculated value
   }
 
   calculateProgress(raffle: any): number {
-    const total = this.getTotalTickets(raffle);
-    const sold = this.getTicketsSold(raffle);
-    if (total === 0) return 0;
-    return Math.round((sold / total) * 100);
+    return raffle._progress; // Use pre-calculated value
   }
 
   getProgressValue(raffle: any): number {
-    const total = this.getTotalTickets(raffle);
-    const sold = this.getTicketsSold(raffle);
-    if (total === 0) return 0;
-    return sold / total;
+    return raffle._progress / 100; // Use pre-calculated value
   }
 
   getProgressColor(raffle: any): string {
-    const progress = this.calculateProgress(raffle);
+    const progress = raffle._progress; // Use pre-calculated value
     if (progress >= 80) return 'danger';
     if (progress >= 50) return 'warning';
     return 'primary';
   }
 
-  // ============ STATUS METHODS ============
+  // ============ OPTIMIZED STATUS METHODS ============
 
   isEndingSoon(raffle: any): boolean {
     if (!raffle.endDate) return false;
-    const endDate = new Date(raffle.endDate);
-    const now = new Date();
-    const diffTime = endDate.getTime() - now.getTime();
+    const now = Date.now();
+    const endTime = raffle._endDate; // Use pre-calculated value
+    const diffTime = endTime - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays <= 3 && diffDays > 0;
   }
 
   getDaysUntilEnd(raffle: any): number {
     if (!raffle.endDate) return 0;
-    const endDate = new Date(raffle.endDate);
-    const now = new Date();
-    const diffTime = endDate.getTime() - now.getTime();
+    const now = Date.now();
+    const endTime = raffle._endDate; // Use pre-calculated value
+    const diffTime = endTime - now;
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 
   isNewRaffle(raffle: any): boolean {
     if (!raffle.createdAt) return false;
-    const createdDate = new Date(raffle.createdAt);
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const createdDate = new Date(raffle.createdAt).getTime();
+    const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
     return createdDate > oneWeekAgo;
   }
 
   isSoldOut(raffle: any): boolean {
-    return this.getRemainingTickets(raffle) <= 0;
+    return raffle._remainingTickets <= 0; // Use pre-calculated value
   }
 
   isPopularRaffle(raffle: any): boolean {
-    return this.calculateProgress(raffle) > 70 && !this.isSoldOut(raffle);
+    return raffle._progress > 70 && !this.isSoldOut(raffle); // Use pre-calculated value
   }
 
   // ============ ACTION METHODS ============
@@ -275,14 +346,13 @@ export class LandingPage implements OnInit {
 
   learnMore() {
     this.announce('Learn more about our mission and how you can help.');
-    // You can implement navigation to about page or show modal
   }
 
-  // ============ UTILITY METHODS ============
+  // ============ OPTIMIZED UTILITY METHODS ============
 
   formatDate(date: Date): string {
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const now = Date.now();
+    const diffTime = Math.abs(now - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 1) return 'yesterday';
@@ -291,11 +361,15 @@ export class LandingPage implements OnInit {
     return date.toLocaleDateString();
   }
 
-  private announce(message: string) {
-    const liveRegion = document.getElementById('liveRegion');
-    if (liveRegion) {
-      liveRegion.textContent = message;
-    }
+  private async announce(message: string) {
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+      const liveRegion = document.getElementById('liveRegion');
+      if (liveRegion) {
+        liveRegion.textContent = message;
+      }
+    });
+
     this.toastController.create({
       message,
       duration: 2000,
@@ -306,5 +380,15 @@ export class LandingPage implements OnInit {
   logout() {
     localStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
+  }
+  // Add this method for better *ngFor performance
+trackByRaffleId(index: number, raffle: any): string {
+  return raffle._id || index;
+}
+
+  // Add refresh method with cache busting
+  refreshRaffles() {
+    localStorage.removeItem(this.CACHE_KEY); // Clear cache
+    this.getRecentRaffles();
   }
 }

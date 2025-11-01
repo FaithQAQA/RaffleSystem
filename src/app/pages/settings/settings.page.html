@@ -1,0 +1,124 @@
+<app-header></app-header>
+
+<ion-content [fullscreen]="true">
+  <div class="settings-container">
+    <!-- Tabs -->
+<ion-segment [value]="activeTab" (ionChange)="setActiveTab($any($event.detail.value))">
+        <ion-segment-button value="profile">
+        <ion-label>Profile</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="password">
+        <ion-label>Password</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Profile Tab -->
+    <div *ngIf="activeTab === 'profile'" class="tab-content">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Profile Information</ion-card-title>
+          <ion-card-subtitle>Update your account details</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+            <ion-item>
+              <ion-label position="stacked">Username</ion-label>
+              <ion-input formControlName="username" type="text"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="profileForm.get('username')?.touched && profileForm.get('username')?.errors">
+              <small *ngIf="profileForm.get('username')?.errors?.['required']">Username is required</small>
+              <small *ngIf="profileForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</small>
+              <small *ngIf="profileForm.get('username')?.errors?.['maxlength']">Username cannot exceed 30 characters</small>
+            </ion-text>
+
+            <ion-item>
+              <ion-label position="stacked">Email</ion-label>
+              <ion-input formControlName="email" type="email"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.errors">
+              <small *ngIf="profileForm.get('email')?.errors?.['required']">Email is required</small>
+              <small *ngIf="profileForm.get('email')?.errors?.['email']">Please enter a valid email</small>
+            </ion-text>
+
+            <ion-button
+              type="submit"
+              expand="block"
+              [disabled]="profileForm.invalid || !profileForm.dirty"
+              class="ion-margin-top">
+              Update Profile
+            </ion-button>
+          </form>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Account Status -->
+  <!-- In the Account Status section -->
+<ion-card *ngIf="user">
+  <ion-card-header>
+    <ion-card-title>Account Status</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-item>
+      <ion-label>Email Verified</ion-label>
+      <ion-badge [color]="user?.emailVerified ? 'success' : 'warning'" slot="end">
+        {{ user?.emailVerified ? 'Verified' : 'Pending' }}
+      </ion-badge>
+    </ion-item>
+    <ion-item>
+      <ion-label>Member Since</ion-label>
+      <ion-note slot="end">{{ user?.createdAt | date:'mediumDate' }}</ion-note>
+    </ion-item>
+  </ion-card-content>
+</ion-card>
+    </div>
+
+    <!-- Password Tab -->
+    <div *ngIf="activeTab === 'password'" class="tab-content">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Change Password</ion-card-title>
+          <ion-card-subtitle>Update your password securely</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+            <ion-item>
+              <ion-label position="stacked">Current Password</ion-label>
+              <ion-input formControlName="currentPassword" type="password"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.errors">
+              <small *ngIf="passwordForm.get('currentPassword')?.errors?.['required']">Current password is required</small>
+            </ion-text>
+
+            <ion-item>
+              <ion-label position="stacked">New Password</ion-label>
+              <ion-input formControlName="newPassword" type="password"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors">
+              <small *ngIf="passwordForm.get('newPassword')?.errors?.['required']">New password is required</small>
+              <small *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']">Password must be at least 6 characters</small>
+            </ion-text>
+
+            <ion-item>
+              <ion-label position="stacked">Confirm New Password</ion-label>
+              <ion-input formControlName="confirmPassword" type="password"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.errors">
+              <small *ngIf="passwordForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</small>
+              <small *ngIf="passwordForm.errors?.['passwordMismatch']">Passwords do not match</small>
+            </ion-text>
+
+            <ion-button
+              type="submit"
+              expand="block"
+              [disabled]="passwordForm.invalid"
+              class="ion-margin-top">
+              Change Password
+            </ion-button>
+          </form>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

@@ -94,12 +94,22 @@ const routes: Routes = [
     redirectTo: 'login',
     pathMatch: 'full'
   },
+ {
+    path: 'raffles/:id/live',
+    loadChildren: () => import('./raffles/live-raffle/live-raffle.module').then( m => m.LiveRafflePageModule)
+  },
 
+   {
+    path: 'settings',
+    loadChildren: () => import('./pages/settings/settings.module').then( m => m.SettingsPageModule)
+  },
   // WILDCARD ROUTE MUST BE LAST
   {
     path: '**',
     redirectTo: 'login'
-  }
+  },
+
+
 ];
 
 @NgModule({

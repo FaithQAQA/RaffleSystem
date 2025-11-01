@@ -1,0 +1,134 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>
+      <div class="header-title">
+        <ion-icon name="radio" color="danger" *ngIf="isLive && !winner"></ion-icon>
+        <ion-icon name="trophy" color="warning" *ngIf="winner"></ion-icon>
+        <span>{{ winner ? 'Winner Selected!' : (isLive ? 'Live Raffle' : 'Raffle Ended') }}</span>
+      </div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="live-raffle-content">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading raffle...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <ion-icon name="warning-outline" size="large" color="danger"></ion-icon>
+    <h2>Error</h2>
+    <p>{{ error }}</p>
+    <ion-button (click)="goBack()">Back to Raffles</ion-button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="raffle && !loading" class="main-content">
+
+    <!-- Countdown Section -->
+    <div class="countdown-section">
+      <div class="countdown-circle" [class.ending]="countdown.startsWith('00:') && countdown !== '00:00'"
+           [class.ended]="!isLive">
+        <div class="countdown-timer">{{ countdown }}</div>
+        <div class="countdown-label">
+          <span *ngIf="winner">WINNER SELECTED</span>
+          <span *ngIf="!winner && !isLive">DRAWING WINNER...</span>
+          <span *ngIf="!winner && isLive">TIME REMAINING</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add this section after the countdown section -->
+<div *ngIf="isDrawingWinner" class="drawing-section">
+  <div class="drawing-animation">
+    <ion-spinner name="lines"></ion-spinner>
+    <h3>Drawing Winner...</h3>
+    <p>Please wait while we select the winner</p>
+  </div>
+</div>
+
+    <!-- Winner Announcement -->
+    <!-- Winner Announcement -->
+<div *ngIf="winner" class="winner-section">
+  <div class="winner-card" [class.user-winner]="isUserWinner()">
+    <ion-icon name="trophy" class="trophy-icon"></ion-icon>
+    <h2 *ngIf="isUserWinner()">🎉 YOU WON! 🎉</h2>
+    <h2 *ngIf="!isUserWinner()">Winner Selected!</h2>
+
+    <!-- Updated winner name display -->
+    <p class="winner-name">{{ getWinnerDisplayName() }}</p>
+
+    <p *ngIf="isUserWinner()" class="congratulations">Congratulations! You won the raffle!</p>
+    <p *ngIf="!isUserWinner()" class="better-luck">Better luck next time!</p>
+  </div>
+</div>
+    <!-- Live Stats -->
+    <div class="stats-section">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <div class="stat-card">
+              <div class="stat-number">{{ userTicketCount }}</div>
+              <div class="stat-label">Your Tickets</div>
+            </div>
+          </ion-col>
+          <ion-col size="6">
+            <div class="stat-card">
+              <div class="stat-number">{{ userWinningChance.toFixed(1) }}%</div>
+              <div class="stat-label">Win Chance</div>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <div class="stat-card">
+              <div class="stat-number">{{ raffle.totalTicketsSold }}</div>
+              <div class="stat-label">Total Tickets</div>
+            </div>
+          </ion-col>
+          <ion-col size="6">
+            <div class="stat-card">
+              <div class="stat-number">{{ getTotalParticipants() }}</div>
+              <div class="stat-label">Participants</div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- Live Updates Feed -->
+    <div class="updates-section">
+      <h3>📡 Live Updates</h3>
+      <div class="updates-feed">
+        <div *ngFor="let update of liveUpdates" class="update-item">
+          {{ update }}
+        </div>
+        <div *ngIf="liveUpdates.length === 0" class="no-updates">
+          Waiting for updates...
+        </div>
+      </div>
+    </div>
+
+    <!-- Raffle Info -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>{{ raffle.title }}</ion-card-title>
+        <ion-card-subtitle>{{ raffle.description }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Ticket Price:</strong> ${{ raffle.price }}</p>
+        <p><strong>Total Prize Pool:</strong> ${{ getTotalPrizeValue() }}</p>
+        <p><strong>Raffle ID:</strong> {{ raffle._id | uppercase }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

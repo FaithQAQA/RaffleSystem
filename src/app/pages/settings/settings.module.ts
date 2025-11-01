@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule } from '@angular/forms';
+import { SettingsPageRoutingModule } from './settings-routing.module';
 
-import { ViewHistoryPageRoutingModule } from './view-history-routing.module';
-
-import { ViewHistoryPage } from './view-history.page';
+import { SettingsPage } from './settings.page';
 import { AppHeaderComponent } from "src/app/components/app-header/app-header.component";
 
 @NgModule({
@@ -14,9 +14,10 @@ import { AppHeaderComponent } from "src/app/components/app-header/app-header.com
     CommonModule,
     FormsModule,
     IonicModule,
-    ViewHistoryPageRoutingModule,
+    SettingsPageRoutingModule,
+    ReactiveFormsModule,
     AppHeaderComponent
 ],
-  declarations: [ViewHistoryPage]
+  declarations: [SettingsPage]
 })
-export class ViewHistoryPageModule {}
+export class SettingsPageModule {}
