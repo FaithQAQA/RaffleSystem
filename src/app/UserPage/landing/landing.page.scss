@@ -10,11 +10,11 @@
 ion-content.modern-content {
   --background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   flex: 1;
-  // Optimize scrolling performance
-  will-change: transform;
+  // Optimize scrolling performance - REMOVED will-change
+  // will-change: transform; // ❌ REMOVED - causes memory issues
 }
 
-/* Performance Optimized Glassmorphism */
+/* Performance Optimized Glassmorphism - FIXED */
 .glass-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
@@ -26,9 +26,26 @@ ion-content.modern-content {
     0 2px 8px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   // Improve rendering performance
-  transform: translateZ(0);
+  transform: translateZ(0); // ✅ Use this instead of will-change
   backface-visibility: hidden;
   contain: layout style paint;
+
+  // Smooth transitions
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Only enable will-change during hover
+  &:hover {
+    transform: translateY(-8px) translateZ(0);
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.15),
+      0 8px 16px rgba(0, 0, 0, 0.1);
+    will-change: transform; // ✅ Only when actively animating
+  }
+
+  // Remove will-change when not hovering
+  &:not(:hover) {
+    will-change: auto;
+  }
 }
 
 .gradient-text {
@@ -36,11 +53,11 @@ ion-content.modern-content {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  // Prevent repaints
-  will-change: auto;
+  // Prevent repaints - FIXED
+  // will-change: auto; // ❌ REMOVED - not needed for text
 }
 
-/* Optimized Hero Section */
+/* Optimized Hero Section - FIXED */
 .hero-section {
   position: relative;
   padding: 4rem 1.5rem;
@@ -57,8 +74,9 @@ ion-content.modern-content {
     bottom: 0;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    // Performance optimization
-    will-change: transform;
+    // Performance optimization - FIXED
+    // will-change: transform; // ❌ REMOVED - large area impact
+    transform: translateZ(0); // ✅ Use this instead
   }
 
   .hero-content {
@@ -176,7 +194,7 @@ ion-content.modern-content {
   }
 }
 
-/* Performance Optimized Raffle Cards */
+/* Performance Optimized Raffle Cards - FIXED */
 .raffle-gallery {
   max-width: 1200px;
   margin: 0 auto;
@@ -198,19 +216,24 @@ ion-content.modern-content {
   height: 100%;
   display: flex;
   flex-direction: column;
-  // Performance optimizations
-  transform: translateZ(0);
+  // Performance optimizations - FIXED
+  transform: translateZ(0); // ✅ GPU acceleration
   backface-visibility: hidden;
   perspective: 1000;
   contain: layout style paint;
 
   &:hover {
-    transform: translateY(-8px);
+    transform: translateY(-8px) translateZ(0);
     box-shadow:
       0 20px 40px rgba(0, 0, 0, 0.15),
       0 8px 16px rgba(0, 0, 0, 0.1);
-    // Optimize hover animations
-    will-change: transform, box-shadow;
+    // Optimize hover animations - FIXED
+    will-change: transform; // ✅ Only enable during hover
+  }
+
+  // Remove will-change when not hovering
+  &:not(:hover) {
+    will-change: auto;
   }
 
   .card-badges {
@@ -272,7 +295,8 @@ ion-content.modern-content {
       // Optimize image rendering
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
-      will-change: transform;
+      // FIXED: Remove will-change, use transform for GPU
+      transform: translateZ(0);
 
       // Prevent layout shifts with aspect ratio
       aspect-ratio: 16/9;
@@ -294,14 +318,17 @@ ion-content.modern-content {
       justify-content: center;
       opacity: 0;
       transition: opacity 0.3s ease;
-      // Performance optimization
-      will-change: opacity;
+      // Performance optimization - FIXED
+      // will-change: opacity; // ❌ REMOVED
       pointer-events: none;
+      transform: translateZ(0); // ✅ Use this instead
 
       .overlay-content {
         transform: translateY(20px);
         transition: transform 0.3s ease;
-        will-change: transform;
+        // FIXED: Remove will-change
+        // will-change: transform; // ❌ REMOVED
+        transform: translateZ(0); // ✅ Use this instead
 
         .quick-view-btn {
           pointer-events: auto;
@@ -311,14 +338,14 @@ ion-content.modern-content {
 
     &:hover {
       .raffle-image {
-        transform: scale(1.05);
+        transform: scale(1.05) translateZ(0);
       }
 
       .image-overlay {
         opacity: 1;
 
         .overlay-content {
-          transform: translateY(0);
+          transform: translateY(0) translateZ(0);
         }
       }
     }
@@ -446,8 +473,13 @@ ion-content.modern-content {
         contain: layout style;
 
         &:hover:not([disabled]) {
-          transform: translateY(-2px);
-          will-change: transform;
+          transform: translateY(-2px) translateZ(0);
+          will-change: transform; // ✅ Only during hover
+        }
+
+        // Remove will-change when not hovering
+        &:not(:hover) {
+          will-change: auto;
         }
 
         &[disabled] {
@@ -490,7 +522,7 @@ ion-content.modern-content {
   }
 }
 
-/* Quick Actions Section */
+/* Quick Actions Section - FIXED */
 .quick-actions-section {
   padding: 3rem 1.5rem;
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
@@ -509,13 +541,18 @@ ion-content.modern-content {
       text-align: center;
       transition: all 0.3s ease;
       cursor: pointer;
-      // Performance optimization
+      // Performance optimization - FIXED
       transform: translateZ(0);
       contain: layout style paint;
 
       &:hover {
-        transform: translateY(-4px);
-        will-change: transform;
+        transform: translateY(-4px) translateZ(0);
+        will-change: transform; // ✅ Only during hover
+      }
+
+      // Remove will-change when not hovering
+      &:not(:hover) {
+        will-change: auto;
       }
 
       .action-content {
@@ -576,7 +613,7 @@ ion-content.modern-content {
   border: 0;
 }
 
-/* Performance Optimized Responsive Design */
+/* Performance Optimized Responsive Design - FIXED */
 @media (max-width: 768px) {
   .hero-section {
     padding: 2rem 1rem;
@@ -639,6 +676,15 @@ ion-content.modern-content {
         min-height: auto;
       }
     }
+
+    // Remove all will-change on mobile
+    &,
+    &:hover,
+    .card-image-container .raffle-image,
+    .image-overlay,
+    .add-to-cart-btn {
+      will-change: auto !important;
+    }
   }
 
   .quick-actions-section {
@@ -648,12 +694,25 @@ ion-content.modern-content {
       grid-template-columns: 1fr;
       gap: 1rem;
     }
+
+    .action-card {
+      &,
+      &:hover {
+        will-change: auto !important;
+      }
+    }
   }
 
   /* Reduce blur effects on mobile for better performance */
   .glass-card {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+
+    // Remove will-change completely on mobile
+    &,
+    &:hover {
+      will-change: auto !important;
+    }
   }
 }
 
