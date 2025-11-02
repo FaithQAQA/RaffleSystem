@@ -1,124 +1,296 @@
 <app-header></app-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="settings-content">
   <div class="settings-container">
-    <!-- Tabs -->
-<ion-segment [value]="activeTab" (ionChange)="setActiveTab($any($event.detail.value))">
-        <ion-segment-button value="profile">
-        <ion-label>Profile</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="password">
-        <ion-label>Password</ion-label>
-      </ion-segment-button>
-    </ion-segment>
+
+    <!-- Header Section -->
+    <div class="settings-header">
+      <h1 class="page-title gradient-text">Account Settings</h1>
+      <p class="page-subtitle">Manage your profile and security preferences</p>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-navigation">
+      <div class="tabs-container">
+        <button
+          class="tab-button"
+          [class.active]="activeTab === 'profile'"
+          (click)="setActiveTab('profile')">
+          <i class="fas fa-user-circle tab-icon"></i>
+          <span class="tab-label">Profile</span>
+        </button>
+
+        <button
+          class="tab-button"
+          [class.active]="activeTab === 'password'"
+          (click)="setActiveTab('password')">
+          <i class="fas fa-lock tab-icon"></i>
+          <span class="tab-label">Password</span>
+        </button>
+      </div>
+    </div>
 
     <!-- Profile Tab -->
-    <div *ngIf="activeTab === 'profile'" class="tab-content">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Profile Information</ion-card-title>
-          <ion-card-subtitle>Update your account details</ion-card-subtitle>
-        </ion-card-header>
+    <div *ngIf="activeTab === 'profile'" class="tab-content slide-in-left">
 
-        <ion-card-content>
-          <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
-            <ion-item>
-              <ion-label position="stacked">Username</ion-label>
-              <ion-input formControlName="username" type="text"></ion-input>
-            </ion-item>
-            <ion-text color="danger" *ngIf="profileForm.get('username')?.touched && profileForm.get('username')?.errors">
-              <small *ngIf="profileForm.get('username')?.errors?.['required']">Username is required</small>
-              <small *ngIf="profileForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</small>
-              <small *ngIf="profileForm.get('username')?.errors?.['maxlength']">Username cannot exceed 30 characters</small>
-            </ion-text>
+      <!-- Profile Information Card -->
+      <div class="glass-card settings-card">
+        <div class="card-header">
+          <div class="header-content">
+            <i class="fas fa-user-edit header-icon"></i>
+            <div>
+              <h2 class="card-title">Profile Information</h2>
+              <p class="card-subtitle">Update your account details and preferences</p>
+            </div>
+          </div>
+        </div>
 
-            <ion-item>
-              <ion-label position="stacked">Email</ion-label>
-              <ion-input formControlName="email" type="email"></ion-input>
-            </ion-item>
-            <ion-text color="danger" *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.errors">
-              <small *ngIf="profileForm.get('email')?.errors?.['required']">Email is required</small>
-              <small *ngIf="profileForm.get('email')?.errors?.['email']">Please enter a valid email</small>
-            </ion-text>
+        <div class="card-body">
+          <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="settings-form">
 
-            <ion-button
+            <!-- Username Field -->
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-at label-icon"></i>
+                Username
+              </label>
+              <div class="input-container">
+                <input
+                  formControlName="username"
+                  type="text"
+                  class="form-input"
+                  placeholder="Enter your username">
+                <i class="fas fa-user input-icon"></i>
+              </div>
+              <div class="error-messages" *ngIf="profileForm.get('username')?.touched && profileForm.get('username')?.errors">
+                <small *ngIf="profileForm.get('username')?.errors?.['required']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Username is required
+                </small>
+                <small *ngIf="profileForm.get('username')?.errors?.['minlength']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Username must be at least 3 characters
+                </small>
+                <small *ngIf="profileForm.get('username')?.errors?.['maxlength']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Username cannot exceed 30 characters
+                </small>
+              </div>
+            </div>
+
+            <!-- Email Field -->
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-envelope label-icon"></i>
+                Email Address
+              </label>
+              <div class="input-container">
+                <input
+                  formControlName="email"
+                  type="email"
+                  class="form-input"
+                  placeholder="Enter your email address">
+                <i class="fas fa-envelope input-icon"></i>
+              </div>
+              <div class="error-messages" *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.errors">
+                <small *ngIf="profileForm.get('email')?.errors?.['required']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Email is required
+                </small>
+                <small *ngIf="profileForm.get('email')?.errors?.['email']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Please enter a valid email address
+                </small>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button
               type="submit"
-              expand="block"
-              [disabled]="profileForm.invalid || !profileForm.dirty"
-              class="ion-margin-top">
+              class="btn-primary submit-btn"
+              [disabled]="profileForm.invalid || !profileForm.dirty">
+              <i class="fas fa-save btn-icon"></i>
               Update Profile
-            </ion-button>
+              <div class="btn-loading" *ngIf="updatingProfile">
+                <div class="loading-spinner"></div>
+              </div>
+            </button>
           </form>
-        </ion-card-content>
-      </ion-card>
+        </div>
+      </div>
 
-      <!-- Account Status -->
-  <!-- In the Account Status section -->
-<ion-card *ngIf="user">
-  <ion-card-header>
-    <ion-card-title>Account Status</ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    <ion-item>
-      <ion-label>Email Verified</ion-label>
-      <ion-badge [color]="user?.emailVerified ? 'success' : 'warning'" slot="end">
-        {{ user?.emailVerified ? 'Verified' : 'Pending' }}
-      </ion-badge>
-    </ion-item>
-    <ion-item>
-      <ion-label>Member Since</ion-label>
-      <ion-note slot="end">{{ user?.createdAt | date:'mediumDate' }}</ion-note>
-    </ion-item>
-  </ion-card-content>
-</ion-card>
+      <!-- Account Status Card -->
+      <div class="glass-card settings-card" *ngIf="user">
+        <div class="card-header">
+          <div class="header-content">
+            <i class="fas fa-chart-bar header-icon"></i>
+            <div>
+              <h2 class="card-title">Account Status</h2>
+              <p class="card-subtitle">Your account information and verification status</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="status-grid">
+            <!-- Email Verification Status -->
+            <div class="status-item">
+              <div class="status-info">
+                <i class="fas fa-envelope status-icon" [class.verified]="user?.emailVerified"></i>
+                <div class="status-details">
+                  <span class="status-label">Email Verification</span>
+                  <span class="status-value" [class.verified]="user?.emailVerified">
+                    {{ user?.emailVerified ? 'Verified' : 'Pending Verification' }}
+                  </span>
+                </div>
+              </div>
+              <div class="status-badge" [class.verified]="user?.emailVerified">
+                <i class="fas" [class.fa-check]="user?.emailVerified" [class.fa-clock]="!user?.emailVerified"></i>
+                {{ user?.emailVerified ? 'Verified' : 'Pending' }}
+              </div>
+            </div>
+
+            <!-- Member Since -->
+            <div class="status-item">
+              <div class="status-info">
+                <i class="fas fa-calendar-alt status-icon"></i>
+                <div class="status-details">
+                  <span class="status-label">Member Since</span>
+                  <span class="status-value">{{ user?.createdAt | date:'MMMM d, y' }}</span>
+                </div>
+              </div>
+              <div class="status-date">
+                {{ user?.createdAt | date:'mediumDate' }}
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Password Tab -->
-    <div *ngIf="activeTab === 'password'" class="tab-content">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Change Password</ion-card-title>
-          <ion-card-subtitle>Update your password securely</ion-card-subtitle>
-        </ion-card-header>
+    <div *ngIf="activeTab === 'password'" class="tab-content slide-in-left">
 
-        <ion-card-content>
-          <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
-            <ion-item>
-              <ion-label position="stacked">Current Password</ion-label>
-              <ion-input formControlName="currentPassword" type="password"></ion-input>
-            </ion-item>
-            <ion-text color="danger" *ngIf="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.errors">
-              <small *ngIf="passwordForm.get('currentPassword')?.errors?.['required']">Current password is required</small>
-            </ion-text>
+      <!-- Change Password Card -->
+      <div class="glass-card settings-card">
+        <div class="card-header">
+          <div class="header-content">
+            <i class="fas fa-key header-icon"></i>
+            <div>
+              <h2 class="card-title">Change Password</h2>
+              <p class="card-subtitle">Update your password to keep your account secure</p>
+            </div>
+          </div>
+        </div>
 
-            <ion-item>
-              <ion-label position="stacked">New Password</ion-label>
-              <ion-input formControlName="newPassword" type="password"></ion-input>
-            </ion-item>
-            <ion-text color="danger" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors">
-              <small *ngIf="passwordForm.get('newPassword')?.errors?.['required']">New password is required</small>
-              <small *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']">Password must be at least 6 characters</small>
-            </ion-text>
+        <div class="card-body">
+          <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="settings-form">
 
-            <ion-item>
-              <ion-label position="stacked">Confirm New Password</ion-label>
-              <ion-input formControlName="confirmPassword" type="password"></ion-input>
-            </ion-item>
-            <ion-text color="danger" *ngIf="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.errors">
-              <small *ngIf="passwordForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</small>
-              <small *ngIf="passwordForm.errors?.['passwordMismatch']">Passwords do not match</small>
-            </ion-text>
+            <!-- Current Password -->
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-lock label-icon"></i>
+                Current Password
+              </label>
+              <div class="input-container">
+                <input
+                  formControlName="currentPassword"
+                  type="password"
+                  class="form-input"
+                  placeholder="Enter your current password">
+                <i class="fas fa-lock input-icon"></i>
+              </div>
+              <div class="error-messages" *ngIf="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.errors">
+                <small *ngIf="passwordForm.get('currentPassword')?.errors?.['required']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Current password is required
+                </small>
+              </div>
+            </div>
 
-            <ion-button
+            <!-- New Password -->
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-lock-open label-icon"></i>
+                New Password
+              </label>
+              <div class="input-container">
+                <input
+                  formControlName="newPassword"
+                  type="password"
+                  class="form-input"
+                  placeholder="Enter your new password">
+                <i class="fas fa-lock-open input-icon"></i>
+              </div>
+              <div class="error-messages" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors">
+                <small *ngIf="passwordForm.get('newPassword')?.errors?.['required']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  New password is required
+                </small>
+                <small *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Password must be at least 6 characters
+                </small>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-redo label-icon"></i>
+                Confirm New Password
+              </label>
+              <div class="input-container">
+                <input
+                  formControlName="confirmPassword"
+                  type="password"
+                  class="form-input"
+                  placeholder="Confirm your new password">
+                <i class="fas fa-redo input-icon"></i>
+              </div>
+              <div class="error-messages" *ngIf="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.errors">
+                <small *ngIf="passwordForm.get('confirmPassword')?.errors?.['required']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Please confirm your password
+                </small>
+                <small *ngIf="passwordForm.errors?.['passwordMismatch']" class="error-text">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Passwords do not match
+                </small>
+              </div>
+            </div>
+
+            <!-- Password Requirements -->
+            <div class="password-requirements">
+              <h4>Password Requirements:</h4>
+              <ul>
+                <li [class.valid]="passwordForm.get('newPassword')?.value?.length >= 6">
+                  <i class="fas" [class.fa-check]="passwordForm.get('newPassword')?.value?.length >= 6" [class.fa-circle]="passwordForm.get('newPassword')?.value?.length < 6"></i>
+                  At least 6 characters
+                </li>
+                <li [class.valid]="passwordForm.get('newPassword')?.value !== passwordForm.get('currentPassword')?.value && passwordForm.get('newPassword')?.value">
+                  <i class="fas" [class.fa-check]="passwordForm.get('newPassword')?.value !== passwordForm.get('currentPassword')?.value && passwordForm.get('newPassword')?.value" [class.fa-circle]="passwordForm.get('newPassword')?.value === passwordForm.get('currentPassword')?.value"></i>
+                  Different from current password
+                </li>
+              </ul>
+            </div>
+
+            <!-- Submit Button -->
+            <button
               type="submit"
-              expand="block"
-              [disabled]="passwordForm.invalid"
-              class="ion-margin-top">
+              class="btn-primary submit-btn"
+              [disabled]="passwordForm.invalid">
+              <i class="fas fa-key btn-icon"></i>
               Change Password
-            </ion-button>
+              <div class="btn-loading" *ngIf="changingPassword">
+                <div class="loading-spinner"></div>
+              </div>
+            </button>
           </form>
-        </ion-card-content>
-      </ion-card>
+        </div>
+      </div>
     </div>
   </div>
 </ion-content>

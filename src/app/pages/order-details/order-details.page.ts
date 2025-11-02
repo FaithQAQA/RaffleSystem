@@ -138,7 +138,7 @@ export class OrderDetailsPage implements OnInit {
   }
 
   browseMoreRaffles() {
-    this.router.navigate(['/raffles']);
+    this.router.navigate(['/view-raffles']);
   }
 
   async contactSupport() {
@@ -157,6 +157,6 @@ export class OrderDetailsPage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/raffles']);
+    this.router.navigate(['/view-raffles']);
   }
 }

@@ -233,25 +233,28 @@ export class ApiService {
       this.cartCount.next(items.length);
     });
   }
+login(email: string, password: string): Observable<any> {
+  const url = `${this.baseUrl}/auth/login`;
+  const body = { email, password };
+  console.log('Sending login request to:', url);
+  console.log('Request payload:', body);
 
-  // ============ OPTIMIZED AUTH METHODS ============
-  login(email: string, password: string): Observable<any> {
-    const url = `${this.baseUrl}/auth/login`;
-    const body = { email, password };
-    console.log('Sending login request to:', url);
-    console.log('Request payload:', body);
+  return this.http.post(url, body).pipe(
+    tap((response: any) => {
+      if (response && response.token) {
+        localStorage.setItem('token', response.token);
+        this.clearCache(); // Clear all cache on login
+        console.log('Token saved to localStorage');
+      }
+    }),
+    // Pass raw error to component instead of handling it here
+    catchError((err) => {
+      console.error('Login service error:', err);
+      return throwError(() => err);
+    })
+  );
+}
 
-    return this.http.post(url, body).pipe(
-      tap((response: any) => {
-        if (response && response.token) {
-          localStorage.setItem('token', response.token);
-          this.clearCache(); // Clear all cache on login
-          console.log('Token saved to localStorage');
-        }
-      }),
-      catchError(this.handleError)
-    );
-  }
 
   verifyEmail(token: string): Observable<any> {
     console.log('Calling verify email API with token:', token);

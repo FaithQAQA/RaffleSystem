@@ -1,124 +1,231 @@
-.loading-container, .error-container {
+// ======================================
+// 🎨 Design Tokens (Glassmorphism + Gradient)
+// ======================================
+$primary-blue: #667eea;
+$primary-purple: #764ba2;
+$primary-gradient: linear-gradient(135deg, $primary-blue, $primary-purple);
+$light-bg-start: #f8fafc;
+$light-bg-end: #e2e8f0;
+$glass-bg: rgba(255, 255, 255, 0.9);
+$text-primary: #2d3748;
+$text-secondary: #4a5568;
+$text-tertiary: #718096;
+$radius-md: 12px;
+$radius-lg: 20px;
+$shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+$blur: blur(20px);
+
+// ======================================
+// ⏳ Loading / Error States
+// ======================================
+.loading-container,
+.error-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 50vh;
   text-align: center;
+  backdrop-filter: $blur;
 
   ion-spinner {
     margin-bottom: 16px;
+    color: $primary-blue;
   }
 
   p {
-    color: var(--ion-color-medium);
+    color: $text-tertiary;
     margin: 0;
+    font-weight: 500;
   }
 }
 
+// ======================================
+// 📦 Order Container
+// ======================================
 .order-container {
-  padding: 16px;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, $light-bg-start, $light-bg-end);
+  min-height: 100vh;
+  color: $text-primary;
 }
 
+// ======================================
+// 🧾 Header Card (Glass Morphism)
+// ======================================
 .header-card {
   text-align: center;
-  --background: var(--ion-color-light);
+  background: $glass-bg;
+  border-radius: $radius-lg;
+  padding: 1.5rem;
+  box-shadow: $shadow-md;
+  backdrop-filter: $blur;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  margin-bottom: 1.5rem;
 
   .success-title {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    font-size: 1.2em;
+    gap: 10px;
+    font-size: 1.3em;
+    font-weight: 600;
+    background: $primary-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 
+// ======================================
+// 🧾 Order Header
+// ======================================
 .order-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--ion-color-light-shade);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 
   .order-info {
     h2 {
-      margin: 0 0 4px 0;
-      font-size: 1.1em;
-      color: var(--ion-color-dark);
+      margin: 0 0 6px 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: $text-primary;
     }
 
     .order-date {
       margin: 0;
-      font-size: 0.9em;
-      color: var(--ion-color-medium);
+      font-size: 0.9rem;
+      color: $text-secondary;
     }
   }
 
   .status-badge {
     font-size: 0.8em;
-    padding: 6px 10px;
-    border-radius: 12px;
+    padding: 6px 12px;
+    border-radius: $radius-md;
+    font-weight: 600;
+    background: rgba($primary-blue, 0.15);
+    color: $primary-purple;
+    border: 1px solid rgba($primary-purple, 0.2);
+    backdrop-filter: blur(6px);
   }
 }
 
+// ======================================
+// 🔢 Monospace Text
+// ======================================
 .monospace {
-  font-family: monospace;
+  font-family: 'SFMono-Regular', Menlo, monospace;
   font-size: 0.9em;
+  color: $text-secondary;
 }
 
+// ======================================
+// 🎟️ Raffle Info Cards
+// ======================================
 .raffle-info {
-  --background: var(--ion-color-light);
-  border-radius: 8px;
-  margin: 8px 0;
+  background: $glass-bg;
+  border-radius: $radius-md;
+  margin: 12px 0;
+  padding: 1rem;
+  box-shadow: $shadow-md;
+  backdrop-filter: $blur;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 
   h3 {
     margin: 0 0 4px 0;
     font-weight: 600;
-    color: var(--ion-color-primary);
+    background: $primary-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   p {
     margin: 0;
-    font-size: 0.9em;
-    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+    color: $text-tertiary;
   }
 }
 
+// ======================================
+// 💰 Total Row
+// ======================================
 .total-row {
-  --background: var(--ion-color-light);
-  border-top: 2px solid var(--ion-color-primary);
-  margin-top: 16px;
+  background: $glass-bg;
+  border-top: 2px solid $primary-blue;
+  border-radius: $radius-md;
+  margin-top: 1.5rem;
+  padding: 1rem;
   font-weight: 600;
+  color: $text-primary;
+  box-shadow: $shadow-md;
 
-  ion-label, ion-text {
+  ion-label,
+  ion-text {
     font-weight: 600;
   }
 }
 
+// ======================================
+// 🧾 Receipt Section
+// ======================================
 .receipt-section {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid var(--ion-color-light-shade);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 
   .receipt-date {
     font-size: 0.8em;
-    color: var(--ion-color-medium);
-    margin: 4px 0 0 0;
+    color: $text-secondary;
+    margin-top: 4px;
   }
 }
 
+// ======================================
+// 🧩 Buttons & Actions
+// ======================================
 .action-button {
   margin-bottom: 12px;
+
+  ion-button {
+    --border-radius: #{$radius-md};
+    --background: #{$primary-gradient};
+    --box-shadow: #{$shadow-md};
+    font-weight: 600;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.03);
+    }
+  }
 }
 
 .support-text {
-  color: var(--ion-color-medium);
-  line-height: 1.5;
+  color: $text-tertiary;
+  line-height: 1.6;
   margin-bottom: 16px;
 }
 
-// Responsive adjustments
+// ======================================
+// 📋 List Header
+// ======================================
+ion-list-header {
+  background: $glass-bg;
+  font-weight: 600;
+  border-radius: $radius-md;
+  padding: 0.75rem 1rem;
+  box-shadow: $shadow-md;
+  margin-top: 16px;
+  color: $text-primary;
+  backdrop-filter: $blur;
+}
+
+// ======================================
+// 📱 Responsive Adjustments
+// ======================================
 @media (max-width: 768px) {
   .order-header {
     flex-direction: column;
@@ -128,10 +235,4 @@
       align-self: flex-start;
     }
   }
-}
-
-ion-list-header {
-  --background: var(--ion-color-light);
-  font-weight: 600;
-  margin-top: 16px;
 }

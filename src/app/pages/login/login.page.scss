@@ -50,3 +50,14 @@
   align-items: center;
   gap: 8px;
 }
+
+
+.error-message {
+  color: #e53e3e; // red
+  background: rgba(229, 62, 62, 0.1); // subtle red background
+  border-left: 4px solid #e53e3e;
+  padding: 8px 12px;
+  margin: 12px 0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}

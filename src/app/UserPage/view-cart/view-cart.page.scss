@@ -1,11 +1,193 @@
-.cart-container {
-  max-height: 400px; /* Adjust height to show 4 items */
-  overflow-y: auto; /* Enable scrolling */
-  padding: 10px;
+// ======================================
+// 🎨 Design System Variables
+// ======================================
+$primary-blue: #667eea;
+$primary-purple: #764ba2;
+$primary-gradient: linear-gradient(135deg, $primary-blue, $primary-purple);
+
+$light-bg-start: #f8fafc;
+$light-bg-end: #e2e8f0;
+$light-bg: linear-gradient(135deg, $light-bg-start, $light-bg-end);
+
+$card-bg: rgba(255, 255, 255, 0.95);
+$text-primary: #2d3748;
+$text-secondary: #4a5568;
+$text-tertiary: #718096;
+
+$radius-md: 16px;
+$radius-lg: 20px;
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 8px 20px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.15);
+
+$blur-bg: blur(20px);
+
+// ======================================
+// 🌤️ Global Section Styling
+// ======================================
+section.h-custom {
+  background: $light-bg;
+  min-height: 100vh;
+  padding: 2rem 0;
+
+  .container {
+    backdrop-filter: $blur-bg;
+  }
 }
 
-.cart-items-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* Space between items */
+// ======================================
+// 🧊 Card Base (Glassmorphism)
+// ======================================
+.card {
+  background: $card-bg;
+  border-radius: $radius-lg;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: $shadow-md;
+  backdrop-filter: $blur-bg;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+
+  &.bg-primary {
+    background: $primary-gradient !important;
+    color: #fff;
+    box-shadow: $shadow-md;
+  }
+
+  .card-body {
+    color: $text-primary;
+  }
+}
+
+// ======================================
+// 🛒 Cart Container
+// ======================================
+.cart-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+
+  .card {
+    margin-bottom: 1rem;
+    border-radius: $radius-md;
+
+    .card-body {
+      padding: 1rem 1.25rem;
+
+      img {
+        border-radius: 12px;
+        box-shadow: $shadow-sm;
+      }
+
+      h5 {
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      h6 {
+        color: $text-secondary;
+        font-size: 0.85rem;
+      }
+
+      p {
+        color: $text-tertiary;
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
+
+// ======================================
+// 💳 Checkout Section
+// ======================================
+.col-lg-5 {
+  .card.bg-primary {
+    border: none;
+    border-radius: $radius-lg;
+    padding: 1.5rem;
+    box-shadow: $shadow-lg;
+
+    h5 {
+      font-weight: 600;
+      font-size: 1.3rem;
+      letter-spacing: 0.3px;
+      background: $primary-gradient;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    #card-container {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: $radius-md;
+      padding: 1rem;
+      backdrop-filter: blur(10px);
+      margin-bottom: 1rem;
+    }
+
+    .btn-info {
+      background: $primary-gradient;
+      border: none;
+      color: #fff;
+      border-radius: $radius-md;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: $shadow-sm;
+
+      &:hover {
+        box-shadow: $shadow-md;
+        transform: scale(1.02);
+      }
+    }
+  }
+}
+
+// ======================================
+// 🧭 Links, Buttons, and Icons
+// ======================================
+a.text-body {
+  color: $primary-blue;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $primary-purple;
+  }
+}
+
+ion-button {
+  --border-radius: #{$radius-md};
+  --background: transparent;
+  --color: $primary-blue;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &[color="danger"] {
+    --color: #e53e3e;
+  }
+}
+
+ion-icon {
+  vertical-align: middle;
+  font-size: 1.2rem;
+}
+
+// ======================================
+// 📱 Responsive
+// ======================================
+@media (max-width: 992px) {
+  .cart-container {
+    max-height: none;
+  }
+
+  .col-lg-5 {
+    margin-top: 2rem;
+  }
 }
