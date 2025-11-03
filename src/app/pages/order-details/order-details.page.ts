@@ -11,8 +11,10 @@ import { ApiService, Order } from '../../services/api.service';
 })
 export class OrderDetailsPage implements OnInit {
   order: Order | null = null;
+  allOrders: any[] = []; // Store all orders passed through state
   loading = true;
   error = '';
+  hasMultipleOrders = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -23,6 +25,13 @@ export class OrderDetailsPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    // Check for passed state data first
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      this.allOrders = navigation.extras.state['allOrders'] || [];
+      this.hasMultipleOrders = this.allOrders.length > 1;
+    }
+
     this.route.paramMap.subscribe(params => {
       const orderId = params.get('id');
       if (orderId) {
@@ -45,6 +54,12 @@ export class OrderDetailsPage implements OnInit {
         next: (order: Order) => {
           console.log('Order data received:', order);
           this.order = order;
+
+          // If we have multiple orders from state, add the current one if not already included
+          if (this.hasMultipleOrders && !this.allOrders.find(o => o.orderId === orderId)) {
+            this.allOrders.unshift(order);
+          }
+
           this.error = '';
         },
         error: (err: any) => {
@@ -66,8 +81,44 @@ export class OrderDetailsPage implements OnInit {
     }
   }
 
-  // Safe methods that handle null/undefined orders and IDs
-  formatDate(dateString: string | undefined): string {
+  // Add method to view other orders
+  viewOtherOrders() {
+    if (this.hasMultipleOrders) {
+      this.showOrdersList();
+    }
+  }
+
+  private async showOrdersList() {
+    const alert = await this.alertController.create({
+      header: 'Your Orders',
+      message: `You have ${this.allOrders.length} orders from this purchase:`,
+      inputs: this.allOrders.map((order, index) => ({
+        name: `order${index}`,
+        type: 'radio',
+        label: `Order #${this.getShortOrderId(order.orderId)} - ${order.ticketsBought} tickets - ${this.formatCurrency(order.amount)}`,
+        value: order.orderId,
+        checked: order.orderId === this.order?._id
+      })),
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'View Selected',
+          handler: (orderId) => {
+            if (orderId) {
+              this.router.navigate(['/orders', orderId]);
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+ formatDate(dateString: string | undefined): string {
     if (!dateString) return 'N/A';
     try {
       return new Date(dateString).toLocaleDateString('en-CA', {
@@ -140,6 +191,7 @@ export class OrderDetailsPage implements OnInit {
   browseMoreRaffles() {
     this.router.navigate(['/view-raffles']);
   }
+
 
   async contactSupport() {
     const alert = await this.alertController.create({

@@ -147,7 +147,7 @@ export class ViewCartPage implements OnInit, AfterViewInit {
   async showOrderConfirmation(orderData: any) {
     const alert = await this.alertController.create({
       header: 'Order Confirmed!',
-      message: `Your order #${orderData.orderId} has been processed successfully. A receipt has been sent to your email. Please check your Spam or Junk folder if you don’t see it in your inbox.`,
+      message: `Your order #${orderData.orderId} has been processed successfully. A receipt has been sent to your email. Please check your Spam or Junk folder if you don't see it in your inbox.`,
       buttons: [
         {
           text: 'View Order',
@@ -167,71 +167,91 @@ export class ViewCartPage implements OnInit, AfterViewInit {
     await alert.present();
   }
 
-  async buyTickets() {
-    if (!this.UserID) {
-      console.error(' User not logged in');
-      return;
-    }
+async buyTickets() {
+  if (!this.UserID) {
+    console.error(' User not logged in');
+    return;
+  }
 
-    if (!this.card) {
-      console.error(' Card element not initialized');
-      return;
-    }
+  if (!this.card) {
+    console.error(' Card element not initialized');
+    return;
+  }
 
-    if (this.cartItems.length === 0) {
-      console.error(' Cart is empty');
-      return;
-    }
+  if (this.cartItems.length === 0) {
+    console.error(' Cart is empty');
+    return;
+  }
 
+  const successfulOrders: any[] = [];
+
+  // Process each cart item individually
+  for (const item of this.cartItems) {
     try {
-      const result = await this.card.tokenize();
+      const orderData = await this.processSinglePurchase(item);
+      successfulOrders.push(orderData);
+      console.log(`✅ Successfully purchased ${item.quantity} tickets for ${item.title}`);
+    } catch (error) {
+      console.error(`❌ Failed to purchase tickets for raffle ${item.raffleId}:`, error);
+      const errorDiv = document.getElementById('card-errors');
+      if (errorDiv) errorDiv.innerText = `Failed to purchase ${item.quantity} tickets for ${item.title}. Please try again.`;
+      return;
+    }
+  }
 
+  // Clear cart after all successful purchases
+  this.clearCart();
+
+  // Navigate with the orders data in state
+  if (successfulOrders.length > 0) {
+    if (successfulOrders.length === 1) {
+      // Single order - go directly to that order details
+      this.router.navigate(['/orders', successfulOrders[0].orderId]);
+    } else {
+      // Multiple orders - go to first order but pass all orders in state
+      this.router.navigate(['/orders', successfulOrders[0].orderId], {
+        state: { allOrders: successfulOrders }
+      });
+    }
+  }
+}
+
+private async processSinglePurchase(item: CartItem): Promise<any> {
+  return new Promise((resolve, reject) => {
+    // Tokenize for each purchase
+    this.card.tokenize().then((result: any) => {
       if (result.status !== 'OK') {
         const errorMsg = result.errors?.[0]?.message || 'Payment failed';
         console.error(' Tokenization failed:', result.errors);
-        const errorDiv = document.getElementById('card-errors');
-        if (errorDiv) errorDiv.innerText = errorMsg;
+        reject(new Error(errorMsg));
         return;
       }
 
       const paymentToken = result.token;
-      let successfulPurchases = 0;
-      let lastOrderData: any = null;
+      const userId = this.UserID!;
+      const raffleId = typeof item.raffleId === 'object' ? item.raffleId['_id'] : item.raffleId;
+      const ticketsBought = item.quantity;
 
-      // Loop through items in cart and purchase tickets
-      for (const item of this.cartItems) {
-        const raffleId = item.raffleId;
-        const userId = this.UserID!;
-        const ticketsBought = item.quantity;
+      console.log('🛒 Processing purchase:', { userId, raffleId, ticketsBought });
 
-        try {
-          const res = await this.apiService
-            .purchaseTickets(raffleId, userId, ticketsBought, paymentToken)
-            .toPromise();
-
-          console.log(` Success for raffle ${raffleId}:`, res);
-          successfulPurchases++;
-          lastOrderData = res; // Store the last order data for confirmation
-        } catch (err) {
-          console.error(` Error purchasing for raffle ${raffleId}:`, err);
-        }
-      }
-
-      if (successfulPurchases > 0) {
-        this.clearCart();
-
-        if (successfulPurchases === this.cartItems.length) {
-          // All purchases successful
-          await this.showOrderConfirmation(lastOrderData);
-        } else {
-          // Some purchases failed
-          await this.showSuccessPopup();
-        }
-      }
-    } catch (err) {
-      console.error(' Error during tokenize:', err);
-    }
-  }
+      // Call the backend API for this specific raffle
+      this.apiService.purchaseSingleRaffleTickets(userId, raffleId, ticketsBought, paymentToken)
+        .subscribe(
+          (res) => {
+            console.log('✅ Single purchase success:', res);
+            resolve(res); // Return the order data
+          },
+          (error) => {
+            console.error('❌ Single purchase failed:', error);
+            reject(error);
+          }
+        );
+    }).catch((err: any) => {
+      console.error('❌ Tokenization error:', err);
+      reject(err);
+    });
+  });
+}
 
   logout() {
     localStorage.removeItem('adminToken');

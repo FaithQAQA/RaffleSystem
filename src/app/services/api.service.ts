@@ -15,24 +15,6 @@ export interface Order {
   raffleId: string;
   ticketsBought: number;
   amount: number;
-  status: string;
-  paymentId: string;
-  receiptSent: boolean;
-  receiptSentAt?: string;
-  receiptError?: string;
-  createdAt: string;
-  raffle?: {
-    title: string;
-    price: number;
-  };
-}
-
-export interface Order {
-  _id: string;
-  userId: string;
-  raffleId: string;
-  ticketsBought: number;
-  amount: number;
   baseAmount: number;
   taxAmount: number;
   status: string;
@@ -140,6 +122,11 @@ export class ApiService {
   // Clear cache when needed (like after cart updates)
   private clearCache(): void {
     this.cache.clear();
+  }
+
+  // Helper method to generate idempotency key
+  private generateIdempotencyKey(): string {
+    return 'key_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   }
 
   // ============ OPTIMIZED CART METHODS ============
@@ -410,22 +397,39 @@ export class ApiService {
     );
   }
 
-  // Purchase tickets
-  purchaseTickets(
-    raffleId: string,
-    userId: string,
-    ticketsBought: number,
-    paymentToken: string
-  ): Observable<any> {
-    const url = `${this.baseUrl}/raffles/${raffleId}/purchase`;
+  // ============ PURCHASE METHOD ============
+  purchaseTickets(userId: string, cartItems: CartItem[], paymentToken: string, idempotencyKey?: string): Observable<any> {
+    const url = `${this.baseUrl}/raffles/purchase`;
     const headers = this.getHeaders();
 
-    return this.http.post(
-      url,
-      { userId, ticketsBought, paymentToken },
-      { headers }
-    ).pipe(catchError(this.handleError));
+    const body = {
+      userId,
+      cartItems,  // Now accepts cart array instead of single ticketsBought
+      paymentToken,
+      idempotencyKey: idempotencyKey || this.generateIdempotencyKey(),
+      includeTax: true  // Default to true as per backend
+    };
+
+    return this.http.post(url, body, { headers })
+      .pipe(catchError(this.handleError));
   }
+
+  // Add this to your ApiService for single raffle purchases
+purchaseSingleRaffleTickets(userId: string, raffleId: string, ticketsBought: number, paymentToken: string, idempotencyKey?: string): Observable<any> {
+  const url = `${this.baseUrl}/raffles/${raffleId}/purchase`;
+  const headers = this.getHeaders();
+
+  const body = {
+    userId,
+    ticketsBought,
+    paymentToken,
+    idempotencyKey: idempotencyKey || this.generateIdempotencyKey(),
+    includeTax: true
+  };
+
+  return this.http.post(url, body, { headers })
+    .pipe(catchError(this.handleError));
+}
 
   // ============ OTHER METHODS ============
   getRaffleWinningChance(raffleId: string, userId: string): Observable<any> {

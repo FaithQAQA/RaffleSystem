@@ -52,6 +52,24 @@
       </ion-card-header>
     </ion-card>
 
+    <!-- Multiple Orders Notification -->
+    <ion-card *ngIf="hasMultipleOrders" color="primary">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="layers" slot="start"></ion-icon>
+          Multiple Orders Created
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>You successfully purchased tickets for {{ allOrders.length }} raffles!</p>
+        <p>This page shows Order #{{ getShortOrderId(order?._id) }}</p>
+        <ion-button expand="block" (click)="viewOtherOrders()" color="light">
+          <ion-icon name="list" slot="start"></ion-icon>
+          View All {{ allOrders.length }} Orders
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
     <!-- Order Summary -->
     <ion-card>
       <ion-card-header>
@@ -79,7 +97,6 @@
           <ion-label>Order ID</ion-label>
           <ion-text slot="end" class="monospace">#{{ getShortOrderId(order?._id) }}</ion-text>
         </ion-item>
-
 
         <ion-item>
           <ion-label>Purchase Date</ion-label>
@@ -115,12 +132,12 @@
 
         <ion-item>
           <ion-label>Subtotal</ion-label>
-          <ion-text slot="end">{{ formatCurrency(order?.amount) }}</ion-text>
+          <ion-text slot="end">{{ formatCurrency(order?.baseAmount || order?.amount) }}</ion-text>
         </ion-item>
 
         <ion-item>
           <ion-label>Tax</ion-label>
-          <ion-text slot="end">{{ formatCurrency(0) }}</ion-text>
+          <ion-text slot="end">{{ formatCurrency(order?.taxAmount || 0) }}</ion-text>
         </ion-item>
 
         <ion-item class="total-row">
@@ -128,6 +145,37 @@
           <ion-text slot="end" color="primary">
             <strong>{{ formatCurrency(order?.amount) }}</strong>
           </ion-text>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Payment Information -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Payment Information</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label>Payment ID</ion-label>
+          <ion-text slot="end" class="monospace">{{ getShortOrderId(order?.paymentId) }}</ion-text>
+        </ion-item>
+        <ion-item>
+          <ion-label>Payment Status</ion-label>
+          <ion-text slot="end" color="success">
+            <ion-icon name="checkmark" slot="start"></ion-icon>
+            Completed
+          </ion-text>
+        </ion-item>
+        <ion-item *ngIf="order?.receiptSent">
+          <ion-label>Receipt Sent</ion-label>
+          <ion-text slot="end" color="success">
+            <ion-icon name="checkmark" slot="start"></ion-icon>
+            Yes
+          </ion-text>
+        </ion-item>
+        <ion-item *ngIf="order?.receiptSentAt">
+          <ion-label>Receipt Sent At</ion-label>
+          <ion-text slot="end">{{ formatDate(order?.receiptSentAt) }}</ion-text>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -143,6 +191,12 @@
         <ion-button expand="block" fill="outline" (click)="contactSupport()" class="action-button">
           <ion-icon slot="start" name="help-circle"></ion-icon>
           Contact Support
+        </ion-button>
+
+        <!-- Show refresh orders button when multiple orders exist -->
+        <ion-button *ngIf="hasMultipleOrders" expand="block" fill="clear" (click)="viewOtherOrders()" class="action-button">
+          <ion-icon slot="start" name="swap-horizontal"></ion-icon>
+          Switch to Another Order
         </ion-button>
       </ion-card-content>
     </ion-card>
@@ -167,7 +221,6 @@
             <ion-icon slot="start" name="mail" color="primary"></ion-icon>
             <ion-label>{{ 'admin@voicefordeafkids.com' }}</ion-label>
           </ion-item>
-
         </ion-list>
       </ion-card-content>
     </ion-card>
