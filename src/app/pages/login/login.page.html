@@ -1,5 +1,8 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4 w-100" style="max-width: 380px; backdrop-filter: blur(15px); background: rgba(255,255,255,0.85); border-radius: 16px;">
+  <div
+    class="card shadow-lg p-4 w-100"
+    style="max-width: 380px; backdrop-filter: blur(15px); background: rgba(255,255,255,0.85); border-radius: 16px;"
+  >
     <div class="card-body">
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -8,10 +11,9 @@
       </div>
 
       <!-- Error Message -->
-      <!-- Error Message -->
-<div *ngIf="errorMessage" class="error-message mb-3">
-  {{ errorMessage }}
-</div>
+      <div *ngIf="errorMessage" class="error-message mb-3">
+        {{ errorMessage }}
+      </div>
 
       <!-- Email Input -->
       <div class="form-group mb-3">
@@ -26,17 +28,32 @@
         />
       </div>
 
-      <!-- Password Input -->
+      <!-- Password Input with Perfectly Centered Eye Icon -->
       <div class="form-group mb-3 position-relative">
         <label for="password" class="form-label">Password</label>
         <input
+          [type]="showPassword ? 'text' : 'password'"
           [(ngModel)]="password"
-          type="password"
-          class="form-control"
+          class="form-control pe-5"
           id="password"
           placeholder="Password"
           required
         />
+        <i
+          class="bi"
+          [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
+          (click)="showPassword = !showPassword"
+          style="
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #6c757d;
+            cursor: pointer;
+            transition: color 0.2s ease;
+          "
+        ></i>
       </div>
 
       <!-- Keep me signed in & Forgot Password -->
@@ -70,8 +87,6 @@
 
       <!-- Separator -->
       <div class="separator my-4 text-center"></div>
-
-      <!-- Social Login Buttons (optional) -->
     </div>
   </div>
 </div>

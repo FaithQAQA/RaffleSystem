@@ -15,6 +15,8 @@ export class LoginPage implements OnInit {
   rememberMe: boolean = false;
   isLoading: boolean = false;
   errorMessage: string = ''; // <-- For clean on-screen error display
+  showPassword: boolean = false;
+
 
   constructor(
     private apiService: ApiService,
