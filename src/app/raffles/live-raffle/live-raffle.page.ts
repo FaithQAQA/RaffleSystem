@@ -109,27 +109,44 @@ export class LiveRafflePage implements OnInit, OnDestroy {
     });
   }
 
-  calculateUserTicketCount() {
-    if (!this.raffle || !this.raffle.participants || !this.currentUser) {
-      this.userTicketCount = 0;
-      return;
-    }
-
-    const userParticipant = this.raffle.participants.find(
-      (p: any) => p.userId && p.userId._id === this.currentUser._id
-    );
-
-    const newTicketCount = userParticipant ? userParticipant.ticketsBought : 0;
-
-    // Check if user bought more tickets
-    if (newTicketCount > this.userTicketCount && this.userTicketCount > 0) {
-      const additionalTickets = newTicketCount - this.userTicketCount;
-      this.addLiveUpdate(`🎯 You purchased ${additionalTickets} more ticket(s)!`);
-    }
-
-    this.userTicketCount = newTicketCount;
+calculateUserTicketCount() {
+  if (!this.raffle || !this.raffle.participants || !this.currentUser) {
+    this.userTicketCount = 0;
+    return;
   }
 
+  const normalizeId = (id: any): string => {
+    if (!id) return '';
+    // If it's already a string, return it
+    if (typeof id === 'string') return id;
+    // If it's an object with _id (populated), use _id
+    if (id._id) return id._id.toString();
+    // If it's an ObjectId, convert to string
+    return id.toString();
+  };
+
+  const currentUserId = normalizeId(this.currentUser._id);
+
+  const userParticipant = this.raffle.participants.find(
+    (p: any) => {
+      if (!p.userId) return false;
+
+      // Handle both cases: userId as string or userId as object with _id
+      const participantUserId = normalizeId(p.userId);
+      return participantUserId === currentUserId;
+    }
+  );
+
+  const newTicketCount = userParticipant ? userParticipant.ticketsBought : 0;
+
+  // Check if user bought more tickets
+  if (newTicketCount > this.userTicketCount && this.userTicketCount > 0) {
+    const additionalTickets = newTicketCount - this.userTicketCount;
+    this.addLiveUpdate(`🎯 You purchased ${additionalTickets} more ticket(s)!`);
+  }
+
+  this.userTicketCount = newTicketCount;
+}
   loadWinningChance(raffleId: string) {
     if (!this.currentUser) return;
 
@@ -347,7 +364,7 @@ export class LiveRafflePage implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/raffles']);
+    this.router.navigate(['/view-raffles']);
   }
 
   ngOnDestroy() {
