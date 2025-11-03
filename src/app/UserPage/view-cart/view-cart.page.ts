@@ -147,7 +147,7 @@ export class ViewCartPage implements OnInit, AfterViewInit {
   async showOrderConfirmation(orderData: any) {
     const alert = await this.alertController.create({
       header: 'Order Confirmed!',
-      message: `Your order #${orderData.orderId} has been processed successfully. A receipt has been sent to your email, Check Spam if email is not there.`,
+      message: `Your order #${orderData.orderId} has been processed successfully. A receipt has been sent to your email. Please check your Spam or Junk folder if you don’t see it in your inbox.`,
       buttons: [
         {
           text: 'View Order',
