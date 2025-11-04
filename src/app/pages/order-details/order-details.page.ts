@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { ApiService, Order } from '../../services/api.service';
+import { SharedDataService } from 'src/app/services/shared-data.service';
 
 @Component({
   selector: 'app-order-details',
@@ -21,15 +22,29 @@ export class OrderDetailsPage implements OnInit {
     private router: Router,
     private apiService: ApiService,
     private loadingController: LoadingController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private sharedData: SharedDataService // Add this
+
   ) { }
 
-  ngOnInit() {
-    // Check for passed state data first
+ngOnInit() {
+    // Check shared service for multiple orders FIRST
+    const sharedOrders = this.sharedData.getRecentOrders();
+    if (sharedOrders.length > 0) {
+      this.allOrders = sharedOrders;
+      this.hasMultipleOrders = true;
+      console.log('Found multiple orders from shared service:', this.allOrders.length);
+    }
+
+    // Then check for passed state data
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
-      this.allOrders = navigation.extras.state['allOrders'] || [];
-      this.hasMultipleOrders = this.allOrders.length > 1;
+      const stateOrders = navigation.extras.state['allOrders'] || [];
+      if (stateOrders.length > 0) {
+        this.allOrders = stateOrders;
+        this.hasMultipleOrders = true;
+        console.log('Found multiple orders from state:', this.allOrders.length);
+      }
     }
 
     this.route.paramMap.subscribe(params => {
@@ -55,9 +70,14 @@ export class OrderDetailsPage implements OnInit {
           console.log('Order data received:', order);
           this.order = order;
 
-          // If we have multiple orders from state, add the current one if not already included
-          if (this.hasMultipleOrders && !this.allOrders.find(o => o.orderId === orderId)) {
-            this.allOrders.unshift(order);
+             // If we have multiple orders, ensure current order is included
+          if (this.hasMultipleOrders) {
+            const orderExists = this.allOrders.some(o =>
+              o.orderId === orderId || o._id === orderId || o.id === orderId
+            );
+            if (!orderExists) {
+              this.allOrders.unshift(order);
+            }
           }
 
           this.error = '';
@@ -89,35 +109,43 @@ export class OrderDetailsPage implements OnInit {
   }
 
   private async showOrdersList() {
-    const alert = await this.alertController.create({
-      header: 'Your Orders',
-      message: `You have ${this.allOrders.length} orders from this purchase:`,
-      inputs: this.allOrders.map((order, index) => ({
-        name: `order${index}`,
-        type: 'radio',
-        label: `Order #${this.getShortOrderId(order.orderId)} - ${order.ticketsBought} tickets - ${this.formatCurrency(order.amount)}`,
-        value: order.orderId,
-        checked: order.orderId === this.order?._id
-      })),
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'View Selected',
-          handler: (orderId) => {
-            if (orderId) {
-              this.router.navigate(['/orders', orderId]);
-            }
+  if (!this.hasMultipleOrders || this.allOrders.length === 0) return;
+
+  const inputs = this.allOrders.map((order, index) => {
+    const orderId = order.orderId || order._id || order.id;
+    const isCurrent = orderId === this.order?._id;
+
+    return {
+      name: `order${index}`,
+      type: 'radio' as const, // Use 'as const' to specify it's a literal type
+      label: `Order #${this.getShortOrderId(orderId)} - ${order.ticketsBought} tickets - ${this.formatCurrency(order.amount)}`,
+      value: orderId,
+      checked: isCurrent
+    };
+  });
+
+  const alert = await this.alertController.create({
+    header: 'Your Recent Orders',
+    message: `You have ${this.allOrders.length} orders from this purchase:`,
+    inputs: inputs,
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel'
+      },
+      {
+        text: 'View Selected',
+        handler: (selectedOrderId) => {
+          if (selectedOrderId && selectedOrderId !== this.order?._id) {
+            this.router.navigate(['/orders', selectedOrderId]);
           }
         }
-      ]
-    });
+      }
+    ]
+  });
 
-    await alert.present();
-  }
-
+  await alert.present();
+}
  formatDate(dateString: string | undefined): string {
     if (!dateString) return 'N/A';
     try {
