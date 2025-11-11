@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService, Order, MonthlySales, RaffleSales, DailySales, SalesStatistics } from '../../services/api.service';
+import { ToastController } from '@ionic/angular'; // Add this import
 
 // Define the view types as a type
 type ViewType = 'user-orders' | 'monthly-sales' | 'raffle-sales' | 'daily-sales' | 'statistics' | 'pending-receipts';
@@ -31,12 +32,20 @@ export class TransactionHistoryPage implements OnInit {
   };
   selectedYear = new Date().getFullYear();
 
+  // Add missing properties
+  startDate: string = '';
+  endDate: string = '';
+  selectedStatus: string = '';
+
   // Pagination
   currentPage = 1;
   itemsPerPage = 10;
   totalOrders = 0;
 
-  constructor(private apiService: ApiService) { }
+  constructor(
+    private apiService: ApiService,
+    private toastController: ToastController // Add ToastController
+  ) { }
 
   ngOnInit() {
     this.checkUserRole();
@@ -250,27 +259,35 @@ export class TransactionHistoryPage implements OnInit {
     });
   }
 
+  // ============ TOAST METHOD ============
+
+  async presentToast(message: string, color: string = 'success') {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 3000,
+      position: 'bottom',
+      color: color
+    });
+    await toast.present();
+  }
+
   // ============ ACTION METHODS ============
 
-  markReceiptAsSent(order: Order) {
+  markReceiptAsSent(order: any) {
     this.apiService.markReceiptSent(order._id).subscribe({
-      next: (updatedOrder) => {
-        // Remove from pending receipts if in that view
+      next: (updatedOrder: any) => {
+        // Handle success
+        order.receiptSent = true;
+        order.receiptSentAt = updatedOrder.receiptSentAt;
+        this.presentToast('Receipt marked as sent successfully');
+        // Refresh the pending receipts list if we're in that view
         if (this.selectedView === 'pending-receipts') {
-          const index = this.pendingReceipts.findIndex(o => o._id === order._id);
-          if (index > -1) {
-            this.pendingReceipts.splice(index, 1);
-          }
+          this.loadPendingReceipts();
         }
-        // Update in user orders if present
-        const userOrderIndex = this.userOrders.findIndex(o => o._id === order._id);
-        if (userOrderIndex > -1) {
-          this.userOrders[userOrderIndex] = updatedOrder;
-        }
-        console.log('Receipt marked as sent successfully');
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error marking receipt as sent:', error);
+        this.presentToast('Error marking receipt as sent', 'danger');
       }
     });
   }
@@ -286,52 +303,98 @@ export class TransactionHistoryPage implements OnInit {
       case 'daily-sales':
         this.exportDailySales();
         break;
-      default:
+      case 'user-orders':
+      case 'pending-receipts':
         this.exportOrders();
+        break;
+      default:
+        this.presentToast('Export not available for this view', 'warning');
         break;
     }
   }
 
   exportOrders() {
-    this.apiService.exportOrdersToCSV({
-      startDate: this.dateRange.startDate,
-      endDate: this.dateRange.endDate
-    });
+    const filters = {
+      startDate: this.startDate,
+      endDate: this.endDate,
+      status: this.selectedStatus
+    };
+
+    this.apiService.exportOrdersToCSV(filters);
+    this.presentToast('Orders export started');
   }
 
   exportMonthlySales() {
-    // Implement CSV export for monthly sales
+    if (!this.monthlySales.length) {
+      this.presentToast('No data to export', 'warning');
+      return;
+    }
+
     this.downloadAsCSV(
-      this.monthlySales,
+      this.monthlySales.map(sale => ({
+        Year: sale.year,
+        Month: sale.month,
+        'Month Name': this.formatMonthYear(sale.year, sale.month),
+        'Total Sales': this.formatCurrency(sale.totalSales),
+        'Base Amount': this.formatCurrency(sale.totalBaseAmount),
+        'Tax Amount': this.formatCurrency(sale.totalTaxAmount),
+        'Total Orders': sale.totalOrders,
+        'Total Tickets': sale.totalTickets,
+        'Average Order Value': this.formatCurrency(sale.averageOrderValue)
+      })),
       `monthly_sales_${this.selectedYear}.csv`,
-      ['Year', 'Month', 'Total Sales', 'Base Amount', 'Tax Amount', 'Total Orders', 'Total Tickets', 'Average Order Value']
+      ['Year', 'Month', 'Month Name', 'Total Sales', 'Base Amount', 'Tax Amount', 'Total Orders', 'Total Tickets', 'Average Order Value']
     );
+    this.presentToast('Monthly sales exported successfully');
   }
 
   exportRaffleSales() {
+    if (!this.raffleSales.length) {
+      this.presentToast('No data to export', 'warning');
+      return;
+    }
+
     this.downloadAsCSV(
-      this.raffleSales,
+      this.raffleSales.map(sale => ({
+        'Raffle Name': sale.raffleName,
+        'Total Sales': this.formatCurrency(sale.totalSales),
+        'Total Tickets': sale.totalTickets,
+        'Total Orders': sale.totalOrders
+      })),
       'raffle_sales.csv',
       ['Raffle Name', 'Total Sales', 'Total Tickets', 'Total Orders']
     );
+    this.presentToast('Raffle sales exported successfully');
   }
 
   exportDailySales() {
+    if (!this.dailySales.length) {
+      this.presentToast('No data to export', 'warning');
+      return;
+    }
+
     this.downloadAsCSV(
-      this.dailySales,
-      `daily_sales_${this.dateRange.startDate}_to_${this.dateRange.endDate}.csv`,
-      ['Date', 'Total Sales', 'Total Orders', 'Total Tickets']
+      this.dailySales.map(sale => ({
+        Date: sale.date,
+        'Formatted Date': this.formatDate(sale.date),
+        'Total Sales': this.formatCurrency(sale.totalSales),
+        'Total Orders': sale.totalOrders,
+        'Total Tickets': sale.totalTickets
+      })),
+      `daily_sales_${this.dateRange.startDate || this.getDefaultStartDate()}_to_${this.dateRange.endDate || this.getDefaultEndDate()}.csv`,
+      ['Date', 'Formatted Date', 'Total Sales', 'Total Orders', 'Total Tickets']
     );
+    this.presentToast('Daily sales exported successfully');
   }
 
   private downloadAsCSV(data: any[], filename: string, headers: string[]) {
     if (!data.length) {
-      alert('No data to export');
+      this.presentToast('No data to export', 'warning');
       return;
     }
 
     const csvContent = this.convertToCSV(data, headers);
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -343,9 +406,10 @@ export class TransactionHistoryPage implements OnInit {
   private convertToCSV(data: any[], headers: string[]): string {
     const headerRow = headers.join(',');
     const dataRows = data.map(item => {
-      return Object.values(item).map(value =>
-        `"${String(value).replace(/"/g, '""')}"`
-      ).join(',');
+      return headers.map(header => {
+        const value = item[header] || '';
+        return `"${String(value).replace(/"/g, '""')}"`;
+      }).join(',');
     });
 
     return [headerRow, ...dataRows].join('\n');

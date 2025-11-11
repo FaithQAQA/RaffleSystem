@@ -28,6 +28,10 @@ export interface Order {
     title: string;
     price: number;
   };
+  user?: {
+    username: string;
+    email: string;
+  };
 }
 
 // Add new interfaces for analytics
@@ -150,8 +154,9 @@ export class ApiService {
       });
   }
 
+  // Updated cart methods to use new RESTful endpoints
   addToCart(raffleId: string, quantity: number): void {
-    this.http.post<any>(`${this.baseUrl}/cart/add`, { raffleId, quantity }, { headers: this.getHeaders() })
+    this.http.post<any>(`${this.baseUrl}/cart/items`, { raffleId, quantity }, { headers: this.getHeaders() })
       .pipe(
         tap(cart => {
           this.clearCache(); // Clear cache since cart changed
@@ -166,7 +171,7 @@ export class ApiService {
   }
 
   removeFromCart(raffleId: string): void {
-    this.http.post<any>(`${this.baseUrl}/cart/remove`, { raffleId }, { headers: this.getHeaders() })
+    this.http.delete<any>(`${this.baseUrl}/cart/items/${raffleId}`, { headers: this.getHeaders() })
       .pipe(
         tap(cart => {
           this.clearCache(); // Clear cache since cart changed
@@ -180,9 +185,9 @@ export class ApiService {
       .subscribe();
   }
 
-  // Clear cart
+  // Clear cart using new RESTful endpoint
   clearCart(): void {
-    this.http.post<any>(`${this.baseUrl}/cart/clear`, {}, { headers: this.getHeaders() })
+    this.http.delete<any>(`${this.baseUrl}/cart/`, { headers: this.getHeaders() })
       .pipe(
         tap(() => {
           this.clearCache();
@@ -268,6 +273,46 @@ export class ApiService {
     return this.http.post(url, body).pipe(catchError(this.handleError));
   }
 
+  // Update user profile
+  updateUserProfile(profileData: {
+    username?: string;
+    email?: string;
+    currentPassword?: string;
+    newPassword?: string;
+  }): Observable<any> {
+    const url = `${this.baseUrl}/auth/profile`;
+    const headers = this.getHeaders();
+    return this.http.put<any>(url, profileData, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Get user profile
+  getUserProfile(): Observable<any> {
+    const url = `${this.baseUrl}/auth/profile`;
+    const headers = this.getHeaders();
+    return this.http.get<any>(url, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // ============ EMAIL SERVICE METHODS ============
+  getEmailServiceStatus(): Observable<any> {
+    const url = `${this.baseUrl}/auth/email/status`;
+    const headers = this.getHeaders();
+    return this.http.get<any>(url, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  testEmailService(): Observable<any> {
+    const url = `${this.baseUrl}/auth/email/test`;
+    const headers = this.getHeaders();
+    return this.http.get<any>(url, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   // ============ OPTIMIZED RAFFLE METHODS ============
   // Create Raffle
   createRaffle(raffleData: any): Observable<any> {
@@ -321,7 +366,7 @@ export class ApiService {
     );
   }
 
-  // Add to ApiService class
+  // Pick winner for raffle
   pickWinner(raffleId: string): Observable<any> {
     const url = `${this.baseUrl}/raffles/${raffleId}/pick-winner`;
     const headers = this.getHeaders();
@@ -397,6 +442,15 @@ export class ApiService {
     );
   }
 
+  // Get all orders (admin only)
+  getAllOrders(): Observable<Order[]> {
+    const url = `${this.baseUrl}/orders`;
+    const headers = this.getHeaders();
+    return this.http.get<Order[]>(url, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   // ============ PURCHASE METHOD ============
   purchaseTickets(userId: string, cartItems: CartItem[], paymentToken: string, idempotencyKey?: string): Observable<any> {
     const url = `${this.baseUrl}/raffles/purchase`;
@@ -404,32 +458,32 @@ export class ApiService {
 
     const body = {
       userId,
-      cartItems,  // Now accepts cart array instead of single ticketsBought
+      cartItems,
       paymentToken,
       idempotencyKey: idempotencyKey || this.generateIdempotencyKey(),
-      includeTax: true  // Default to true as per backend
+      includeTax: true
     };
 
     return this.http.post(url, body, { headers })
       .pipe(catchError(this.handleError));
   }
 
-  // Add this to your ApiService for single raffle purchases
-purchaseSingleRaffleTickets(userId: string, raffleId: string, ticketsBought: number, paymentToken: string, idempotencyKey?: string): Observable<any> {
-  const url = `${this.baseUrl}/raffles/${raffleId}/purchase`;
-  const headers = this.getHeaders();
+  // Purchase single raffle tickets
+  purchaseSingleRaffleTickets(userId: string, raffleId: string, ticketsBought: number, paymentToken: string, idempotencyKey?: string): Observable<any> {
+    const url = `${this.baseUrl}/raffles/${raffleId}/purchase`;
+    const headers = this.getHeaders();
 
-  const body = {
-    userId,
-    ticketsBought,
-    paymentToken,
-    idempotencyKey: idempotencyKey || this.generateIdempotencyKey(),
-    includeTax: true
-  };
+    const body = {
+      userId,
+      ticketsBought,
+      paymentToken,
+      idempotencyKey: idempotencyKey || this.generateIdempotencyKey(),
+      includeTax: true
+    };
 
-  return this.http.post(url, body, { headers })
-    .pipe(catchError(this.handleError));
-}
+    return this.http.post(url, body, { headers })
+      .pipe(catchError(this.handleError));
+  }
 
   // ============ OTHER METHODS ============
   getRaffleWinningChance(raffleId: string, userId: string): Observable<any> {
@@ -462,6 +516,7 @@ purchaseSingleRaffleTickets(userId: string, raffleId: string, ticketsBought: num
     });
   }
 
+  // ============ USER MANAGEMENT METHODS ============
   // Get all users with pagination and filters
   getUsers(page: number = 1, limit: number = 10, filters?: any): Observable<any> {
     let url = `${this.baseUrl}/users?page=${page}&limit=${limit}`;
@@ -569,6 +624,91 @@ purchaseSingleRaffleTickets(userId: string, raffleId: string, ticketsBought: num
     );
   }
 
+  // Add these methods to your ApiService class
+
+// Mark receipt as sent
+markReceiptSent(orderId: string): Observable<Order> {
+  const url = `${this.baseUrl}/orders/${orderId}/mark-receipt-sent`;
+  const headers = this.getHeaders();
+  return this.http.post<Order>(url, {}, { headers }).pipe(
+    catchError(this.handleError)
+  );
+}
+
+// Export orders to CSV
+exportOrdersToCSV(filters?: any): void {
+  let url = `${this.baseUrl}/orders/export`;
+
+  if (filters) {
+    const params = new URLSearchParams();
+    if (filters.startDate) params.append('startDate', filters.startDate);
+    if (filters.endDate) params.append('endDate', filters.endDate);
+    if (filters.status) params.append('status', filters.status);
+
+    const queryString = params.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+  }
+
+  const headers = this.getHeaders();
+
+  this.http.get(url, { headers, responseType: 'blob' }).subscribe({
+    next: (blob) => {
+      const a = document.createElement('a');
+      const objectUrl = window.URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = `orders_export_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(objectUrl);
+    },
+    error: (err) => {
+      console.error('Failed to export orders CSV', err);
+      alert('Error exporting orders data.');
+    },
+  });
+}
+
+// Get orders with pagination and filters (for admin)
+getOrders(
+  page: number = 1,
+  limit: number = 10,
+  filters?: {
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+    userId?: string;
+    raffleId?: string;
+  }
+): Observable<{ orders: Order[]; total: number; page: number; totalPages: number }> {
+  let url = `${this.baseUrl}/orders?page=${page}&limit=${limit}`;
+
+  if (filters) {
+    if (filters.status) url += `&status=${filters.status}`;
+    if (filters.startDate) url += `&startDate=${filters.startDate}`;
+    if (filters.endDate) url += `&endDate=${filters.endDate}`;
+    if (filters.userId) url += `&userId=${filters.userId}`;
+    if (filters.raffleId) url += `&raffleId=${filters.raffleId}`;
+  }
+
+  const headers = this.getHeaders();
+  return this.http.get<{ orders: Order[]; total: number; page: number; totalPages: number }>(
+    url,
+    { headers }
+  ).pipe(
+    catchError(this.handleError)
+  );
+}
+
+// Get order summary with detailed information
+getOrderSummary(orderId: string): Observable<any> {
+  const url = `${this.baseUrl}/orders/${orderId}/summary`;
+  const headers = this.getHeaders();
+  return this.http.get<any>(url, { headers }).pipe(
+    catchError(this.handleError)
+  );
+}
+
   // Get orders that need receipt (for admin)
   getPendingReceipts(): Observable<Order[]> {
     const url = `${this.baseUrl}/orders/receipts/pending`;
@@ -587,99 +727,10 @@ purchaseSingleRaffleTickets(userId: string, raffleId: string, ticketsBought: num
     );
   }
 
-  // Mark receipt as sent
-  markReceiptSent(orderId: string): Observable<Order> {
-    const url = `${this.baseUrl}/orders/${orderId}/mark-receipt-sent`;
-    const headers = this.getHeaders();
-    return this.http.post<Order>(url, {}, { headers }).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  // Get order summary with detailed information
-  getOrderSummary(orderId: string): Observable<any> {
-    const url = `${this.baseUrl}/orders/${orderId}/summary`;
-    const headers = this.getHeaders();
-    return this.http.get<any>(url, { headers }).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  // Get orders with pagination and filters (for admin)
-  getOrders(
-    page: number = 1,
-    limit: number = 10,
-    filters?: {
-      status?: string;
-      startDate?: string;
-      endDate?: string;
-      userId?: string;
-      raffleId?: string;
-    }
-  ): Observable<{ orders: Order[]; total: number; page: number; totalPages: number }> {
-    let url = `${this.baseUrl}/orders?page=${page}&limit=${limit}`;
-
-    if (filters) {
-      if (filters.status) url += `&status=${filters.status}`;
-      if (filters.startDate) url += `&startDate=${filters.startDate}`;
-      if (filters.endDate) url += `&endDate=${filters.endDate}`;
-      if (filters.userId) url += `&userId=${filters.userId}`;
-      if (filters.raffleId) url += `&raffleId=${filters.raffleId}`;
-    }
-
-    const headers = this.getHeaders();
-    return this.http.get<{ orders: Order[]; total: number; page: number; totalPages: number }>(
-      url,
-      { headers }
-    ).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  // Export orders to CSV
-  exportOrdersToCSV(filters?: any): void {
-    let url = `${this.baseUrl}/orders/export`;
-
-    if (filters) {
-      const params = new URLSearchParams();
-      if (filters.startDate) params.append('startDate', filters.startDate);
-      if (filters.endDate) params.append('endDate', filters.endDate);
-      if (filters.status) params.append('status', filters.status);
-
-      const queryString = params.toString();
-      if (queryString) {
-        url += `?${queryString}`;
-      }
-    }
-
-    const headers = this.getHeaders();
-
-    this.http.get(url, { headers, responseType: 'blob' }).subscribe({
-      next: (blob) => {
-        const a = document.createElement('a');
-        const objectUrl = window.URL.createObjectURL(blob);
-        a.href = objectUrl;
-        a.download = `orders_export_${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-        window.URL.revokeObjectURL(objectUrl);
-      },
-      error: (err) => {
-        console.error('Failed to export orders CSV', err);
-        alert('Error exporting orders data.');
-      },
-    });
-  }
-
-  // Update user profile
-  updateUserProfile(profileData: {
-    username?: string;
-    email?: string;
-    currentPassword?: string;
-    newPassword?: string;
-  }): Observable<any> {
-    const url = `${this.baseUrl}/auth/profile`;
-    const headers = this.getHeaders();
-    return this.http.put<any>(url, profileData, { headers }).pipe(
+  // Health check
+  healthCheck(): Observable<any> {
+    const url = `${this.baseUrl}/auth/health`;
+    return this.http.get(url).pipe(
       catchError(this.handleError)
     );
   }
