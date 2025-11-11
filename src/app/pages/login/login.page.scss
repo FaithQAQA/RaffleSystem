@@ -53,11 +53,44 @@
 
 
 .error-message {
-  color: #e53e3e; // red
-  background: rgba(229, 62, 62, 0.1); // subtle red background
+  color: #e53e3e;
+  background: rgba(229, 62, 62, 0.1);
   border-left: 4px solid #e53e3e;
   padding: 8px 12px;
   margin: 12px 0;
   border-radius: 6px;
   font-size: 0.95rem;
+}
+.password-wrapper {
+  position: relative;
+}
+
+.pr-with-eye {
+  padding-right: 2.5rem;
+}
+
+.toggle-eye {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 2px);
+}
+
+.toggle-eye .bi {
+  font-size: 1.2rem;
+  color: #6c757d;
+  transition: color 0.2s ease;
+}
+
+.toggle-eye:hover .bi,
+.toggle-eye:focus .bi {
+  color: #495057;
 }
