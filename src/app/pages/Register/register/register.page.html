@@ -48,48 +48,58 @@
         />
       </div>
 
-      <!-- Password -->
-      <div class="form-group mb-3 position-relative">
-        <label for="password" class="form-label">Password</label>
-        <input
-          [type]="showPassword ? 'text' : 'password'"
-          [(ngModel)]="user.password"
-          class="form-control"
-          id="password"
-          placeholder="Enter password"
-          required
-          [disabled]="isLoading"
-        />
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
-          (click)="togglePasswordVisibility()"
-          [disabled]="isLoading"
-        >
-          <i [ngClass]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-        </button>
-      </div>
+<!-- Password -->
+<div class="form-group mb-3">
+  <label for="password" class="form-label">Password</label>
+
+  <div class="password-wrapper">
+    <input
+      [type]="showPassword ? 'text' : 'password'"
+      [(ngModel)]="user.password"
+      class="form-control pr-with-eye"
+      id="password"
+      placeholder="Enter password"
+      required
+      [disabled]="isLoading"
+    />
+
+    <button
+      type="button"
+      class="toggle-eye"
+      (click)="togglePasswordVisibility()"
+      [disabled]="isLoading"
+      aria-label="Toggle password visibility"
+    >
+      <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+    </button>
+  </div>
+</div>
 
       <!-- Confirm Password -->
-      <div class="form-group mb-3 position-relative">
+      <div class="form-group mb-3">
         <label for="confirmPassword" class="form-label">Confirm Password</label>
-        <input
-          [type]="showConfirmPassword ? 'text' : 'password'"
-          [(ngModel)]="user.confirmPassword"
-          class="form-control"
-          id="confirmPassword"
-          placeholder="Re-enter password"
-          required
-          [disabled]="isLoading"
-        />
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
-          (click)="toggleConfirmPasswordVisibility()"
-          [disabled]="isLoading"
-        >
-          <i [ngClass]="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-        </button>
+
+        <div class="password-wrapper">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            [(ngModel)]="user.confirmPassword"
+            class="form-control pr-with-eye"
+            id="confirmPassword"
+            placeholder="Re-enter password"
+            required
+            [disabled]="isLoading"
+          />
+
+          <button
+            type="button"
+            class="toggle-eye"
+            (click)="toggleConfirmPasswordVisibility()"
+            [disabled]="isLoading"
+            aria-label="Toggle confirm password visibility"
+          >
+            <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Password Mismatch Warning -->

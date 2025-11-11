@@ -1,0 +1,38 @@
+.password-wrapper {
+  position: relative;
+}
+
+.pr-with-eye {
+  padding-right: 2.5rem;
+}
+
+.toggle-eye {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  height: calc(100% - 2px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.toggle-eye .bi {
+  font-size: 1.2rem;
+  color: #6c757d;
+  transition: color 0.2s ease;
+}
+
+.toggle-eye:hover .bi,
+.toggle-eye:focus .bi {
+  color: #495057;
+}
