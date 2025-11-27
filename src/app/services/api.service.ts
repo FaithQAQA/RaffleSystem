@@ -134,33 +134,56 @@ export class ApiService {
   }
 
   // ============ OPTIMIZED CART METHODS ============
+
+  /**
+   * Load cart:
+   * - if cache exists: update UI immediately from cache
+   * - always request backend to refresh cache and state
+   */
   loadCart(): void {
     const cachedCart = this.getFromCache('cart');
-    if (cachedCart) {
-      this.updateCartState(cachedCart.items);
-      return;
+
+    // If cached cart looks valid, update UI immediately (fast)
+    if (cachedCart && (Array.isArray(cachedCart.items) || Array.isArray(cachedCart))) {
+      // Accept either { items: [...] } or [...] shapes
+      const items = Array.isArray(cachedCart.items) ? cachedCart.items : (Array.isArray(cachedCart) ? cachedCart : []);
+      this.updateCartState(items);
     }
 
+    // Always refresh from backend (keeps UI and cache honest)
     this.http.get<any>(`${this.baseUrl}/cart/`, { headers: this.getHeaders() })
       .subscribe({
         next: (cart) => {
-          this.setCache('cart', cart);
-          this.updateCartState(cart.items);
+          // Normalize response: if backend returned array, wrap into { items }
+          const normalized = Array.isArray(cart) ? { items: cart } : cart || { items: [] };
+
+          // Save normalized cart to cache
+          this.setCache('cart', normalized);
+
+          // Update state with normalized.items
+          this.updateCartState(normalized.items);
         },
         error: (error) => {
           console.error('Error loading cart:', error);
-          // Don't update state on error to prevent UI flickering
+          // keep existing UI state if any
         }
       });
   }
 
-  // Updated cart methods to use new RESTful endpoints
+  /**
+   * Add to cart:
+   * - expects backend to return updated cart (array or { items: [...] })
+   * - clears cache, updates cache with backend response, updates state
+   */
   addToCart(raffleId: string, quantity: number): void {
     this.http.post<any>(`${this.baseUrl}/cart/items`, { raffleId, quantity }, { headers: this.getHeaders() })
       .pipe(
-        tap(cart => {
-          this.clearCache(); // Clear cache since cart changed
-          this.updateCartState(cart.items);
+        tap((cartResponse) => {
+          // Normalize and update cache/state
+          const normalized = Array.isArray(cartResponse) ? { items: cartResponse } : cartResponse || { items: [] };
+          this.clearCache();
+          this.setCache('cart', normalized);
+          this.updateCartState(normalized.items);
         }),
         catchError(error => {
           console.error('Error adding to cart:', error);
@@ -170,12 +193,19 @@ export class ApiService {
       .subscribe();
   }
 
+  /**
+   * Remove from cart:
+   * - uses DELETE endpoint that returns updated cart
+   * - ensures cache and state are updated
+   */
   removeFromCart(raffleId: string): void {
     this.http.delete<any>(`${this.baseUrl}/cart/items/${raffleId}`, { headers: this.getHeaders() })
       .pipe(
-        tap(cart => {
-          this.clearCache(); // Clear cache since cart changed
-          this.updateCartState(cart.items);
+        tap((cartResponse) => {
+          const normalized = Array.isArray(cartResponse) ? { items: cartResponse } : cartResponse || { items: [] };
+          this.clearCache();
+          this.setCache('cart', normalized);
+          this.updateCartState(normalized.items);
         }),
         catchError(error => {
           console.error('Error removing from cart:', error);
@@ -185,12 +215,16 @@ export class ApiService {
       .subscribe();
   }
 
-  // Clear cart using new RESTful endpoint
+  /**
+   * Clear cart:
+   * - backend returns success (we reset UI & cache)
+   */
   clearCart(): void {
     this.http.delete<any>(`${this.baseUrl}/cart/`, { headers: this.getHeaders() })
       .pipe(
         tap(() => {
           this.clearCache();
+          this.setCache('cart', { items: [] });
           this.updateCartState([]);
         }),
         catchError(error => {
@@ -201,28 +235,63 @@ export class ApiService {
       .subscribe();
   }
 
-  // Get cart with caching
+  /**
+   * Get cart (Observable) - returns cached if available, otherwise calls backend.
+   * Normalizes backend shapes to { items: [...] }.
+   */
   getCart(): Observable<{ items: CartItem[] }> {
     const cached = this.getFromCache('cart');
     if (cached) {
       return new Observable(observer => {
-        observer.next(cached);
+        observer.next(Array.isArray(cached) ? { items: cached } : cached);
         observer.complete();
       });
     }
 
-    return this.http.get<{ items: CartItem[] }>(`${this.baseUrl}/cart/`, { headers: this.getHeaders() })
+    return this.http.get<any>(`${this.baseUrl}/cart/`, { headers: this.getHeaders() })
       .pipe(
-        tap(cart => this.setCache('cart', cart))
+        tap(cart => {
+          const normalized = Array.isArray(cart) ? { items: cart } : cart || { items: [] };
+          this.setCache('cart', normalized);
+        })
       );
   }
 
-  // Centralized cart state update to prevent multiple emissions
-  private updateCartState(items: any[]): void {
-    // Run in NgZone to ensure change detection works properly
+  /**
+   * Centralized cart state update.
+   * Accepts items array OR response object. Always computes total quantity.
+   */
+  private updateCartState(responseOrItems: any): void {
+    // Normalize to items array
+    let items: any[] = [];
+
+    if (!responseOrItems) {
+      items = [];
+    } else if (Array.isArray(responseOrItems)) {
+      items = responseOrItems;
+    } else if (responseOrItems.items && Array.isArray(responseOrItems.items)) {
+      items = responseOrItems.items;
+    } else if (responseOrItems.cart && Array.isArray(responseOrItems.cart)) {
+      items = responseOrItems.cart;
+    } else {
+      // Fallback: empty
+      items = [];
+    }
+
+    // Ensure quantities are numbers and safe
+    const safeItems = items.map(i => ({
+      ...i,
+      quantity: typeof i.quantity === 'number' ? i.quantity : parseInt(i.quantity, 10) || 0,
+      totalCost: typeof i.totalCost === 'number' ? i.totalCost : (i.totalCost ? Number(i.totalCost) : 0)
+    }));
+
+    // Compute total quantity (sum of quantities) — this is what the header should display
+    const totalQuantity = safeItems.reduce((sum, it) => sum + (it.quantity || 0), 0);
+
+    // Update subjects inside NgZone so Angular change detection for OnPush components works
     this.ngZone.run(() => {
-      this.cart.next(items);
-      this.cartCount.next(items.length);
+      this.cart.next(safeItems);
+      this.cartCount.next(totalQuantity);
     });
   }
 
