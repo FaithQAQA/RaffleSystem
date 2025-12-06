@@ -92,10 +92,12 @@
           <h5>{{ raffle.description }}</h5>
           <div class="raffle-details">
             <div>
-              <strong>Start Date:</strong> {{ raffle.startDate | date:'medium' }}
+              <strong>Start Date:</strong> {{ raffle.startDate | date:'medium':'UTC' }}
             </div>
             <div>
-              <strong>End Date:</strong> {{ raffle.endDate | date:'medium' }}
+              <strong>End Date:</strong> {{ raffle.endDate | date:'medium':'UTC' }}
+
+
             </div>
             <div><strong>Price:</strong> ${{ raffle.price }}</div>
             <div><strong>Category:</strong> {{ raffle.category }}</div>
