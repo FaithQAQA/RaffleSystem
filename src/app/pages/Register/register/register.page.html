@@ -1,7 +1,7 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
   <div class="card shadow-lg p-4 w-100" style="max-width: 400px; position: relative;">
 
-    <!-- Overlay Loader (optional full-card overlay) -->
+    <!-- Overlay Loader -->
     <div
       *ngIf="isLoading"
       class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center bg-white bg-opacity-75 rounded"
@@ -10,117 +10,176 @@
       <div class="spinner-border text-primary mb-2" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <div class="fw-semibold text-secondary small">Registering your account...</div>
+      <div class="fw-semibold text-secondary small">
+        {{ registrationCompleted ? 'Sending verification email...' : 'Registering your account...' }}
+      </div>
     </div>
 
     <div class="card-body" [class.opacity-50]="isLoading">
-      <!-- Header -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="mb-0"><b>Register</b></h3>
-        <a routerLink="/login" class="text-primary">Already have an account?</a>
-      </div>
 
-      <!-- Username -->
-      <div class="form-group mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input
-          type="text"
-          [(ngModel)]="user.username"
-          class="form-control"
-          id="username"
-          placeholder="Enter username"
-          required
-          [disabled]="isLoading"
-        />
-      </div>
+      <!-- Registration Form (Hidden after successful registration) -->
+      <div *ngIf="!registrationCompleted">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="mb-0"><b>Register</b></h3>
+          <a routerLink="/login" class="text-primary">Already have an account?</a>
+        </div>
 
-      <!-- Email -->
-      <div class="form-group mb-3">
-        <label for="email" class="form-label">Email Address</label>
-        <input
-          type="email"
-          [(ngModel)]="user.email"
-          class="form-control"
-          id="email"
-          placeholder="Enter email"
-          required
-          [disabled]="isLoading"
-        />
-      </div>
-
-<!-- Password -->
-<div class="form-group mb-3">
-  <label for="password" class="form-label">Password</label>
-
-  <div class="password-wrapper">
-    <input
-      [type]="showPassword ? 'text' : 'password'"
-      [(ngModel)]="user.password"
-      class="form-control pr-with-eye"
-      id="password"
-      placeholder="Enter password"
-      required
-      [disabled]="isLoading"
-    />
-
-    <button
-      type="button"
-      class="toggle-eye"
-      (click)="togglePasswordVisibility()"
-      [disabled]="isLoading"
-      aria-label="Toggle password visibility"
-    >
-      <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
-    </button>
-  </div>
-</div>
-
-      <!-- Confirm Password -->
-      <div class="form-group mb-3">
-        <label for="confirmPassword" class="form-label">Confirm Password</label>
-
-        <div class="password-wrapper">
+        <!-- Username -->
+        <div class="form-group mb-3">
+          <label for="username" class="form-label">Username</label>
           <input
-            [type]="showConfirmPassword ? 'text' : 'password'"
-            [(ngModel)]="user.confirmPassword"
-            class="form-control pr-with-eye"
-            id="confirmPassword"
-            placeholder="Re-enter password"
+            type="text"
+            [(ngModel)]="user.username"
+            class="form-control"
+            id="username"
+            placeholder="Enter username"
             required
             [disabled]="isLoading"
           />
+        </div>
 
-          <button
-            type="button"
-            class="toggle-eye"
-            (click)="toggleConfirmPasswordVisibility()"
+        <!-- Email -->
+        <div class="form-group mb-3">
+          <label for="email" class="form-label">Email Address</label>
+          <input
+            type="email"
+            [(ngModel)]="user.email"
+            class="form-control"
+            id="email"
+            placeholder="Enter email"
+            required
             [disabled]="isLoading"
-            aria-label="Toggle confirm password visibility"
+          />
+        </div>
+
+        <!-- Password -->
+        <div class="form-group mb-3">
+          <label for="password" class="form-label">Password</label>
+          <div class="password-wrapper">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="user.password"
+              class="form-control pr-with-eye"
+              id="password"
+              placeholder="Enter password"
+              required
+              [disabled]="isLoading"
+            />
+            <button
+              type="button"
+              class="toggle-eye"
+              (click)="togglePasswordVisibility()"
+              [disabled]="isLoading"
+              aria-label="Toggle password visibility"
+            >
+              <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group mb-3">
+          <label for="confirmPassword" class="form-label">Confirm Password</label>
+          <div class="password-wrapper">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              [(ngModel)]="user.confirmPassword"
+              class="form-control pr-with-eye"
+              id="confirmPassword"
+              placeholder="Re-enter password"
+              required
+              [disabled]="isLoading"
+            />
+            <button
+              type="button"
+              class="toggle-eye"
+              (click)="toggleConfirmPasswordVisibility()"
+              [disabled]="isLoading"
+              aria-label="Toggle confirm password visibility"
+            >
+              <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Password Mismatch Warning -->
+        <div *ngIf="user.password && user.confirmPassword && user.password !== user.confirmPassword" class="text-danger small mb-2">
+          Passwords do not match.
+        </div>
+
+        <!-- Register Button -->
+        <div class="d-grid mt-4">
+          <button
+            class="btn btn-primary btn-block"
+            [disabled]="user.password !== user.confirmPassword || isLoading"
+            (click)="register()"
           >
-            <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+            <span *ngIf="!isLoading">Register</span>
+            <div *ngIf="isLoading" class="d-flex align-items-center justify-content-center">
+              <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+              <span>Processing...</span>
+            </div>
           </button>
         </div>
       </div>
 
-      <!-- Password Mismatch Warning -->
-      <div *ngIf="user.password && user.confirmPassword && user.password !== user.confirmPassword" class="text-danger small mb-2">
-        Passwords do not match.
+      <!-- Success Message and Resend Button (Shown after registration) -->
+      <div *ngIf="registrationCompleted" class="text-center py-4">
+        <!-- Success Icon -->
+        <div class="mb-4">
+          <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success text-white"
+               style="width: 80px; height: 80px; font-size: 2.5rem;">
+            <i class="bi bi-check-lg"></i>
+          </div>
+        </div>
+
+        <!-- Success Message -->
+        <h4 class="mb-3 text-success">Registration Successful!</h4>
+        <p class="text-muted mb-4">
+          We've sent a verification email to <strong>{{ registeredEmail }}</strong>.
+          Please check your inbox and click the verification link to activate your account.
+        </p>
+
+        <!-- Tips Box -->
+        <div class="alert alert-info text-start mb-4">
+          <h6 class="alert-heading"><i class="bi bi-lightbulb me-2"></i>Didn't receive the email?</h6>
+          <ul class="mb-0 ps-3">
+            <li>Check your spam or junk folder</li>
+            <li>Make sure you entered the correct email address</li>
+            <li>Wait a few minutes and try resending</li>
+          </ul>
+        </div>
+
+        <!-- Resend Email Button -->
+        <div class="d-grid gap-2 mb-3">
+          <button
+            class="btn btn-outline-primary"
+            (click)="resendVerificationEmail()"
+            [disabled]="isLoading"
+          >
+            <i class="bi bi-send me-2"></i>
+            Resend Verification Email
+          </button>
+        </div>
+
+        <!-- Back to Login Button -->
+        <div class="d-grid">
+          <button
+            class="btn btn-success"
+            (click)="goToLogin()"
+          >
+            <i class="bi bi-box-arrow-in-right me-2"></i>
+            Go to Login
+          </button>
+        </div>
+
+        <!-- Additional Help Text -->
+        <p class="text-muted small mt-4">
+          Need help? <a href="mailto:support@ticketstack.com" class="text-decoration-none">Contact Support</a>
+        </p>
       </div>
 
-      <!-- Register Button -->
-      <div class="d-grid mt-4">
-        <button
-          class="btn btn-primary btn-block"
-          [disabled]="user.password !== user.confirmPassword || isLoading"
-          (click)="register()"
-        >
-          <span *ngIf="!isLoading">Register</span>
-          <div *ngIf="isLoading" class="d-flex align-items-center justify-content-center">
-            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-            <span>Processing...</span>
-          </div>
-        </button>
-      </div>
     </div>
   </div>
 </div>

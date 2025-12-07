@@ -18,7 +18,9 @@ export class RegisterPage {
 
   showPassword = false;
   showConfirmPassword = false;
-  isLoading = false; // ✅ new state for loading indicator
+  isLoading = false;
+  registrationCompleted = false; // New flag to show resend button
+  registeredEmail = ''; // Store email for resending
 
   constructor(private authService: ApiService, private router: Router) {}
 
@@ -41,22 +43,51 @@ export class RegisterPage {
       return;
     }
 
-    this.isLoading = true; // ✅ Start loading
+    this.isLoading = true;
 
     this.authService
       .register(this.user.username.trim(), this.user.email.trim(), this.user.password.trim())
       .subscribe({
         next: (res) => {
+          this.registrationCompleted = true;
+          this.registeredEmail = this.user.email;
           alert('Registration successful! Please check your email to verify your account.');
-          this.router.navigate(['/login']);
         },
         error: (err) => {
           console.error('Registration failed', err);
           alert(err.error?.message || 'Registration failed. Try again.');
         },
         complete: () => {
-          this.isLoading = false; // ✅ Stop loading regardless of outcome
+          this.isLoading = false;
         },
       });
+  }
+
+  // New method to resend verification email
+  resendVerificationEmail() {
+    if (!this.registeredEmail) {
+      alert('No email found to resend verification.');
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.authService.resendVerificationEmail(this.registeredEmail).subscribe({
+      next: (res) => {
+        alert('Verification email resent! Please check your inbox.');
+      },
+      error: (err) => {
+        console.error('Failed to resend verification email', err);
+        alert(err.error?.message || 'Failed to resend verification email. Try again.');
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
+  }
+
+  // Navigate to login
+  goToLogin() {
+    this.router.navigate(['/login']);
   }
 }

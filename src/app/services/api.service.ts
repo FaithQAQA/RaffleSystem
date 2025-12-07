@@ -123,6 +123,15 @@ export class ApiService {
     this.cache.set(key, { data, timestamp: Date.now() });
   }
 
+  // Add this method to your existing ApiService
+// Replace the current resendVerificationEmail method with this:
+resendVerificationEmail(email: string): Observable<any> {
+  const url = `${this.baseUrl}/auth/resend-verification`;
+  const body = { email };
+  return this.http.post(url, body).pipe(
+    catchError(this.handleError)
+  );
+}
   // Clear cache when needed (like after cart updates)
   private clearCache(): void {
     this.cache.clear();
